@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   Shield,
+  BookOpen,
 } from 'lucide-react';
 
 const Layout = () => {
@@ -31,6 +32,7 @@ const Layout = () => {
     { path: '/projects', label: 'Projects', icon: FolderKanban },
     { path: '/tasks', label: 'Tasks', icon: CheckSquare },
     { path: '/employees', label: 'Employees', icon: TrendingUp },
+    { path: '/handbook', label: 'Handbook/Policies', icon: BookOpen },
   ];
 
   // Add Admin link if user is admin
