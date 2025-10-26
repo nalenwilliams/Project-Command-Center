@@ -268,11 +268,15 @@ const ProjectsPage = () => {
                     <SelectValue placeholder="Select user" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
-                        {user.username}
-                      </SelectItem>
-                    ))}
+                    {Array.isArray(users) && users.length > 0 ? (
+                      users.map((user) => (
+                        <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
+                          {user.username}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-gray-400 text-sm">No users available.</div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
