@@ -1,53 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Plus, DollarSign, Calendar, Pencil, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
-import api from '@/lib/api';
-import FileGallery from '@/components/FileGallery';
-
-const ELEGANT_GOLD = '#C9A961';
+import { Card, CardContent } from '@/components/ui/card';
+import { Plus, DollarSign } from 'lucide-react';
 
 const InvoicesPage = () => {
-  const [invoices, setInvoices] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingInvoice, setEditingInvoice] = useState(null);
-  const [formData, setFormData] = useState({
-    invoice_number: '',
-    client_id: '',
-    project_id: '',
-    amount: '',
-    due_date: '',
-    status: 'draft',
-    notes: '',
-    files: []
-  });
-
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const canDelete = user.role === 'admin' || user.role === 'manager';
+  const isAdminOrManager = user.role === 'admin' || user.role === 'manager';
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold" style={{ color: '#C9A961' }}>
+            Invoices
+          </h1>
+          <p className="text-gray-400 mt-2">
+            Track client invoices and payments
+          </p>
+        </div>
+        {isAdminOrManager && (
+          <Button
+            style={{ backgroundColor: '#C9A961', color: '#000000' }}
+            className="hover:opacity-90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Invoice
+          </Button>
+        )}
+      </div>
 
-  const fetchData = async () => {
-    try {
-      const [invoicesRes, clientsRes, projectsRes] = await Promise.all([
-        api.get('/invoices'),
-        api.get('/clients'),
-        api.get('/projects')
-      ]);
-      setInvoices(invoicesRes.data);
+      <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#C9A961' }}>
+        <CardContent className="pt-6">
+          <div className="text-center py-12">
+            <DollarSign className="mx-auto h-12 w-12 mb-4" style={{ color: '#C9A961' }} />
+            <p className="text-gray-400">
+              Invoices module coming soon. This will track client billing, payments, and financial records.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default InvoicesPage;
       setClients(clientsRes.data);
       setProjects(projectsRes.data);
     } catch (error) {
