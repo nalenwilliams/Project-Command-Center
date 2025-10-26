@@ -157,7 +157,7 @@ const AdminPanel = () => {
       </div>
 
       <Tabs defaultValue="users" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-black border" style={{ borderColor: ELEGANT_GOLD }}>
+        <TabsList className="grid w-full grid-cols-3 bg-black border" style={{ borderColor: ELEGANT_GOLD }}>
           <TabsTrigger value="users" style={{ color: ELEGANT_GOLD }}>
             <Users className="h-4 w-4 mr-2" />
             Users
@@ -165,6 +165,10 @@ const AdminPanel = () => {
           <TabsTrigger value="invitations" style={{ color: ELEGANT_GOLD }}>
             <UserPlus className="h-4 w-4 mr-2" />
             Invitations
+          </TabsTrigger>
+          <TabsTrigger value="notifications" style={{ color: ELEGANT_GOLD }}>
+            <Bell className="h-4 w-4 mr-2" />
+            Notifications
           </TabsTrigger>
         </TabsList>
 
