@@ -125,7 +125,8 @@ const Layout = () => {
             </Button>
           </div>
 
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {/* Main Navigation */}
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -143,6 +144,138 @@ const Layout = () => {
                 </Link>
               );
             })}
+
+            {/* Financial Management Section - Admin/Manager only */}
+            {isAdminOrManager && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    Financial Management
+                  </p>
+                </div>
+                {financialItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link key={item.path} to={item.path}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start hover:bg-gray-900"
+                        style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                        data-testid={`nav-${item.label.toLowerCase()}`}
+                      >
+                        <Icon className="mr-3 h-5 w-5" />
+                        {item.label}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Contracts Section - Admin/Manager only */}
+            {isAdminOrManager && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    Contracts
+                  </p>
+                </div>
+                {contractItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link key={item.path} to={item.path}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start hover:bg-gray-900"
+                        style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                        data-testid={`nav-${item.label.toLowerCase()}`}
+                      >
+                        <Icon className="mr-3 h-5 w-5" />
+                        {item.label}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Equipment Section - Visible to all */}
+            <div className="pt-4 pb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                Equipment
+              </p>
+            </div>
+            {equipmentItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link key={item.path} to={item.path}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid={`nav-${item.label.toLowerCase()}`}
+                  >
+                    <Icon className="mr-3 h-5 w-5" />
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            })}
+
+            {/* Operations Section - Visible to all */}
+            <div className="pt-4 pb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                Operations
+              </p>
+            </div>
+            {operationsItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link key={item.path} to={item.path}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid={`nav-${item.label.toLowerCase()}`}
+                  >
+                    <Icon className="mr-3 h-5 w-5" />
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            })}
+
+            {/* Safety & Compliance Section - Admin/Manager only */}
+            {isAdminOrManager && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    Safety & Compliance
+                  </p>
+                </div>
+                {safetyComplianceItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link key={item.path} to={item.path}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start hover:bg-gray-900"
+                        style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                        data-testid={`nav-${item.label.toLowerCase()}`}
+                      >
+                        <Icon className="mr-3 h-5 w-5" />
+                        {item.label}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </>
+            )}
           </nav>
 
           <div className="p-4 border-t" style={{ borderColor: '#C9A961' }}>
