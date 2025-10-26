@@ -266,7 +266,7 @@ const TasksPage = () => {
                 <Button type="button" variant="outline" onClick={handleCloseDialog}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="task-submit-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
+                <Button type="submit" data-testid="task-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
                   {editingTask ? 'Update' : 'Create'}
                 </Button>
               </div>
