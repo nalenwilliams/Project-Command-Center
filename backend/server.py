@@ -482,68 +482,73 @@ async def delete_task(task_id: str, current_user: dict = Depends(get_current_use
     return {"message": "Task deleted successfully"}
 
 # ============================================
-# API ROUTES - DEALS
+# API ROUTES - EMPLOYEES
 # ============================================
 
-@api_router.get("/deals", response_model=List[Deal])
-async def get_deals(current_user: dict = Depends(get_current_user)):
-    deals = await db.deals.find({}, {"_id": 0}).to_list(1000)
-    for deal in deals:
-        if isinstance(deal['created_at'], str):
-            deal['created_at'] = datetime.fromisoformat(deal['created_at'])
-        if deal.get('expected_close_date') and isinstance(deal['expected_close_date'], str):
-            deal['expected_close_date'] = datetime.fromisoformat(deal['expected_close_date'])
-    return deals
+@api_router.get("/employees", response_model=List[Employee])
+async def get_employees(current_user: dict = Depends(get_current_user)):
+    employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
+    for employee in employees:
+        if isinstance(employee['created_at'], str):
+            employee['created_at'] = datetime.fromisoformat(employee['created_at'])
+        if employee.get('hire_date') and isinstance(employee['hire_date'], str):
+            employee['hire_date'] = datetime.fromisoformat(employee['hire_date'])
+    return employees
 
-@api_router.post("/deals", response_model=Deal)
-async def create_deal(deal_data: DealCreate, current_user: dict = Depends(get_current_user)):
-    deal = Deal(**deal_data.model_dump(), created_by=current_user['id'])
-    deal_dict = deal.model_dump()
-    deal_dict['created_at'] = deal_dict['created_at'].isoformat()
-    if deal_dict.get('expected_close_date'):
-        deal_dict['expected_close_date'] = deal_dict['expected_close_date'].isoformat()
+@api_router.post("/employees", response_model=Employee)
+async def create_employee(employee_data: EmployeeCreate, current_user: dict = Depends(get_current_user)):
+    # Check if employee_id already exists
+    existing = await db.employees.find_one({"employee_id": employee_data.employee_id}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Employee ID already exists")
     
-    await db.deals.insert_one(deal_dict)
-    return deal
+    employee = Employee(**employee_data.model_dump(), created_by=current_user['id'])
+    employee_dict = employee.model_dump()
+    employee_dict['created_at'] = employee_dict['created_at'].isoformat()
+    if employee_dict.get('hire_date'):
+        employee_dict['hire_date'] = employee_dict['hire_date'].isoformat()
+    
+    await db.employees.insert_one(employee_dict)
+    return employee
 
-@api_router.get("/deals/{deal_id}", response_model=Deal)
-async def get_deal(deal_id: str, current_user: dict = Depends(get_current_user)):
-    deal = await db.deals.find_one({"id": deal_id}, {"_id": 0})
-    if not deal:
-        raise HTTPException(status_code=404, detail="Deal not found")
+@api_router.get("/employees/{employee_id}", response_model=Employee)
+async def get_employee(employee_id: str, current_user: dict = Depends(get_current_user)):
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
     
-    if isinstance(deal['created_at'], str):
-        deal['created_at'] = datetime.fromisoformat(deal['created_at'])
-    if deal.get('expected_close_date') and isinstance(deal['expected_close_date'], str):
-        deal['expected_close_date'] = datetime.fromisoformat(deal['expected_close_date'])
-    return deal
+    if isinstance(employee['created_at'], str):
+        employee['created_at'] = datetime.fromisoformat(employee['created_at'])
+    if employee.get('hire_date') and isinstance(employee['hire_date'], str):
+        employee['hire_date'] = datetime.fromisoformat(employee['hire_date'])
+    return employee
 
-@api_router.put("/deals/{deal_id}", response_model=Deal)
-async def update_deal(deal_id: str, deal_data: DealUpdate, current_user: dict = Depends(get_current_user)):
-    deal = await db.deals.find_one({"id": deal_id}, {"_id": 0})
-    if not deal:
-        raise HTTPException(status_code=404, detail="Deal not found")
+@api_router.put("/employees/{employee_id}", response_model=Employee)
+async def update_employee(employee_id: str, employee_data: EmployeeUpdate, current_user: dict = Depends(get_current_user)):
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
     
-    update_data = {k: v for k, v in deal_data.model_dump().items() if v is not None}
-    if update_data.get('expected_close_date'):
-        update_data['expected_close_date'] = update_data['expected_close_date'].isoformat()
+    update_data = {k: v for k, v in employee_data.model_dump().items() if v is not None}
+    if update_data.get('hire_date'):
+        update_data['hire_date'] = update_data['hire_date'].isoformat()
     
     if update_data:
-        await db.deals.update_one({"id": deal_id}, {"$set": update_data})
+        await db.employees.update_one({"id": employee_id}, {"$set": update_data})
     
-    updated_deal = await db.deals.find_one({"id": deal_id}, {"_id": 0})
-    if isinstance(updated_deal['created_at'], str):
-        updated_deal['created_at'] = datetime.fromisoformat(updated_deal['created_at'])
-    if updated_deal.get('expected_close_date') and isinstance(updated_deal['expected_close_date'], str):
-        updated_deal['expected_close_date'] = datetime.fromisoformat(updated_deal['expected_close_date'])
-    return updated_deal
+    updated_employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if isinstance(updated_employee['created_at'], str):
+        updated_employee['created_at'] = datetime.fromisoformat(updated_employee['created_at'])
+    if updated_employee.get('hire_date') and isinstance(updated_employee['hire_date'], str):
+        updated_employee['hire_date'] = datetime.fromisoformat(updated_employee['hire_date'])
+    return updated_employee
 
-@api_router.delete("/deals/{deal_id}")
-async def delete_deal(deal_id: str, current_user: dict = Depends(get_current_user)):
-    result = await db.deals.delete_one({"id": deal_id})
+@api_router.delete("/employees/{employee_id}")
+async def delete_employee(employee_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.employees.delete_one({"id": employee_id})
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Deal not found")
-    return {"message": "Deal deleted successfully"}
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"message": "Employee deleted successfully"}
 
 # ============================================
 # API ROUTES - DASHBOARD
@@ -554,7 +559,7 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     total_clients = await db.clients.count_documents({})
     total_projects = await db.projects.count_documents({})
     total_tasks = await db.tasks.count_documents({})
-    total_deals = await db.deals.count_documents({})
+    total_employees = await db.employees.count_documents({})
     active_projects = await db.projects.count_documents({"status": "in_progress"})
     completed_tasks = await db.tasks.count_documents({"status": "completed"})
     
@@ -562,7 +567,7 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
         total_clients=total_clients,
         total_projects=total_projects,
         total_tasks=total_tasks,
-        total_deals=total_deals,
+        total_employees=total_employees,
         active_projects=active_projects,
         completed_tasks=completed_tasks
     )
