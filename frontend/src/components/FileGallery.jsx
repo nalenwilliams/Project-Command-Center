@@ -13,6 +13,23 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(item);
 
+  const getFileIcon = (file) => {
+    const filename = file.filename?.toLowerCase() || '';
+    const contentType = file.content_type?.toLowerCase() || '';
+    
+    if (contentType.includes('pdf') || filename.endsWith('.pdf')) {
+      return <FileText className="h-16 w-16 text-red-500" />;
+    } else if (contentType.includes('word') || filename.endsWith('.doc') || filename.endsWith('.docx')) {
+      return <FileText className="h-16 w-16 text-blue-500" />;
+    } else if (contentType.includes('excel') || contentType.includes('spreadsheet') || filename.endsWith('.xls') || filename.endsWith('.xlsx')) {
+      return <FileText className="h-16 w-16 text-green-500" />;
+    } else if (filename.endsWith('.txt') || filename.endsWith('.md') || filename.endsWith('.note')) {
+      return <FileText className="h-16 w-16" style={{ color: ELEGANT_GOLD }} />;
+    } else {
+      return <File className="h-16 w-16" style={{ color: ELEGANT_GOLD }} />;
+    }
+  };
+
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     
