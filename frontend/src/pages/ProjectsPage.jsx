@@ -148,7 +148,7 @@ const ProjectsPage = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingProject(null)} data-testid="add-project-button">
+            <Button onClick={() => setEditingProject(null)} data-testid="add-project-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
               <Plus className="mr-2 h-4 w-4" /> Add Project
             </Button>
           </DialogTrigger>
