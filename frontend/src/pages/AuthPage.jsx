@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import api from '@/lib/api';
+
+const AuthPage = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const [registerData, setRegisterData] = useState({ username: '', email: '', password: '' });
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/login', loginData);
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      toast.success('Login successful!');
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/register', registerData);
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      toast.success('Registration successful!');
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" data-testid="auth-page">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-3xl font-bold text-center">CRM Pro</CardTitle>
+          <CardDescription className="text-center">
+            Manage your clients, projects, and deals
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login" data-testid="login-tab">Login</TabsTrigger>
+              <TabsTrigger value="register" data-testid="register-tab">Register</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-username">Username</Label>
+                  <Input
+                    id="login-username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={loginData.username}
+                    onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+                    required
+                    data-testid="login-username-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Password</Label>
+                  <Input
+                    id="login-password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    required
+                    data-testid="login-password-input"
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading} data-testid="login-submit-button">
+                  {loading ? 'Logging in...' : 'Login'}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="register">
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-username">Username</Label>
+                  <Input
+                    id="register-username"
+                    type="text"
+                    placeholder="Choose a username"
+                    value={registerData.username}
+                    onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
+                    required
+                    data-testid="register-username-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-email">Email</Label>
+                  <Input
+                    id="register-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={registerData.email}
+                    onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                    required
+                    data-testid="register-email-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-password">Password</Label>
+                  <Input
+                    id="register-password"
+                    type="password"
+                    placeholder="Choose a password"
+                    value={registerData.password}
+                    onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                    required
+                    data-testid="register-password-input"
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading} data-testid="register-submit-button">
+                  {loading ? 'Creating account...' : 'Create Account'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AuthPage;
