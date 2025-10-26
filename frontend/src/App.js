@@ -41,6 +41,7 @@ function App() {
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="tasks" element={<TasksPage />} />
             <Route path="employees" element={<EmployeesPage />} />
+            <Route path="handbook" element={<HandbookPoliciesPage />} />
             <Route path="admin" element={<AdminPanel />} />
           </Route>
         </Routes>
