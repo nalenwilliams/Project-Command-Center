@@ -25,6 +25,7 @@ const CertificationsPage = () => {
     expiry_date: '',
     issuing_authority: ''
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const canDelete = user.role === 'admin' || user.role === 'manager';
