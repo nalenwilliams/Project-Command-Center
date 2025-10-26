@@ -20,14 +20,17 @@ const ProjectsPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filesDialogOpen, setFilesDialogOpen] = useState(false);
+  const [currentProject, setCurrentProject] = useState(null);
   const [editingProject, setEditingProject] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
+    description: '',
     client_id: '',
     status: 'not_started',
     deadline: '',
-    description: '',
     assigned_to: '',
     files: [],
   });
