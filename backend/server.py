@@ -754,7 +754,7 @@ async def seed_admin_user():
             "id": str(uuid.uuid4()),
             "username": "admin",
             "email": "admin@williamsdiversified.com",
-            "password": get_password_hash("Admin123!"),
+            "password_hash": get_password_hash("Admin123!"),
             "role": "admin",
             "is_active": True,
             "created_at": datetime.now(timezone.utc).isoformat()
