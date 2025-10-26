@@ -67,7 +67,14 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
+    if not user.get('is_active', True):
+        raise HTTPException(status_code=403, detail="User account is deactivated")
     return user
+
+async def get_admin_user(current_user: dict = Depends(get_current_user)):
+    if current_user.get('role') != 'admin':
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
 
 # ============================================
 # PYDANTIC MODELS
