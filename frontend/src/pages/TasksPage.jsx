@@ -122,6 +122,17 @@ const TasksPage = () => {
     });
   };
 
+  const handleStatusUpdate = async (taskId, newStatus) => {
+    try {
+      await api.put(`/tasks/${taskId}`, { status: newStatus });
+      toast.success('Task status updated');
+      fetchData();
+      setStatusDialogOpen(false);
+    } catch (error) {
+      toast.error('Failed to update task status');
+    }
+  };
+
   const getStatusBadge = (status) => {
     const variants = {
       todo: { label: 'To Do', style: { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#9CA3AF' } },
