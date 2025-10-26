@@ -159,14 +159,15 @@ const EmployeesPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Employee Profiles</h1>
-          <p className="text-gray-400 mt-1">Manage employee information, handbooks and policies</p>
+          <p className="text-gray-400 mt-1">Manage employee information, handbooks and policies{isEmployee ? ' (View Only)' : ''}</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingEmployee(null)} data-testid="add-employee-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
-              <Plus className="mr-2 h-4 w-4" /> Add Employee
-            </Button>
-          </DialogTrigger>
+        {canEdit && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setEditingEmployee(null)} data-testid="add-employee-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
+                <Plus className="mr-2 h-4 w-4" /> Add Employee
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="employee-dialog">
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingEmployee ? 'Edit Employee' : 'Add New Employee'}</DialogTitle>
