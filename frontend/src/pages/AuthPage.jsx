@@ -58,7 +58,7 @@ const AuthPage = () => {
           />
           <CardTitle className="text-3xl font-bold" style={{ color: '#C9A961' }}>Williams Diversified LLC</CardTitle>
           <CardDescription style={{ color: '#C9A961', opacity: 0.8 }}>
-            CRM & Project Management System
+            Project Command Center
           </CardDescription>
         </CardHeader>
         <CardContent>
