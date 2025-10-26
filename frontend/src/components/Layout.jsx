@@ -44,21 +44,26 @@ const Layout = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black border-r border-yellow-600 transform transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
         data-testid="sidebar"
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div>
-              <h1 className="text-xl font-bold text-indigo-600">Williams Diversified</h1>
-              <p className="text-xs text-gray-500">CRM & Project Hub</p>
+          <div className="flex flex-col items-center p-6 border-b border-yellow-600">
+            <img 
+              src="/williams-logo.png" 
+              alt="Williams Diversified LLC" 
+              className="w-32 h-auto mb-3"
+            />
+            <div className="text-center">
+              <h1 className="text-lg font-bold text-yellow-500">Williams Diversified LLC</h1>
+              <p className="text-xs text-yellow-600">CRM & Project Management</p>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="lg:hidden absolute top-4 right-4 text-yellow-500 hover:text-yellow-400 hover:bg-gray-900"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-5 w-5" />
@@ -72,8 +77,12 @@ const Layout = () => {
               return (
                 <Link key={item.path} to={item.path}>
                   <Button
-                    variant={isActive ? 'default' : 'ghost'}
-                    className="w-full justify-start"
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      isActive 
+                        ? 'bg-yellow-600 text-black hover:bg-yellow-500 hover:text-black' 
+                        : 'text-yellow-500 hover:bg-gray-900 hover:text-yellow-400'
+                    }`}
                     data-testid={`nav-${item.label.toLowerCase()}`}
                   >
                     <Icon className="mr-3 h-5 w-5" />
@@ -84,16 +93,16 @@ const Layout = () => {
             })}
           </nav>
 
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-yellow-600">
             <div className="flex items-center mb-4">
               <div className="flex-1">
-                <p className="text-sm font-medium">{user.username}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <p className="text-sm font-medium text-yellow-500">{user.username}</p>
+                <p className="text-xs text-yellow-600">{user.email}</p>
               </div>
             </div>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start border-yellow-600 text-yellow-500 hover:bg-gray-900 hover:text-yellow-400"
               onClick={handleLogout}
               data-testid="logout-button"
             >
