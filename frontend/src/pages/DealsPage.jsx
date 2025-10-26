@@ -286,7 +286,7 @@ const DealsPage = () => {
                 <Button type="button" variant="outline" onClick={handleCloseDialog}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="deal-submit-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
+                <Button type="submit" data-testid="deal-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
                   {editingDeal ? 'Update' : 'Create'}
                 </Button>
               </div>
