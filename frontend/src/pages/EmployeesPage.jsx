@@ -282,8 +282,8 @@ const EmployeesPage = () => {
                 <Button type="button" variant="outline" onClick={handleCloseDialog} className="border text-white hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD }}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="task-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
-                  {editingTask ? 'Update' : 'Create'}
+                <Button type="submit" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
+                  {editingEmployee ? 'Update' : 'Create'}
                 </Button>
               </div>
             </form>
@@ -293,60 +293,41 @@ const EmployeesPage = () => {
 
       <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
         <CardHeader>
-          <CardTitle style={{ color: ELEGANT_GOLD }}>All Tasks ({tasks.length})</CardTitle>
+          <CardTitle style={{ color: ELEGANT_GOLD }}>All Employees ({employees.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          {tasks.length === 0 ? (
+          {employees.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
-              No tasks yet. Click "Add Task" to get started.
+              No employees yet. Click Add Employee to get started.
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow className="border-b" style={{ borderColor: '#374151' }}>
-                  <TableHead style={{ color: ELEGANT_GOLD }}>Task</TableHead>
-                  <TableHead style={{ color: ELEGANT_GOLD }}>Project</TableHead>
-                  <TableHead style={{ color: ELEGANT_GOLD }}>Assigned To</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Name</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Employee ID</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Email</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Phone</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Position</TableHead>
                   <TableHead style={{ color: ELEGANT_GOLD }}>Status</TableHead>
-                  <TableHead style={{ color: ELEGANT_GOLD }}>Priority</TableHead>
-                  <TableHead style={{ color: ELEGANT_GOLD }}>Due Date</TableHead>
                   <TableHead className="text-right" style={{ color: ELEGANT_GOLD }}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tasks.map((task) => (
-                  <TableRow key={task.id} data-testid={`task-row-${task.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium text-white">{task.title}</div>
-                        {task.description && (
-                          <div className="text-sm text-gray-400 max-w-xs truncate">
-                            {task.description}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-gray-300">{getProjectName(task.project_id)}</TableCell>
-                    <TableCell className="text-gray-300">{getUserName(task.assigned_to)}</TableCell>
-                    <TableCell>{getStatusBadge(task.status)}</TableCell>
-                    <TableCell>{getPriorityBadge(task.priority)}</TableCell>
-                    <TableCell className="text-gray-300">
-                      {task.due_date ? (
-                        <div className="flex items-center text-sm">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {new Date(task.due_date).toLocaleDateString()}
-                        </div>
-                      ) : (
-                        '-'
-                      )}
-                    </TableCell>
+                {employees.map((employee) => (
+                  <TableRow key={employee.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                    <TableCell className="font-medium text-white">{employee.name}</TableCell>
+                    <TableCell className="text-gray-300">{employee.employee_id}</TableCell>
+                    <TableCell className="text-gray-300">{employee.email}</TableCell>
+                    <TableCell className="text-gray-300">{employee.phone || '-'}</TableCell>
+                    <TableCell className="text-gray-300">{employee.position || '-'}</TableCell>
+                    <TableCell>{getStatusBadge(employee.status)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleEdit(task)}
-                          data-testid={`edit-task-${task.id}`}
+                          onClick={() => handleEdit(employee)}
                           className="border hover:bg-gray-800"
                           style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         >
@@ -355,8 +336,7 @@ const EmployeesPage = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(task.id)}
-                          data-testid={`delete-task-${task.id}`}
+                          onClick={() => handleDelete(employee.id)}
                           className="border-red-500 text-red-500 hover:bg-red-950"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -374,4 +354,4 @@ const EmployeesPage = () => {
   );
 };
 
-export default TasksPage;
+export default EmployeesPage;
