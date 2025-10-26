@@ -154,12 +154,14 @@ const InvoicesPage = () => {
       status: invoice.status || 'draft',
       notes: invoice.notes || ''
     });
+    setSelectedFiles(invoice.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingInvoice(null);
+    setSelectedFiles([]);
     setFormData({
       invoice_number: '',
       client_id: '',
