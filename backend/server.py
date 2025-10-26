@@ -744,6 +744,52 @@ async def delete_project(project_id: str, current_user: dict = Depends(get_curre
     return {"message": "Project deleted successfully"}
 
 # ============================================
+# API ROUTES - FILE UPLOADS
+# ============================================
+
+UPLOAD_DIR = Path(__file__).parent / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload a file (image, document, plan, etc.)"""
+    try:
+        # Generate unique filename
+        file_extension = Path(file.filename).suffix
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        file_path = UPLOAD_DIR / unique_filename
+        
+        # Save file
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Return file info
+        return {
+            "id": str(uuid.uuid4()),
+            "filename": file.filename,
+            "stored_filename": unique_filename,
+            "size": file_path.stat().st_size,
+            "content_type": file.content_type,
+            "uploaded_by": current_user['username'],
+            "uploaded_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
+
+@api_router.get("/uploads/{filename}")
+async def get_uploaded_file(filename: str):
+    """Serve uploaded files"""
+    file_path = UPLOAD_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    from fastapi.responses import FileResponse
+    return FileResponse(file_path)
+
+# ============================================
 # API ROUTES - TASKS
 # ============================================
 
