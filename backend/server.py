@@ -1478,6 +1478,367 @@ async def delete_fleet_inspection(inspection_id: str, admin_user: dict = Depends
         raise HTTPException(status_code=404, detail="Inspection not found")
     return {"message": "Fleet inspection deleted successfully"}
 
+
+# ============================================
+# API ROUTES - FINANCIAL MANAGEMENT
+# ============================================
+
+# INVOICES
+@api_router.get("/invoices", response_model=List[Invoice])
+async def get_invoices(current_user: dict = Depends(get_current_user)):
+    invoices = await db.invoices.find({}, {"_id": 0}).to_list(1000)
+    for invoice in invoices:
+        if isinstance(invoice.get('created_at'), str):
+            invoice['created_at'] = datetime.fromisoformat(invoice['created_at'])
+        if invoice.get('due_date') and isinstance(invoice['due_date'], str):
+            invoice['due_date'] = datetime.fromisoformat(invoice['due_date'])
+    return invoices
+
+@api_router.post("/invoices", response_model=Invoice)
+async def create_invoice(invoice: InvoiceCreate, current_user: dict = Depends(get_current_user)):
+    invoice_dict = invoice.model_dump()
+    invoice_dict['id'] = str(uuid.uuid4())
+    invoice_dict['created_by'] = current_user['username']
+    invoice_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if invoice_dict.get('due_date'):
+        invoice_dict['due_date'] = invoice_dict['due_date'].isoformat()
+    await db.invoices.insert_one(invoice_dict)
+    return invoice_dict
+
+@api_router.put("/invoices/{invoice_id}", response_model=Invoice)
+async def update_invoice(invoice_id: str, invoice: InvoiceUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = invoice.model_dump(exclude_unset=True)
+    if update_data.get('due_date'):
+        update_data['due_date'] = update_data['due_date'].isoformat()
+    result = await db.invoices.update_one({"id": invoice_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return await db.invoices.find_one({"id": invoice_id}, {"_id": 0})
+
+@api_router.delete("/invoices/{invoice_id}")
+async def delete_invoice(invoice_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.invoices.delete_one({"id": invoice_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return {"message": "Invoice deleted successfully"}
+
+# EXPENSES
+@api_router.get("/expenses", response_model=List[Expense])
+async def get_expenses(current_user: dict = Depends(get_current_user)):
+    expenses = await db.expenses.find({}, {"_id": 0}).to_list(1000)
+    for expense in expenses:
+        if isinstance(expense.get('created_at'), str):
+            expense['created_at'] = datetime.fromisoformat(expense['created_at'])
+        if isinstance(expense.get('expense_date'), str):
+            expense['expense_date'] = datetime.fromisoformat(expense['expense_date'])
+    return expenses
+
+@api_router.post("/expenses", response_model=Expense)
+async def create_expense(expense: ExpenseCreate, current_user: dict = Depends(get_current_user)):
+    expense_dict = expense.model_dump()
+    expense_dict['id'] = str(uuid.uuid4())
+    expense_dict['created_by'] = current_user['username']
+    expense_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if expense_dict.get('expense_date'):
+        expense_dict['expense_date'] = expense_dict['expense_date'].isoformat()
+    await db.expenses.insert_one(expense_dict)
+    return expense_dict
+
+@api_router.put("/expenses/{expense_id}", response_model=Expense)
+async def update_expense(expense_id: str, expense: ExpenseUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = expense.model_dump(exclude_unset=True)
+    if update_data.get('expense_date'):
+        update_data['expense_date'] = update_data['expense_date'].isoformat()
+    result = await db.expenses.update_one({"id": expense_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return await db.expenses.find_one({"id": expense_id}, {"_id": 0})
+
+@api_router.delete("/expenses/{expense_id}")
+async def delete_expense(expense_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.expenses.delete_one({"id": expense_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return {"message": "Expense deleted successfully"}
+
+# CONTRACTS (Admin/Manager only)
+@api_router.get("/contracts", response_model=List[Contract])
+async def get_contracts(admin_user: dict = Depends(get_admin_user)):
+    contracts = await db.contracts.find({}, {"_id": 0}).to_list(1000)
+    for contract in contracts:
+        if isinstance(contract.get('created_at'), str):
+            contract['created_at'] = datetime.fromisoformat(contract['created_at'])
+        if contract.get('start_date') and isinstance(contract['start_date'], str):
+            contract['start_date'] = datetime.fromisoformat(contract['start_date'])
+        if contract.get('end_date') and isinstance(contract['end_date'], str):
+            contract['end_date'] = datetime.fromisoformat(contract['end_date'])
+    return contracts
+
+@api_router.post("/contracts", response_model=Contract)
+async def create_contract(contract: ContractCreate, admin_user: dict = Depends(get_admin_user)):
+    contract_dict = contract.model_dump()
+    contract_dict['id'] = str(uuid.uuid4())
+    contract_dict['created_by'] = admin_user['username']
+    contract_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if contract_dict.get('start_date'):
+        contract_dict['start_date'] = contract_dict['start_date'].isoformat()
+    if contract_dict.get('end_date'):
+        contract_dict['end_date'] = contract_dict['end_date'].isoformat()
+    await db.contracts.insert_one(contract_dict)
+    return contract_dict
+
+@api_router.put("/contracts/{contract_id}", response_model=Contract)
+async def update_contract(contract_id: str, contract: ContractUpdate, admin_user: dict = Depends(get_admin_user)):
+    update_data = contract.model_dump(exclude_unset=True)
+    if update_data.get('start_date'):
+        update_data['start_date'] = update_data['start_date'].isoformat()
+    if update_data.get('end_date'):
+        update_data['end_date'] = update_data['end_date'].isoformat()
+    result = await db.contracts.update_one({"id": contract_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return await db.contracts.find_one({"id": contract_id}, {"_id": 0})
+
+@api_router.delete("/contracts/{contract_id}")
+async def delete_contract(contract_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.contracts.delete_one({"id": contract_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return {"message": "Contract deleted successfully"}
+
+# ============================================
+# API ROUTES - OPERATIONS
+# ============================================
+
+# EQUIPMENT/ASSETS
+@api_router.get("/equipment", response_model=List[Equipment])
+async def get_equipment(current_user: dict = Depends(get_current_user)):
+    equipment = await db.equipment.find({}, {"_id": 0}).to_list(1000)
+    for item in equipment:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if item.get('purchase_date') and isinstance(item['purchase_date'], str):
+            item['purchase_date'] = datetime.fromisoformat(item['purchase_date'])
+    return equipment
+
+@api_router.post("/equipment", response_model=Equipment)
+async def create_equipment(equipment: EquipmentCreate, current_user: dict = Depends(get_current_user)):
+    equipment_dict = equipment.model_dump()
+    equipment_dict['id'] = str(uuid.uuid4())
+    equipment_dict['created_by'] = current_user['username']
+    equipment_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if equipment_dict.get('purchase_date'):
+        equipment_dict['purchase_date'] = equipment_dict['purchase_date'].isoformat()
+    await db.equipment.insert_one(equipment_dict)
+    return equipment_dict
+
+@api_router.put("/equipment/{equipment_id}", response_model=Equipment)
+async def update_equipment(equipment_id: str, equipment: EquipmentUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = equipment.model_dump(exclude_unset=True)
+    if update_data.get('purchase_date'):
+        update_data['purchase_date'] = update_data['purchase_date'].isoformat()
+    result = await db.equipment.update_one({"id": equipment_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Equipment not found")
+    return await db.equipment.find_one({"id": equipment_id}, {"_id": 0})
+
+@api_router.delete("/equipment/{equipment_id}")
+async def delete_equipment(equipment_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.equipment.delete_one({"id": equipment_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Equipment not found")
+    return {"message": "Equipment deleted successfully"}
+
+# TIMESHEETS
+@api_router.get("/timesheets", response_model=List[Timesheet])
+async def get_timesheets(current_user: dict = Depends(get_current_user)):
+    timesheets = await db.timesheets.find({}, {"_id": 0}).to_list(1000)
+    for timesheet in timesheets:
+        if isinstance(timesheet.get('created_at'), str):
+            timesheet['created_at'] = datetime.fromisoformat(timesheet['created_at'])
+        if isinstance(timesheet.get('date'), str):
+            timesheet['date'] = datetime.fromisoformat(timesheet['date'])
+    return timesheets
+
+@api_router.post("/timesheets", response_model=Timesheet)
+async def create_timesheet(timesheet: TimesheetCreate, current_user: dict = Depends(get_current_user)):
+    timesheet_dict = timesheet.model_dump()
+    timesheet_dict['id'] = str(uuid.uuid4())
+    timesheet_dict['created_by'] = current_user['username']
+    timesheet_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if timesheet_dict.get('date'):
+        timesheet_dict['date'] = timesheet_dict['date'].isoformat()
+    await db.timesheets.insert_one(timesheet_dict)
+    return timesheet_dict
+
+@api_router.put("/timesheets/{timesheet_id}", response_model=Timesheet)
+async def update_timesheet(timesheet_id: str, timesheet: TimesheetUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = timesheet.model_dump(exclude_unset=True)
+    if update_data.get('date'):
+        update_data['date'] = update_data['date'].isoformat()
+    result = await db.timesheets.update_one({"id": timesheet_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Timesheet not found")
+    return await db.timesheets.find_one({"id": timesheet_id}, {"_id": 0})
+
+@api_router.delete("/timesheets/{timesheet_id}")
+async def delete_timesheet(timesheet_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.timesheets.delete_one({"id": timesheet_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Timesheet not found")
+    return {"message": "Timesheet deleted successfully"}
+
+# SAFETY REPORTS
+@api_router.get("/safety-reports", response_model=List[SafetyReport])
+async def get_safety_reports(current_user: dict = Depends(get_current_user)):
+    reports = await db.safety_reports.find({}, {"_id": 0}).to_list(1000)
+    for report in reports:
+        if isinstance(report.get('created_at'), str):
+            report['created_at'] = datetime.fromisoformat(report['created_at'])
+        if isinstance(report.get('incident_date'), str):
+            report['incident_date'] = datetime.fromisoformat(report['incident_date'])
+    return reports
+
+@api_router.post("/safety-reports", response_model=SafetyReport)
+async def create_safety_report(report: SafetyReportCreate, current_user: dict = Depends(get_current_user)):
+    report_dict = report.model_dump()
+    report_dict['id'] = str(uuid.uuid4())
+    report_dict['created_by'] = current_user['username']
+    report_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if report_dict.get('incident_date'):
+        report_dict['incident_date'] = report_dict['incident_date'].isoformat()
+    await db.safety_reports.insert_one(report_dict)
+    return report_dict
+
+@api_router.put("/safety-reports/{report_id}", response_model=SafetyReport)
+async def update_safety_report(report_id: str, report: SafetyReportUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = report.model_dump(exclude_unset=True)
+    if update_data.get('incident_date'):
+        update_data['incident_date'] = update_data['incident_date'].isoformat()
+    result = await db.safety_reports.update_one({"id": report_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Safety report not found")
+    return await db.safety_reports.find_one({"id": report_id}, {"_id": 0})
+
+@api_router.delete("/safety-reports/{report_id}")
+async def delete_safety_report(report_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.safety_reports.delete_one({"id": report_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Safety report not found")
+    return {"message": "Safety report deleted successfully"}
+
+# CERTIFICATIONS
+@api_router.get("/certifications", response_model=List[Certification])
+async def get_certifications(current_user: dict = Depends(get_current_user)):
+    certifications = await db.certifications.find({}, {"_id": 0}).to_list(1000)
+    for cert in certifications:
+        if isinstance(cert.get('created_at'), str):
+            cert['created_at'] = datetime.fromisoformat(cert['created_at'])
+        if cert.get('issue_date') and isinstance(cert['issue_date'], str):
+            cert['issue_date'] = datetime.fromisoformat(cert['issue_date'])
+        if cert.get('expiry_date') and isinstance(cert['expiry_date'], str):
+            cert['expiry_date'] = datetime.fromisoformat(cert['expiry_date'])
+    return certifications
+
+@api_router.post("/certifications", response_model=Certification)
+async def create_certification(certification: CertificationCreate, current_user: dict = Depends(get_current_user)):
+    cert_dict = certification.model_dump()
+    cert_dict['id'] = str(uuid.uuid4())
+    cert_dict['created_by'] = current_user['username']
+    cert_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if cert_dict.get('issue_date'):
+        cert_dict['issue_date'] = cert_dict['issue_date'].isoformat()
+    if cert_dict.get('expiry_date'):
+        cert_dict['expiry_date'] = cert_dict['expiry_date'].isoformat()
+    await db.certifications.insert_one(cert_dict)
+    return cert_dict
+
+@api_router.put("/certifications/{cert_id}", response_model=Certification)
+async def update_certification(cert_id: str, certification: CertificationUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = certification.model_dump(exclude_unset=True)
+    if update_data.get('issue_date'):
+        update_data['issue_date'] = update_data['issue_date'].isoformat()
+    if update_data.get('expiry_date'):
+        update_data['expiry_date'] = update_data['expiry_date'].isoformat()
+    result = await db.certifications.update_one({"id": cert_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    return await db.certifications.find_one({"id": cert_id}, {"_id": 0})
+
+@api_router.delete("/certifications/{cert_id}")
+async def delete_certification(cert_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.certifications.delete_one({"id": cert_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    return {"message": "Certification deleted successfully"}
+
+# INVENTORY
+@api_router.get("/inventory", response_model=List[Inventory])
+async def get_inventory(current_user: dict = Depends(get_current_user)):
+    inventory = await db.inventory.find({}, {"_id": 0}).to_list(1000)
+    for item in inventory:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+    return inventory
+
+@api_router.post("/inventory", response_model=Inventory)
+async def create_inventory(inventory: InventoryCreate, current_user: dict = Depends(get_current_user)):
+    inventory_dict = inventory.model_dump()
+    inventory_dict['id'] = str(uuid.uuid4())
+    inventory_dict['created_by'] = current_user['username']
+    inventory_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    await db.inventory.insert_one(inventory_dict)
+    return inventory_dict
+
+@api_router.put("/inventory/{inventory_id}", response_model=Inventory)
+async def update_inventory(inventory_id: str, inventory: InventoryUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = inventory.model_dump(exclude_unset=True)
+    result = await db.inventory.update_one({"id": inventory_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    return await db.inventory.find_one({"id": inventory_id}, {"_id": 0})
+
+@api_router.delete("/inventory/{inventory_id}")
+async def delete_inventory(inventory_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.inventory.delete_one({"id": inventory_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    return {"message": "Inventory item deleted successfully"}
+
+# DOCUMENTS
+@api_router.get("/documents", response_model=List[Document])
+async def get_documents(current_user: dict = Depends(get_current_user)):
+    documents = await db.documents.find({}, {"_id": 0}).to_list(1000)
+    for doc in documents:
+        if isinstance(doc.get('created_at'), str):
+            doc['created_at'] = datetime.fromisoformat(doc['created_at'])
+    return documents
+
+@api_router.post("/documents", response_model=Document)
+async def create_document(document: DocumentCreate, current_user: dict = Depends(get_current_user)):
+    document_dict = document.model_dump()
+    document_dict['id'] = str(uuid.uuid4())
+    document_dict['created_by'] = current_user['username']
+    document_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    await db.documents.insert_one(document_dict)
+    return document_dict
+
+@api_router.put("/documents/{document_id}", response_model=Document)
+async def update_document(document_id: str, document: DocumentUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = document.model_dump(exclude_unset=True)
+    result = await db.documents.update_one({"id": document_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return await db.documents.find_one({"id": document_id}, {"_id": 0})
+
+@api_router.delete("/documents/{document_id}")
+async def delete_document(document_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.documents.delete_one({"id": document_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"message": "Document deleted successfully"}
+
+
 # ============================================
 # API ROUTES - DASHBOARD
 # ============================================
