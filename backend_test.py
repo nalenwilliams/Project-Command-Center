@@ -428,16 +428,19 @@ class BackendTester:
             print("\n❌ Cannot proceed with other tests - admin login failed")
             return self.generate_summary()
         
-        # Test 2: Get Users List
+        # Test 2: AI Chat Functionality (Priority test as requested)
+        self.test_ai_chat_functionality()
+        
+        # Test 3: Get Users List
         users_list = self.test_get_users_list()
         
-        # Test 3: Check Notification System
+        # Test 4: Check Notification System
         self.test_notification_system_status()
         
-        # Test 4: Create and Assign Task
+        # Test 5: Create and Assign Task
         created_task = self.test_create_and_assign_task(users_list)
         
-        # Test 5: Verify Task Creation
+        # Test 6: Verify Task Creation
         if created_task:
             self.test_verify_task_creation(created_task)
         
