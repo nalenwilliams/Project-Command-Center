@@ -47,6 +47,38 @@ const Layout = () => {
     { path: '/fleet', label: 'Fleet Inspections', icon: Truck },
   ];
 
+  // Financial Management - Admin/Manager only
+  const isAdminOrManager = user.role === 'admin' || user.role === 'manager';
+  const financialItems = [
+    { path: '/invoices', label: 'Invoices', icon: DollarSign, adminOnly: true },
+    { path: '/expenses', label: 'Expenses', icon: FileText, adminOnly: true },
+  ];
+
+  // Contracts - Admin/Manager only
+  const contractItems = [
+    { path: '/contracts', label: 'Contracts', icon: FileText, adminOnly: true },
+  ];
+
+  // Equipment - Visible to all
+  const equipmentItems = [
+    { path: '/equipment', label: 'Equipment/Assets', icon: Wrench },
+  ];
+
+  // Operations - Visible to all
+  const operationsItems = [
+    { path: '/timesheets', label: 'Timesheets', icon: Clock },
+    { path: '/inventory', label: 'Inventory', icon: Package },
+    { path: '/schedules', label: 'Schedules', icon: Calendar },
+  ];
+
+  // Safety & Compliance - Admin/Manager only
+  const safetyComplianceItems = [
+    { path: '/safety-reports', label: 'Safety Reports', icon: AlertTriangle, adminOnly: true },
+    { path: '/certifications', label: 'Certifications', icon: Award, adminOnly: true },
+    { path: '/reports', label: 'Reports', icon: FileBarChart, adminOnly: true },
+    { path: '/compliance', label: 'Compliance', icon: ClipboardCheck, adminOnly: true },
+  ];
+
   // Add Admin link if user is admin
   const isAdmin = user.role === 'admin';
   if (isAdmin) {
