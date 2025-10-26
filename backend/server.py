@@ -231,7 +231,7 @@ class DashboardStats(BaseModel):
     total_clients: int
     total_projects: int
     total_tasks: int
-    total_deals: int
+    total_employees: int
     active_projects: int
     completed_tasks: int
 
