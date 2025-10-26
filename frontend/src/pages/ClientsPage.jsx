@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Pencil, Trash2, Mail, Phone, Building } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import FileGallery from '@/components/FileGallery';
 
 const ELEGANT_GOLD = '#C9A961';
 
