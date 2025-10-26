@@ -160,7 +160,7 @@ const TasksPage = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
+            <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
               <Plus className="mr-2 h-4 w-4" /> Add Task
             </Button>
           </DialogTrigger>
