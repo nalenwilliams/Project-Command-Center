@@ -21,3 +21,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Williams Diversified LLC - Elegant Gold Theme */
+:root {
+  --elegant-gold: #C9A961;
+  --elegant-gold-dark: #B8985A;
+  --elegant-gold-light: #D4B572;
+}
+
+.btn-elegant-gold {
+  background-color: var(--elegant-gold);
+  color: #000000;
+}
+
+.btn-elegant-gold:hover {
+  background-color: var(--elegant-gold-dark);
+  opacity: 0.9;
+}
+
+.text-elegant-gold {
+  color: var(--elegant-gold);
+}
+
+.border-elegant-gold {
+  border-color: var(--elegant-gold);
+}
+
+.bg-elegant-gold {
+  background-color: var(--elegant-gold);
+}
+
+.bg-elegant-gold-light {
+  background-color: rgba(201, 169, 97, 0.1);
+}
