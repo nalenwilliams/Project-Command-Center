@@ -245,6 +245,12 @@ const ClientsPage = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
+                        <FileGallery 
+                          item={client} 
+                          itemType="clients" 
+                          onUpdate={fetchClients}
+                          canDelete={canEdit}
+                        />
                         {canEdit ? (
                           <>
                             <Button
