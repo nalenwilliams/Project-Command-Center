@@ -28,6 +28,7 @@ const SafetyReportsPage = () => {
     reported_by: '',
     status: 'open'
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const canDelete = user.role === 'admin' || user.role === 'manager';
