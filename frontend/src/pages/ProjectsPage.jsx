@@ -67,15 +67,33 @@ const ProjectsPage = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
-    const fileData = files.map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-    }));
-    setSelectedFiles([...selectedFiles, ...fileData]);
+    
+    // Upload each file to the server
+    const uploadPromises = files.map(async (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      try {
+        const response = await api.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error('File upload failed:', error);
+        toast.error(`Failed to upload ${file.name}`);
+        return null;
+      }
+    });
+    
+    const uploadedFiles = await Promise.all(uploadPromises);
+    const successfulUploads = uploadedFiles.filter(f => f !== null);
+    
+    setSelectedFiles([...selectedFiles, ...successfulUploads]);
+    toast.success(`${successfulUploads.length} file(s) uploaded successfully`);
   };
 
   const removeFile = (index) => {
@@ -92,8 +110,8 @@ const ProjectsPage = () => {
       if (!data.client_id) data.client_id = null;
       if (!data.assigned_to) data.assigned_to = null;
       
-      // Store file names (in real app, you'd upload to cloud storage)
-      data.files = selectedFiles.map(f => f.name);
+      // Include uploaded file information
+      data.files = selectedFiles;
 
       if (editingProject) {
         await api.put(`/projects/${editingProject.id}`, data);
