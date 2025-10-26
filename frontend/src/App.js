@@ -55,6 +55,17 @@ function App() {
             <Route path="employees" element={<EmployeesPage />} />
             <Route path="handbook" element={<HandbookPoliciesPage />} />
             <Route path="fleet" element={<FleetInspectionPage />} />
+            <Route path="invoices" element={<InvoicesPage />} />
+            <Route path="expenses" element={<ExpensesPage />} />
+            <Route path="contracts" element={<ContractsPage />} />
+            <Route path="equipment" element={<EquipmentPage />} />
+            <Route path="timesheets" element={<TimesheetsPage />} />
+            <Route path="inventory" element={<InventoryPage />} />
+            <Route path="schedules" element={<SchedulesPage />} />
+            <Route path="safety-reports" element={<SafetyReportsPage />} />
+            <Route path="certifications" element={<CertificationsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="compliance" element={<CompliancePage />} />
             <Route path="admin" element={<AdminPanel />} />
           </Route>
         </Routes>
