@@ -1220,6 +1220,20 @@ async def create_task(task_data: TaskCreate, current_user: dict = Depends(get_cu
         task_dict['due_date'] = task_dict['due_date'].isoformat()
     
     await db.tasks.insert_one(task_dict)
+    
+    # Send notification if task is assigned to someone
+    if task.assigned_to:
+        assigned_user = await db.users.find_one({"id": task.assigned_to}, {"_id": 0})
+        if assigned_user and assigned_user.get('email'):
+            email_service = get_email_service()
+            email_service.send_assignment_notification(
+                user_email=assigned_user['email'],
+                user_name=assigned_user.get('username', 'User'),
+                item_type="Task",
+                item_title=task.title,
+                assigned_by=current_user.get('username', 'Unknown')
+            )
+    
     return task
 
 @api_router.get("/tasks/{task_id}", response_model=Task)
