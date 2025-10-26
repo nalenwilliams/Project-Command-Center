@@ -162,11 +162,13 @@ const ProjectsPage = () => {
   };
 
   const getClientName = (clientId) => {
+    if (!Array.isArray(clients) || !clientId) return 'N/A';
     const client = clients.find((c) => c.id === clientId);
     return client ? client.name : 'N/A';
   };
 
   const getUserName = (userId) => {
+    if (!Array.isArray(users) || !userId) return 'Unassigned';
     const user = users.find((u) => u.id === userId);
     return user ? user.username : 'Unassigned';
   };
