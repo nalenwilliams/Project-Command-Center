@@ -307,6 +307,20 @@ const InvoicesPage = () => {
               <Label style={{ color: ELEGANT_GOLD }}>Notes</Label>
               <Textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} rows={3} />
             </div>
+            <div className="space-y-2">
+              <Label style={{ color: ELEGANT_GOLD }}>Attach Files (PDFs, Documents, Notes, Images)</Label>
+              <Input type="file" multiple onChange={handleFileChange} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} />
+              {selectedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded text-xs">
+                      <span className="text-gray-300">{file.filename}</span>
+                      <button type="button" onClick={() => removeFile(index)} className="text-red-500 hover:text-red-400">×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="flex gap-2 justify-end">
               <Button type="button" variant="outline" onClick={handleCloseDialog}>Cancel</Button>
               <Button type="submit" className="text-black" style={{ backgroundColor: ELEGANT_GOLD }}>{editingInvoice ? 'Update' : 'Create'}</Button>
