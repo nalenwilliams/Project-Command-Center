@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import AIFloatingChat from './AIFloatingChat';
 import {
   LayoutDashboard,
   Users,
