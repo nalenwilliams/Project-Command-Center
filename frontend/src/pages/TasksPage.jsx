@@ -176,14 +176,15 @@ const TasksPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Tasks</h1>
-          <p className="text-gray-400 mt-1">Track and manage your tasks</p>
+          <p className="text-gray-400 mt-1">Track and manage your tasks{isEmployee ? ' (Update Status Only)' : ''}</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
-              <Plus className="mr-2 h-4 w-4" /> Add Task
-            </Button>
-          </DialogTrigger>
+        {canFullEdit && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
+                <Plus className="mr-2 h-4 w-4" /> Add Task
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="task-dialog">
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingTask ? 'Edit Task' : 'Add New Task'}</DialogTitle>
