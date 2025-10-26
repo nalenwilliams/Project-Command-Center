@@ -165,6 +165,7 @@ class ProjectCreate(BaseModel):
     deadline: Optional[datetime] = None
     description: Optional[str] = None
     assigned_to: Optional[str] = None
+    files: Optional[List[dict]] = []
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None
@@ -173,6 +174,7 @@ class ProjectUpdate(BaseModel):
     deadline: Optional[datetime] = None
     description: Optional[str] = None
     assigned_to: Optional[str] = None
+    files: Optional[List[dict]] = None
 
 class Project(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -183,6 +185,7 @@ class Project(BaseModel):
     deadline: Optional[datetime] = None
     description: Optional[str] = None
     assigned_to: Optional[str] = None
+    files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
