@@ -182,40 +182,40 @@ const ClientsPage = () => {
         </Dialog>
       </div>
 
-      <Card>
+      <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
         <CardHeader>
-          <CardTitle>All Clients ({clients.length})</CardTitle>
+          <CardTitle style={{ color: ELEGANT_GOLD }}>All Clients ({clients.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {clients.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-400">
               No clients yet. Click "Add Client" to get started.
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Contact Info</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Notes</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-b" style={{ borderColor: '#374151' }}>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Name</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Contact Info</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Company</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Notes</TableHead>
+                  <TableHead className="text-right" style={{ color: ELEGANT_GOLD }}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {clients.map((client) => (
-                  <TableRow key={client.id} data-testid={`client-row-${client.id}`}>
-                    <TableCell className="font-medium">{client.name}</TableCell>
+                  <TableRow key={client.id} data-testid={`client-row-${client.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                    <TableCell className="font-medium text-white">{client.name}</TableCell>
                     <TableCell>
                       <div className="space-y-1 text-sm">
                         {client.email && (
-                          <div className="flex items-center text-gray-600">
+                          <div className="flex items-center text-gray-300">
                             <Mail className="h-3 w-3 mr-1" />
                             {client.email}
                           </div>
                         )}
                         {client.phone && (
-                          <div className="flex items-center text-gray-600">
+                          <div className="flex items-center text-gray-300">
                             <Phone className="h-3 w-3 mr-1" />
                             {client.phone}
                           </div>
@@ -224,14 +224,14 @@ const ClientsPage = () => {
                     </TableCell>
                     <TableCell>
                       {client.company && (
-                        <div className="flex items-center text-gray-600">
+                        <div className="flex items-center text-gray-300">
                           <Building className="h-3 w-3 mr-1" />
                           {client.company}
                         </div>
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm text-gray-600 max-w-xs truncate">
+                      <div className="text-sm text-gray-300 max-w-xs truncate">
                         {client.notes || '-'}
                       </div>
                     </TableCell>
@@ -242,6 +242,8 @@ const ClientsPage = () => {
                           variant="outline"
                           onClick={() => handleEdit(client)}
                           data-testid={`edit-client-${client.id}`}
+                          className="border hover:bg-gray-800"
+                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -250,8 +252,9 @@ const ClientsPage = () => {
                           variant="outline"
                           onClick={() => handleDelete(client.id)}
                           data-testid={`delete-client-${client.id}`}
+                          className="border-red-500 text-red-500 hover:bg-red-950"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
