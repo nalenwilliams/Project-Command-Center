@@ -317,6 +317,44 @@ class DashboardStats(BaseModel):
     active_projects: int
     completed_tasks: int
 
+# Fleet Inspection Report Models
+class FleetInspectionCreate(BaseModel):
+    vehicle_name: str
+    vehicle_number: Optional[str] = None
+    inspector_name: str
+    inspection_date: datetime
+    mileage: Optional[str] = None
+    location: Optional[str] = None
+    status: str = "pass"  # pass, fail, needs_repair
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class FleetInspectionUpdate(BaseModel):
+    vehicle_name: Optional[str] = None
+    vehicle_number: Optional[str] = None
+    inspector_name: Optional[str] = None
+    inspection_date: Optional[datetime] = None
+    mileage: Optional[str] = None
+    location: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class FleetInspection(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    vehicle_name: str
+    vehicle_number: Optional[str] = None
+    inspector_name: str
+    inspection_date: datetime
+    mileage: Optional[str] = None
+    location: Optional[str] = None
+    status: str = "pass"
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Notification Settings Models
 class NotificationSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
