@@ -44,27 +44,29 @@ const Layout = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black border-r border-yellow-600 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black border-r transform transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
+        style={{ borderColor: '#C9A961' }}
         data-testid="sidebar"
       >
         <div className="flex flex-col h-full">
-          <div className="flex flex-col items-center p-6 border-b border-yellow-600">
+          <div className="flex flex-col items-center p-6 border-b" style={{ borderColor: '#C9A961' }}>
             <img 
               src="/williams-logo.png" 
               alt="Williams Diversified LLC" 
               className="w-32 h-auto mb-3"
             />
             <div className="text-center">
-              <h1 className="text-lg font-bold text-yellow-500">Williams Diversified LLC</h1>
-              <p className="text-xs text-yellow-600">CRM & Project Management</p>
+              <h1 className="text-lg font-bold" style={{ color: '#C9A961' }}>Williams Diversified LLC</h1>
+              <p className="text-xs" style={{ color: '#C9A961', opacity: 0.8 }}>CRM & Project Management</p>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden absolute top-4 right-4 text-yellow-500 hover:text-yellow-400 hover:bg-gray-900"
+              className="lg:hidden absolute top-4 right-4 hover:bg-gray-900"
               onClick={() => setSidebarOpen(false)}
+              style={{ color: '#C9A961' }}
             >
               <X className="h-5 w-5" />
             </Button>
@@ -78,11 +80,8 @@ const Layout = () => {
                 <Link key={item.path} to={item.path}>
                   <Button
                     variant="ghost"
-                    className={`w-full justify-start ${
-                      isActive 
-                        ? 'bg-yellow-600 text-black hover:bg-yellow-500 hover:text-black' 
-                        : 'text-yellow-500 hover:bg-gray-900 hover:text-yellow-400'
-                    }`}
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={isActive ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
                     data-testid={`nav-${item.label.toLowerCase()}`}
                   >
                     <Icon className="mr-3 h-5 w-5" />
@@ -93,16 +92,17 @@ const Layout = () => {
             })}
           </nav>
 
-          <div className="p-4 border-t border-yellow-600">
+          <div className="p-4 border-t" style={{ borderColor: '#C9A961' }}>
             <div className="flex items-center mb-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-500">{user.username}</p>
-                <p className="text-xs text-yellow-600">{user.email}</p>
+                <p className="text-sm font-medium" style={{ color: '#C9A961' }}>{user.username}</p>
+                <p className="text-xs" style={{ color: '#C9A961', opacity: 0.7 }}>{user.email}</p>
               </div>
             </div>
             <Button
               variant="outline"
-              className="w-full justify-start border-yellow-600 text-yellow-500 hover:bg-gray-900 hover:text-yellow-400"
+              className="w-full justify-start hover:bg-gray-900"
+              style={{ borderColor: '#C9A961', color: '#C9A961' }}
               onClick={handleLogout}
               data-testid="logout-button"
             >
