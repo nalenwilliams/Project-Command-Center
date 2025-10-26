@@ -138,6 +138,7 @@ class ClientCreate(BaseModel):
     phone: Optional[str] = None
     company: Optional[str] = None
     notes: Optional[str] = None
+    files: Optional[List[dict]] = []
 
 class ClientUpdate(BaseModel):
     name: Optional[str] = None
@@ -145,6 +146,7 @@ class ClientUpdate(BaseModel):
     phone: Optional[str] = None
     company: Optional[str] = None
     notes: Optional[str] = None
+    files: Optional[List[dict]] = None
 
 class Client(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -154,6 +156,7 @@ class Client(BaseModel):
     phone: Optional[str] = None
     company: Optional[str] = None
     notes: Optional[str] = None
+    files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
