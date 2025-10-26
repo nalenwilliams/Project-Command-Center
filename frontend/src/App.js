@@ -24,6 +24,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
+          <Route path="/colors" element={<ColorPicker />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route
             path="/"
