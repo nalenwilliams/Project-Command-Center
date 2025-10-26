@@ -198,6 +198,7 @@ class TaskCreate(BaseModel):
     status: str = "todo"  # todo, in_progress, completed
     due_date: Optional[datetime] = None
     priority: str = "medium"  # low, medium, high
+    files: Optional[List[dict]] = []
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
@@ -207,6 +208,7 @@ class TaskUpdate(BaseModel):
     status: Optional[str] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    files: Optional[List[dict]] = None
 
 class Task(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -218,6 +220,7 @@ class Task(BaseModel):
     status: str = "todo"
     due_date: Optional[datetime] = None
     priority: str = "medium"
+    files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
