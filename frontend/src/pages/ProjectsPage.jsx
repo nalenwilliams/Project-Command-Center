@@ -218,7 +218,7 @@ const ProjectsPage = () => {
                       <SelectValue placeholder="Select client" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
-                      {clients.length === 0 ? (
+                      {!Array.isArray(clients) || clients.length === 0 ? (
                         <div className="p-2 text-gray-400 text-sm">No clients available. Create a client first.</div>
                       ) : (
                         clients.map((client) => (
