@@ -485,14 +485,18 @@ const ProjectsPage = () => {
           </DialogHeader>
           
           <div className="space-y-4">
-            {/* Upload New Files Section */}
+            {/* Upload New Files Section - Everyone can add files */}
             <div className="border rounded p-4" style={{ borderColor: ELEGANT_GOLD }}>
-              <Label style={{ color: ELEGANT_GOLD }} className="mb-2 block">Add More Files</Label>
+              <Label style={{ color: ELEGANT_GOLD }} className="mb-2 block">Add Files (Photos, Plans, Documents)</Label>
               <Input
                 type="file"
                 multiple
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 onChange={async (e) => {
                   const files = Array.from(e.target.files);
+                  
+                  toast.info(`Uploading ${files.length} file(s)...`);
+                  
                   const uploadPromises = files.map(async (file) => {
                     const formData = new FormData();
                     formData.append('file', file);
@@ -520,15 +524,19 @@ const ProjectsPage = () => {
                     // Update local state
                     setCurrentProject({ ...currentProject, files: updatedFiles });
                     await fetchData();
-                    toast.success(`${successful.length} file(s) uploaded`);
+                    toast.success(`${successful.length} file(s) uploaded successfully!`);
                   }
+                  
+                  // Clear the input
+                  e.target.value = '';
                 }}
                 className="bg-black border text-white"
                 style={{ borderColor: ELEGANT_GOLD }}
               />
+              <p className="text-xs text-gray-400 mt-2">All team members can upload files. Accepted: Images, PDFs, Documents</p>
             </div>
 
-            {/* Files Grid */}
+            {/* Files Grid - Everyone can view */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {currentProject?.files && currentProject.files.length > 0 ? (
                 currentProject.files.map((file, index) => (
@@ -550,14 +558,14 @@ const ProjectsPage = () => {
                         <FileImage className="h-16 w-16" style={{ color: ELEGANT_GOLD }} />
                       </div>
                     )}
-                    <p className="text-sm font-medium truncate" style={{ color: ELEGANT_GOLD }}>
+                    <p className="text-sm font-medium truncate" style={{ color: ELEGANT_GOLD }} title={file.filename}>
                       {file.filename}
                     </p>
                     <p className="text-xs text-gray-400">
                       {(file.size / 1024).toFixed(2)} KB
                     </p>
                     <p className="text-xs text-gray-500">
-                      By: {file.uploaded_by}
+                      Uploaded by: {file.uploaded_by}
                     </p>
                     <div className="flex gap-2 mt-2">
                       <Button
@@ -567,14 +575,17 @@ const ProjectsPage = () => {
                         style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`, '_blank')}
                       >
-                        View
+                        View/Download
                       </Button>
+                      {/* Only Admins and Managers can delete files */}
                       {canEdit && (
                         <Button
                           size="sm"
                           variant="outline"
                           className="border-red-500 text-red-500"
                           onClick={async () => {
+                            if (!window.confirm('Are you sure you want to delete this file?')) return;
+                            
                             const updatedFiles = currentProject.files.filter((_, i) => i !== index);
                             await api.put(`/projects/${currentProject.id}`, {
                               files: updatedFiles
@@ -596,6 +607,12 @@ const ProjectsPage = () => {
                 </div>
               )}
             </div>
+            
+            {!canEdit && (
+              <p className="text-xs text-gray-400 text-center mt-2">
+                You can view and add files, but only Admins/Managers can delete files.
+              </p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
