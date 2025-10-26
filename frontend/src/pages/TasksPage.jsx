@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Calendar, AlertCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+
+const ELEGANT_GOLD = '#C9A961';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -115,22 +117,22 @@ const TasksPage = () => {
 
   const getStatusBadge = (status) => {
     const variants = {
-      todo: { label: 'To Do', className: 'bg-gray-100 text-gray-800' },
-      in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800' },
-      completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
+      todo: { label: 'To Do', style: { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#9CA3AF' } },
+      in_progress: { label: 'In Progress', style: { backgroundColor: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' } },
+      completed: { label: 'Completed', style: { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#4ADE80' } },
     };
     const variant = variants[status] || variants.todo;
-    return <Badge className={variant.className}>{variant.label}</Badge>;
+    return <Badge style={variant.style}>{variant.label}</Badge>;
   };
 
   const getPriorityBadge = (priority) => {
     const variants = {
-      low: { label: 'Low', className: 'bg-blue-50 text-blue-700' },
-      medium: { label: 'Medium', className: 'bg-yellow-50 text-yellow-700' },
-      high: { label: 'High', className: 'bg-red-50 text-red-700' },
+      low: { label: 'Low', style: { backgroundColor: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' } },
+      medium: { label: 'Medium', style: { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#FACC15' } },
+      high: { label: 'High', style: { backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#F87171' } },
     };
     const variant = variants[priority] || variants.medium;
-    return <Badge className={variant.className}>{variant.label}</Badge>;
+    return <Badge style={variant.style}>{variant.label}</Badge>;
   };
 
   const getProjectName = (projectId) => {
@@ -146,7 +148,7 @@ const TasksPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading...</div>
+        <div style={{ color: ELEGANT_GOLD }}>Loading...</div>
       </div>
     );
   }
@@ -155,51 +157,55 @@ const TasksPage = () => {
     <div className="space-y-6" data-testid="tasks-page">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
-          <p className="text-gray-500 mt-1">Track and manage your tasks</p>
+          <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Tasks</h1>
+          <p className="text-gray-400 mt-1">Track and manage your tasks</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
+            <Button onClick={() => setEditingTask(null)} data-testid="add-task-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
               <Plus className="mr-2 h-4 w-4" /> Add Task
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl" data-testid="task-dialog">
+          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="task-dialog">
             <DialogHeader>
-              <DialogTitle>{editingTask ? 'Edit Task' : 'Add New Task'}</DialogTitle>
+              <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingTask ? 'Edit Task' : 'Add New Task'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Task Title *</Label>
+                <Label htmlFor="title" style={{ color: ELEGANT_GOLD }}>Task Title *</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
                   data-testid="task-title-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" style={{ color: ELEGANT_GOLD }}>Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   data-testid="task-description-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="project">Project</Label>
+                  <Label htmlFor="project" style={{ color: ELEGANT_GOLD }}>Project</Label>
                   <Select value={formData.project_id} onValueChange={(value) => setFormData({ ...formData, project_id: value })}>
-                    <SelectTrigger data-testid="task-project-select">
+                    <SelectTrigger data-testid="task-project-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue placeholder="Select project" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
                       {projects.map((project) => (
-                        <SelectItem key={project.id} value={project.id}>
+                        <SelectItem key={project.id} value={project.id} className="text-white hover:bg-gray-800">
                           {project.name}
                         </SelectItem>
                       ))}
@@ -207,14 +213,14 @@ const TasksPage = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="assigned_to">Assign To</Label>
+                  <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assign To</Label>
                   <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
-                    <SelectTrigger data-testid="task-assignee-select">
+                    <SelectTrigger data-testid="task-assignee-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue placeholder="Select user" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
                       {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
+                        <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
                           {user.username}
                         </SelectItem>
                       ))}
@@ -225,48 +231,50 @@ const TasksPage = () => {
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
+                  <Label htmlFor="status" style={{ color: ELEGANT_GOLD }}>Status</Label>
                   <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-                    <SelectTrigger data-testid="task-status-select">
+                    <SelectTrigger data-testid="task-status-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todo">To Do</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                      <SelectItem value="todo" className="text-white hover:bg-gray-800">To Do</SelectItem>
+                      <SelectItem value="in_progress" className="text-white hover:bg-gray-800">In Progress</SelectItem>
+                      <SelectItem value="completed" className="text-white hover:bg-gray-800">Completed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="priority">Priority</Label>
+                  <Label htmlFor="priority" style={{ color: ELEGANT_GOLD }}>Priority</Label>
                   <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-                    <SelectTrigger data-testid="task-priority-select">
+                    <SelectTrigger data-testid="task-priority-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                      <SelectItem value="low" className="text-white hover:bg-gray-800">Low</SelectItem>
+                      <SelectItem value="medium" className="text-white hover:bg-gray-800">Medium</SelectItem>
+                      <SelectItem value="high" className="text-white hover:bg-gray-800">High</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="due_date">Due Date</Label>
+                  <Label htmlFor="due_date" style={{ color: ELEGANT_GOLD }}>Due Date</Label>
                   <Input
                     id="due_date"
                     type="date"
                     value={formData.due_date}
                     onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                     data-testid="task-due-date-input"
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
                   />
                 </div>
               </div>
 
               <div className="flex gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border text-white hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD }}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="task-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
+                <Button type="submit" data-testid="task-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
                   {editingTask ? 'Update' : 'Create'}
                 </Button>
               </div>
@@ -275,48 +283,48 @@ const TasksPage = () => {
         </Dialog>
       </div>
 
-      <Card>
+      <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
         <CardHeader>
-          <CardTitle>All Tasks ({tasks.length})</CardTitle>
+          <CardTitle style={{ color: ELEGANT_GOLD }}>All Tasks ({tasks.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {tasks.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-400">
               No tasks yet. Click "Add Task" to get started.
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Task</TableHead>
-                  <TableHead>Project</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-b" style={{ borderColor: '#374151' }}>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Task</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Project</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Assigned To</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Status</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Priority</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Due Date</TableHead>
+                  <TableHead className="text-right" style={{ color: ELEGANT_GOLD }}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {tasks.map((task) => (
-                  <TableRow key={task.id} data-testid={`task-row-${task.id}`}>
+                  <TableRow key={task.id} data-testid={`task-row-${task.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{task.title}</div>
+                        <div className="font-medium text-white">{task.title}</div>
                         {task.description && (
-                          <div className="text-sm text-gray-500 max-w-xs truncate">
+                          <div className="text-sm text-gray-400 max-w-xs truncate">
                             {task.description}
                           </div>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>{getProjectName(task.project_id)}</TableCell>
-                    <TableCell>{getUserName(task.assigned_to)}</TableCell>
+                    <TableCell className="text-gray-300">{getProjectName(task.project_id)}</TableCell>
+                    <TableCell className="text-gray-300">{getUserName(task.assigned_to)}</TableCell>
                     <TableCell>{getStatusBadge(task.status)}</TableCell>
                     <TableCell>{getPriorityBadge(task.priority)}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-gray-300">
                       {task.due_date ? (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm">
                           <Calendar className="h-3 w-3 mr-1" />
                           {new Date(task.due_date).toLocaleDateString()}
                         </div>
@@ -331,6 +339,8 @@ const TasksPage = () => {
                           variant="outline"
                           onClick={() => handleEdit(task)}
                           data-testid={`edit-task-${task.id}`}
+                          className="border hover:bg-gray-800"
+                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -339,8 +349,9 @@ const TasksPage = () => {
                           variant="outline"
                           onClick={() => handleDelete(task.id)}
                           data-testid={`delete-task-${task.id}`}
+                          className="border-red-500 text-red-500 hover:bg-red-950"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
