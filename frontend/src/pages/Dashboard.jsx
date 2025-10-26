@@ -46,8 +46,8 @@ const Dashboard = () => {
       bgColor: 'rgba(201, 169, 97, 0.1)',
     },
     {
-      title: 'Total Deals',
-      value: stats?.total_deals || 0,
+      title: 'Total Employees',
+      value: stats?.total_employees || 0,
       icon: TrendingUp,
       color: '#C9A961',
       bgColor: 'rgba(201, 169, 97, 0.15)',
