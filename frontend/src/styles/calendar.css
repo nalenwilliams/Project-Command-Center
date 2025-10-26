@@ -1,0 +1,99 @@
+/* Custom calendar styles for Williams Diversified theme */
+.rbc-calendar {
+  color: #ffffff;
+  background-color: #000000;
+}
+
+.rbc-header {
+  padding: 10px 3px;
+  font-weight: bold;
+  background-color: #1a1a1a;
+  color: #C9A961;
+  border-bottom: 1px solid #C9A961;
+}
+
+.rbc-today {
+  background-color: rgba(201, 169, 97, 0.1);
+}
+
+.rbc-off-range-bg {
+  background-color: #0a0a0a;
+}
+
+.rbc-date-cell {
+  padding: 5px;
+  text-align: right;
+  color: #ffffff;
+}
+
+.rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+  background-color: #000000;
+  border: 1px solid #374151;
+}
+
+.rbc-month-row, .rbc-day-bg, .rbc-time-column {
+  border-color: #374151;
+}
+
+.rbc-time-slot {
+  border-top: 1px solid #374151;
+  color: #9ca3af;
+}
+
+.rbc-current-time-indicator {
+  background-color: #C9A961;
+}
+
+.rbc-toolbar {
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+
+.rbc-toolbar button {
+  color: #C9A961;
+  border: 1px solid #C9A961;
+  background-color: transparent;
+  padding: 5px 10px;
+  margin: 0 2px;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #C9A961;
+  color: #000000;
+}
+
+.rbc-toolbar button.rbc-active {
+  background-color: #C9A961;
+  color: #000000;
+}
+
+.rbc-time-header-content {
+  border-left: 1px solid #374151;
+}
+
+.rbc-time-content {
+  border-top: 1px solid #374151;
+}
+
+.rbc-agenda-table {
+  border: 1px solid #374151;
+}
+
+.rbc-agenda-table thead > tr > th {
+  background-color: #1a1a1a;
+  color: #C9A961;
+  border-bottom: 1px solid #C9A961;
+}
+
+.rbc-agenda-table tbody > tr > td {
+  color: #ffffff;
+  border-top: 1px solid #374151;
+}
+
+.rbc-agenda-date-cell, .rbc-agenda-time-cell {
+  color: #9ca3af;
+}
+
+.rbc-agenda-event-cell {
+  color: #ffffff;
+}
