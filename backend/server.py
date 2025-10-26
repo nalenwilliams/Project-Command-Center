@@ -969,6 +969,91 @@ async def delete_employee(employee_id: str, current_user: dict = Depends(get_cur
     return {"message": "Employee deleted successfully"}
 
 # ============================================
+# API ROUTES - POLICIES/HANDBOOK
+# ============================================
+
+@api_router.get("/policies", response_model=List[Policy])
+async def get_policies(current_user: dict = Depends(get_current_user)):
+    policies = await db.policies.find({}, {"_id": 0}).to_list(1000)
+    for policy in policies:
+        if isinstance(policy.get('created_at'), str):
+            policy['created_at'] = datetime.fromisoformat(policy['created_at'])
+        if isinstance(policy.get('updated_at'), str):
+            policy['updated_at'] = datetime.fromisoformat(policy['updated_at'])
+        if policy.get('effective_date') and isinstance(policy['effective_date'], str):
+            policy['effective_date'] = datetime.fromisoformat(policy['effective_date'])
+    return policies
+
+@api_router.post("/policies", response_model=Policy)
+async def create_policy(policy: PolicyCreate, admin_user: dict = Depends(get_admin_user)):
+    policy_dict = policy.model_dump()
+    policy_dict['id'] = str(uuid.uuid4())
+    policy_dict['created_by'] = admin_user['username']
+    policy_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    policy_dict['updated_at'] = datetime.now(timezone.utc).isoformat()
+    policy_dict['acknowledgments'] = []
+    
+    if policy_dict.get('effective_date'):
+        policy_dict['effective_date'] = policy_dict['effective_date'].isoformat()
+    
+    await db.policies.insert_one(policy_dict)
+    return policy_dict
+
+@api_router.put("/policies/{policy_id}", response_model=Policy)
+async def update_policy(policy_id: str, policy: PolicyUpdate, admin_user: dict = Depends(get_admin_user)):
+    update_data = policy.model_dump(exclude_unset=True)
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    if update_data.get('effective_date'):
+        update_data['effective_date'] = update_data['effective_date'].isoformat()
+    
+    result = await db.policies.update_one(
+        {"id": policy_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    
+    updated_policy = await db.policies.find_one({"id": policy_id}, {"_id": 0})
+    return updated_policy
+
+@api_router.delete("/policies/{policy_id}")
+async def delete_policy(policy_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.policies.delete_one({"id": policy_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    return {"message": "Policy deleted successfully"}
+
+@api_router.post("/policies/{policy_id}/acknowledge")
+async def acknowledge_policy(policy_id: str, current_user: dict = Depends(get_current_user)):
+    """Employee acknowledges they have read a policy"""
+    policy = await db.policies.find_one({"id": policy_id}, {"_id": 0})
+    if not policy:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    
+    # Check if already acknowledged
+    acknowledgments = policy.get('acknowledgments', [])
+    already_acknowledged = any(ack['user_id'] == current_user['id'] for ack in acknowledgments)
+    
+    if already_acknowledged:
+        return {"message": "Policy already acknowledged"}
+    
+    # Add acknowledgment
+    new_ack = {
+        "user_id": current_user['id'],
+        "user_name": current_user['username'],
+        "acknowledged_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.policies.update_one(
+        {"id": policy_id},
+        {"$push": {"acknowledgments": new_ack}}
+    )
+    
+    return {"message": "Policy acknowledged successfully"}
+
+# ============================================
 # API ROUTES - DASHBOARD
 # ============================================
 
