@@ -25,6 +25,11 @@ const ClientsPage = () => {
     notes: '',
   });
 
+  // Get current user role
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const isEmployee = currentUser.role === 'employee';
+  const canEdit = !isEmployee;
+
   useEffect(() => {
     fetchClients();
   }, []);
