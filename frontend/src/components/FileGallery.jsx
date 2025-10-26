@@ -152,7 +152,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
                       </a>
                     ) : (
                       <div className="w-full h-40 flex items-center justify-center bg-gray-800 rounded mb-2">
-                        <FileImage className="h-16 w-16" style={{ color: ELEGANT_GOLD }} />
+                        {getFileIcon(file)}
                       </div>
                     )}
                     <p className="text-sm font-medium truncate" style={{ color: ELEGANT_GOLD }} title={file.filename}>
