@@ -355,6 +355,184 @@ class FleetInspection(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Invoice Models
+class InvoiceCreate(BaseModel):
+    invoice_number: str
+    client_id: Optional[str] = None
+    project_id: Optional[str] = None
+    amount: float
+    due_date: Optional[datetime] = None
+    status: str = "draft"  # draft, sent, paid, overdue
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class InvoiceUpdate(BaseModel):
+    invoice_number: Optional[str] = None
+    client_id: Optional[str] = None
+    project_id: Optional[str] = None
+    amount: Optional[float] = None
+    due_date: Optional[datetime] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Invoice(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    invoice_number: str
+    client_id: Optional[str] = None
+    project_id: Optional[str] = None
+    amount: float
+    due_date: Optional[datetime] = None
+    status: str = "draft"
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Expense Models
+class ExpenseCreate(BaseModel):
+    description: str
+    amount: float
+    category: str  # materials, labor, equipment, travel, other
+    project_id: Optional[str] = None
+    expense_date: datetime
+    receipt_number: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class ExpenseUpdate(BaseModel):
+    description: Optional[str] = None
+    amount: Optional[float] = None
+    category: Optional[str] = None
+    project_id: Optional[str] = None
+    expense_date: Optional[datetime] = None
+    receipt_number: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Expense(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    description: str
+    amount: float
+    category: str
+    project_id: Optional[str] = None
+    expense_date: datetime
+    receipt_number: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Contract Models
+class ContractCreate(BaseModel):
+    title: str
+    client_id: Optional[str] = None
+    contract_number: Optional[str] = None
+    value: Optional[float] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    status: str = "active"  # active, completed, terminated
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class ContractUpdate(BaseModel):
+    title: Optional[str] = None
+    client_id: Optional[str] = None
+    contract_number: Optional[str] = None
+    value: Optional[float] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Contract(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    client_id: Optional[str] = None
+    contract_number: Optional[str] = None
+    value: Optional[float] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    status: str = "active"
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Equipment/Asset Models
+class EquipmentCreate(BaseModel):
+    name: str
+    equipment_type: str  # vehicle, tool, machinery, other
+    serial_number: Optional[str] = None
+    location: Optional[str] = None
+    assigned_to: Optional[str] = None
+    purchase_date: Optional[datetime] = None
+    status: str = "available"  # available, in_use, maintenance, retired
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class EquipmentUpdate(BaseModel):
+    name: Optional[str] = None
+    equipment_type: Optional[str] = None
+    serial_number: Optional[str] = None
+    location: Optional[str] = None
+    assigned_to: Optional[str] = None
+    purchase_date: Optional[datetime] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Equipment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    equipment_type: str
+    serial_number: Optional[str] = None
+    location: Optional[str] = None
+    assigned_to: Optional[str] = None
+    purchase_date: Optional[datetime] = None
+    status: str = "available"
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Timesheet Models
+class TimesheetCreate(BaseModel):
+    employee_name: str
+    date: datetime
+    hours_worked: float
+    project_id: Optional[str] = None
+    task_description: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class TimesheetUpdate(BaseModel):
+    employee_name: Optional[str] = None
+    date: Optional[datetime] = None
+    hours_worked: Optional[float] = None
+    project_id: Optional[str] = None
+    task_description: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Timesheet(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    employee_name: str
+    date: datetime
+    hours_worked: float
+    project_id: Optional[str] = None
+    task_description: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Notification Settings Models
 class NotificationSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
