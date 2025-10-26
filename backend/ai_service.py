@@ -1,7 +1,11 @@
 import os
+from dotenv import load_dotenv
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from typing import Optional
 import logging
+
+# Load environment variables
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
