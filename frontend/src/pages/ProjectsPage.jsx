@@ -230,7 +230,7 @@ const ProjectsPage = () => {
                     <SelectTrigger data-testid="project-status-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                    <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
                       <SelectItem value="not_started" className="text-white hover:bg-gray-800">Not Started</SelectItem>
                       <SelectItem value="in_progress" className="text-white hover:bg-gray-800">In Progress</SelectItem>
                       <SelectItem value="completed" className="text-white hover:bg-gray-800">Completed</SelectItem>
