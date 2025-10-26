@@ -270,6 +270,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "AI Chat Functionality"
     - "Admin Login Authentication UI"
     - "Dashboard Loading and Display"
     - "Admin Navigation Sidebar - Financial Management"
