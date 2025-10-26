@@ -161,7 +161,7 @@ const ClientsPage = () => {
                 <Button type="button" variant="outline" onClick={handleCloseDialog}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="client-submit-button">
+                <Button type="submit" data-testid="client-submit-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
                   {editingClient ? 'Update' : 'Create'}
                 </Button>
               </div>
