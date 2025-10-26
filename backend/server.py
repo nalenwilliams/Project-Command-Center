@@ -269,6 +269,36 @@ class DashboardStats(BaseModel):
     active_projects: int
     completed_tasks: int
 
+# Notification Settings Models
+class NotificationSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    admin_email: str
+    smtp_server: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = ""
+    notify_task_created: bool = True
+    notify_file_upload: bool = True
+    notify_status_change: bool = True
+    notify_assignments: bool = True
+    enabled: bool = False
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class NotificationSettingsUpdate(BaseModel):
+    admin_email: Optional[str] = None
+    smtp_server: Optional[str] = None
+    smtp_port: Optional[int] = None
+    smtp_username: Optional[str] = None
+    smtp_password: Optional[str] = None
+    smtp_from_email: Optional[str] = None
+    notify_task_created: Optional[bool] = None
+    notify_file_upload: Optional[bool] = None
+    notify_status_change: Optional[bool] = None
+    notify_assignments: Optional[bool] = None
+    enabled: Optional[bool] = None
+
 # ============================================
 # API ROUTES - AUTHENTICATION
 # ============================================
