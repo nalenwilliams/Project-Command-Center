@@ -136,12 +136,14 @@ const SafetyReportsPage = () => {
       reported_by: report.reported_by || '',
       status: report.status || 'open'
     });
+    setSelectedFiles(report.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingReport(null);
+    setSelectedFiles([]);
     setFormData({
       title: '',
       description: '',
