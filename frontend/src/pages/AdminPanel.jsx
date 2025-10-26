@@ -8,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Pencil, Trash2, Mail, Copy, Shield, Users, UserPlus } from 'lucide-react';
+import { Plus, Pencil, Trash2, Mail, Copy, Shield, Users, UserPlus, Bell } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import NotificationSettings from './NotificationSettings';
 
 const ELEGANT_GOLD = '#C9A961';
 
