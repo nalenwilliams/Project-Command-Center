@@ -107,13 +107,12 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
               <Input
                 type="file"
                 multiple
-                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 onChange={handleFileUpload}
                 className="bg-black border text-white"
                 style={{ borderColor: ELEGANT_GOLD }}
               />
               <p className="text-xs text-gray-400 mt-2">
-                All team members can upload files. Accepted: Images, PDFs, Documents
+                All team members can upload files. Accepts: PDFs, Documents (Word, Excel), Images, Notes (txt, md), and all other file types
               </p>
             </div>
 
