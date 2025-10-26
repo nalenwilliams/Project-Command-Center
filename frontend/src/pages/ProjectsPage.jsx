@@ -175,14 +175,15 @@ const ProjectsPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Projects</h1>
-          <p className="text-gray-400 mt-1">Manage and track your projects</p>
+          <p className="text-gray-400 mt-1">Manage and track your projects{isEmployee ? ' (View Only)' : ''}</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingProject(null)} data-testid="add-project-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
-              <Plus className="mr-2 h-4 w-4" /> Add Project
-            </Button>
-          </DialogTrigger>
+        {canEdit && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setEditingProject(null)} data-testid="add-project-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
+                <Plus className="mr-2 h-4 w-4" /> Add Project
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="project-dialog">
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
