@@ -353,25 +353,40 @@ const TasksPage = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(task)}
-                          data-testid={`edit-task-${task.id}`}
-                          className="border hover:bg-gray-800"
-                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDelete(task.id)}
-                          data-testid={`delete-task-${task.id}`}
-                          className="border-red-500 text-red-500 hover:bg-red-950"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {canFullEdit ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(task)}
+                              data-testid={`edit-task-${task.id}`}
+                              className="border hover:bg-gray-800"
+                              style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(task.id)}
+                              data-testid={`delete-task-${task.id}`}
+                              className="border-red-500 text-red-500 hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <Select value={task.status} onValueChange={(value) => handleStatusUpdate(task.id, value)}>
+                            <SelectTrigger className="w-32 bg-black border text-white text-sm h-8" style={{ borderColor: ELEGANT_GOLD }}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                              <SelectItem value="todo" className="text-white hover:bg-gray-800">To Do</SelectItem>
+                              <SelectItem value="in_progress" className="text-white hover:bg-gray-800">In Progress</SelectItem>
+                              <SelectItem value="completed" className="text-white hover:bg-gray-800">Completed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
