@@ -84,6 +84,7 @@ const SafetyReportsPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      const data = { ...formData, files: selectedFiles };
       const url = editingReport 
         ? `${backendUrl}/api/safety-reports/${editingReport.id}`
         : `${backendUrl}/api/safety-reports`;
@@ -94,7 +95,7 @@ const SafetyReportsPage = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
