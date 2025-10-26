@@ -137,6 +137,21 @@ const AuthPage = () => {
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="register-invitation" style={{ color: '#C9A961' }}>Invitation Code *</Label>
+                  <Input
+                    id="register-invitation"
+                    type="text"
+                    placeholder="Enter invitation code"
+                    value={registerData.invitation_code}
+                    onChange={(e) => setRegisterData({ ...registerData, invitation_code: e.target.value.toUpperCase() })}
+                    required
+                    data-testid="register-invitation-input"
+                    className="bg-gray-900 text-white placeholder:text-gray-500"
+                    style={{ borderColor: '#C9A961' }}
+                  />
+                  <p className="text-xs text-gray-500">Contact admin to receive an invitation code</p>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="register-username" style={{ color: '#C9A961' }}>Username</Label>
                   <Input
                     id="register-username"
