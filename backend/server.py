@@ -396,6 +396,12 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 @api_router.get("/admin/users", response_model=List[UserResponse])
 async def get_all_users(admin_user: dict = Depends(get_admin_user)):
     users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
+    # Ensure all users have required fields with defaults
+    for user in users:
+        if 'role' not in user:
+            user['role'] = 'employee'
+        if 'is_active' not in user:
+            user['is_active'] = True
     return users
 
 @api_router.put("/admin/users/{user_id}")
