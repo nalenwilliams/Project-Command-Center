@@ -40,7 +40,7 @@ class BackendTester:
         try:
             login_data = {
                 "username": "admin",
-                "password": "admin123"
+                "password": "Admin123!"
             }
             
             response = self.session.post(
