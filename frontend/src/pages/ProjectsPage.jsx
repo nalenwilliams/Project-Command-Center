@@ -208,12 +208,16 @@ const ProjectsPage = () => {
                     <SelectTrigger data-testid="project-client-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue placeholder="Select client" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.id} className="text-white hover:bg-gray-800">
-                          {client.name}
-                        </SelectItem>
-                      ))}
+                    <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
+                      {clients.length === 0 ? (
+                        <div className="p-2 text-gray-400 text-sm">No clients available. Create a client first.</div>
+                      ) : (
+                        clients.map((client) => (
+                          <SelectItem key={client.id} value={client.id} className="text-white hover:bg-gray-800">
+                            {client.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
