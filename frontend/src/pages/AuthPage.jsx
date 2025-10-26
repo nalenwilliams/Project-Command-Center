@@ -48,25 +48,30 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" data-testid="auth-page">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center">Williams Diversified LLC</CardTitle>
-          <CardDescription className="text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4" data-testid="auth-page">
+      <Card className="w-full max-w-md bg-black border-2 border-yellow-600">
+        <CardHeader className="space-y-3 text-center">
+          <img 
+            src="/williams-logo.png" 
+            alt="Williams Diversified LLC" 
+            className="w-48 h-auto mx-auto mb-2"
+          />
+          <CardTitle className="text-3xl font-bold text-yellow-500">Williams Diversified LLC</CardTitle>
+          <CardDescription className="text-yellow-600">
             CRM & Project Management System
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login" data-testid="login-tab">Login</TabsTrigger>
-              <TabsTrigger value="register" data-testid="register-tab">Register</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-gray-900">
+              <TabsTrigger value="login" data-testid="login-tab" className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black">Login</TabsTrigger>
+              <TabsTrigger value="register" data-testid="register-tab" className="data-[state=active]:bg-yellow-600 data-[state=active]:text-black">Register</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-username">Username</Label>
+                  <Label htmlFor="login-username" className="text-yellow-500">Username</Label>
                   <Input
                     id="login-username"
                     type="text"
@@ -75,10 +80,11 @@ const AuthPage = () => {
                     onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
                     required
                     data-testid="login-username-input"
+                    className="bg-gray-900 border-yellow-600 text-white placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password" className="text-yellow-500">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -87,9 +93,10 @@ const AuthPage = () => {
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                     required
                     data-testid="login-password-input"
+                    className="bg-gray-900 border-yellow-600 text-white placeholder:text-gray-500"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading} data-testid="login-submit-button">
+                <Button type="submit" className="w-full bg-yellow-600 text-black hover:bg-yellow-500" disabled={loading} data-testid="login-submit-button">
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
@@ -98,7 +105,7 @@ const AuthPage = () => {
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="register-username">Username</Label>
+                  <Label htmlFor="register-username" className="text-yellow-500">Username</Label>
                   <Input
                     id="register-username"
                     type="text"
@@ -107,10 +114,11 @@ const AuthPage = () => {
                     onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
                     required
                     data-testid="register-username-input"
+                    className="bg-gray-900 border-yellow-600 text-white placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
+                  <Label htmlFor="register-email" className="text-yellow-500">Email</Label>
                   <Input
                     id="register-email"
                     type="email"
@@ -119,10 +127,11 @@ const AuthPage = () => {
                     onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                     required
                     data-testid="register-email-input"
+                    className="bg-gray-900 border-yellow-600 text-white placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
+                  <Label htmlFor="register-password" className="text-yellow-500">Password</Label>
                   <Input
                     id="register-password"
                     type="password"
@@ -131,9 +140,10 @@ const AuthPage = () => {
                     onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                     required
                     data-testid="register-password-input"
+                    className="bg-gray-900 border-yellow-600 text-white placeholder:text-gray-500"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading} data-testid="register-submit-button">
+                <Button type="submit" className="w-full bg-yellow-600 text-black hover:bg-yellow-500" disabled={loading} data-testid="register-submit-button">
                   {loading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </form>
