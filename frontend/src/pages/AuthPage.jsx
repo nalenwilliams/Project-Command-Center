@@ -51,9 +51,9 @@ const AuthPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" data-testid="auth-page">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center">CRM Pro</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center">Williams Diversified LLC</CardTitle>
           <CardDescription className="text-center">
-            Manage your clients, projects, and deals
+            CRM & Project Management System
           </CardDescription>
         </CardHeader>
         <CardContent>
