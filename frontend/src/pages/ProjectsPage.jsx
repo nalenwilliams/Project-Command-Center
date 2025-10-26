@@ -258,7 +258,7 @@ const ProjectsPage = () => {
                   <SelectTrigger data-testid="project-assignee-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                     <SelectValue placeholder="Select user" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                  <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
                         {user.username}
