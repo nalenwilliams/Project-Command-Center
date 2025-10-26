@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Calendar } from 'lucide-react';
+import { Plus, Pencil, Trash2, Calendar, Upload, FileImage, X } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+
+const ELEGANT_GOLD = '#C9A961';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -19,6 +21,7 @@ const ProjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     client_id: '',
@@ -26,6 +29,7 @@ const ProjectsPage = () => {
     deadline: '',
     description: '',
     assigned_to: '',
+    files: [],
   });
 
   useEffect(() => {
@@ -49,6 +53,21 @@ const ProjectsPage = () => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const fileData = files.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+    }));
+    setSelectedFiles([...selectedFiles, ...fileData]);
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -58,6 +77,9 @@ const ProjectsPage = () => {
       }
       if (!data.client_id) data.client_id = null;
       if (!data.assigned_to) data.assigned_to = null;
+      
+      // Store file names (in real app, you'd upload to cloud storage)
+      data.files = selectedFiles.map(f => f.name);
 
       if (editingProject) {
         await api.put(`/projects/${editingProject.id}`, data);
@@ -93,13 +115,16 @@ const ProjectsPage = () => {
       deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '',
       description: project.description || '',
       assigned_to: project.assigned_to || '',
+      files: project.files || [],
     });
+    setSelectedFiles([]);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingProject(null);
+    setSelectedFiles([]);
     setFormData({
       name: '',
       client_id: '',
@@ -107,18 +132,19 @@ const ProjectsPage = () => {
       deadline: '',
       description: '',
       assigned_to: '',
+      files: [],
     });
   };
 
   const getStatusBadge = (status) => {
     const variants = {
-      not_started: { label: 'Not Started', className: 'bg-gray-100 text-gray-800' },
-      in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800' },
-      completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-      on_hold: { label: 'On Hold', className: 'bg-yellow-100 text-yellow-800' },
+      not_started: { label: 'Not Started', style: { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#9CA3AF' } },
+      in_progress: { label: 'In Progress', style: { backgroundColor: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' } },
+      completed: { label: 'Completed', style: { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#4ADE80' } },
+      on_hold: { label: 'On Hold', style: { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#FACC15' } },
     };
     const variant = variants[status] || variants.not_started;
-    return <Badge className={variant.className}>{variant.label}</Badge>;
+    return <Badge style={variant.style}>{variant.label}</Badge>;
   };
 
   const getClientName = (clientId) => {
@@ -134,7 +160,7 @@ const ProjectsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading...</div>
+        <div style={{ color: ELEGANT_GOLD }}>Loading...</div>
       </div>
     );
   }
@@ -143,40 +169,42 @@ const ProjectsPage = () => {
     <div className="space-y-6" data-testid="projects-page">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-500 mt-1">Manage and track your projects</p>
+          <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Projects</h1>
+          <p className="text-gray-400 mt-1">Manage and track your projects</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingProject(null)} data-testid="add-project-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
+            <Button onClick={() => setEditingProject(null)} data-testid="add-project-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
               <Plus className="mr-2 h-4 w-4" /> Add Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl" data-testid="project-dialog">
+          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="project-dialog">
             <DialogHeader>
-              <DialogTitle>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
+              <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Project Name *</Label>
+                  <Label htmlFor="name" style={{ color: ELEGANT_GOLD }}>Project Name *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                     data-testid="project-name-input"
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="client">Client</Label>
+                  <Label htmlFor="client" style={{ color: ELEGANT_GOLD }}>Client</Label>
                   <Select value={formData.client_id} onValueChange={(value) => setFormData({ ...formData, client_id: value })}>
-                    <SelectTrigger data-testid="project-client-select">
+                    <SelectTrigger data-testid="project-client-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue placeholder="Select client" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
                       {clients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
+                        <SelectItem key={client.id} value={client.id} className="text-white hover:bg-gray-800">
                           {client.name}
                         </SelectItem>
                       ))}
@@ -187,40 +215,42 @@ const ProjectsPage = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
+                  <Label htmlFor="status" style={{ color: ELEGANT_GOLD }}>Status</Label>
                   <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-                    <SelectTrigger data-testid="project-status-select">
+                    <SelectTrigger data-testid="project-status-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="not_started">Not Started</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="on_hold">On Hold</SelectItem>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                      <SelectItem value="not_started" className="text-white hover:bg-gray-800">Not Started</SelectItem>
+                      <SelectItem value="in_progress" className="text-white hover:bg-gray-800">In Progress</SelectItem>
+                      <SelectItem value="completed" className="text-white hover:bg-gray-800">Completed</SelectItem>
+                      <SelectItem value="on_hold" className="text-white hover:bg-gray-800">On Hold</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="deadline">Deadline</Label>
+                  <Label htmlFor="deadline" style={{ color: ELEGANT_GOLD }}>Deadline</Label>
                   <Input
                     id="deadline"
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                     data-testid="project-deadline-input"
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="assigned_to">Assign To</Label>
+                <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assign To</Label>
                 <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
-                  <SelectTrigger data-testid="project-assignee-select">
+                  <SelectTrigger data-testid="project-assignee-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
                     <SelectValue placeholder="Select user" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
                     {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
+                      <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
                         {user.username}
                       </SelectItem>
                     ))}
@@ -229,20 +259,73 @@ const ProjectsPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" style={{ color: ELEGANT_GOLD }}>Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   data-testid="project-description-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
 
+              {/* File Upload Section */}
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Project Files & Photos</Label>
+                <div className="border-2 border-dashed rounded-lg p-4" style={{ borderColor: ELEGANT_GOLD }}>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,.pdf,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    <div className="flex flex-col items-center justify-center py-4">
+                      <Upload className="h-8 w-8 mb-2" style={{ color: ELEGANT_GOLD }} />
+                      <p className="text-sm" style={{ color: ELEGANT_GOLD }}>Click to upload files</p>
+                      <p className="text-xs text-gray-500 mt-1">Images, PDFs, Documents</p>
+                    </div>
+                  </label>
+                </div>
+                
+                {/* Display selected files */}
+                {selectedFiles.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {selectedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-black border rounded" style={{ borderColor: ELEGANT_GOLD }}>
+                        <div className="flex items-center gap-2">
+                          {file.preview ? (
+                            <img src={file.preview} alt={file.name} className="w-12 h-12 object-cover rounded" />
+                          ) : (
+                            <FileImage className="h-8 w-8" style={{ color: ELEGANT_GOLD }} />
+                          )}
+                          <div>
+                            <p className="text-sm" style={{ color: ELEGANT_GOLD }}>{file.name}</p>
+                            <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFile(index)}
+                        >
+                          <X className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border text-white hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD }}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="project-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: '#C9A961' }}>
+                <Button type="submit" data-testid="project-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
                   {editingProject ? 'Update' : 'Create'}
                 </Button>
               </div>
@@ -251,36 +334,36 @@ const ProjectsPage = () => {
         </Dialog>
       </div>
 
-      <Card>
+      <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
         <CardHeader>
-          <CardTitle>All Projects ({projects.length})</CardTitle>
+          <CardTitle style={{ color: ELEGANT_GOLD }}>All Projects ({projects.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {projects.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-400">
               No projects yet. Click "Add Project" to get started.
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Project Name</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Deadline</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-b" style={{ borderColor: '#374151' }}>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Project Name</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Client</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Status</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Deadline</TableHead>
+                  <TableHead style={{ color: ELEGANT_GOLD }}>Assigned To</TableHead>
+                  <TableHead className="text-right" style={{ color: ELEGANT_GOLD }}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {projects.map((project) => (
-                  <TableRow key={project.id} data-testid={`project-row-${project.id}`}>
-                    <TableCell className="font-medium">{project.name}</TableCell>
-                    <TableCell>{getClientName(project.client_id)}</TableCell>
+                  <TableRow key={project.id} data-testid={`project-row-${project.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                    <TableCell className="font-medium text-white">{project.name}</TableCell>
+                    <TableCell className="text-gray-300">{getClientName(project.client_id)}</TableCell>
                     <TableCell>{getStatusBadge(project.status)}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-gray-300">
                       {project.deadline ? (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm">
                           <Calendar className="h-3 w-3 mr-1" />
                           {new Date(project.deadline).toLocaleDateString()}
                         </div>
@@ -288,7 +371,7 @@ const ProjectsPage = () => {
                         '-'
                       )}
                     </TableCell>
-                    <TableCell>{getUserName(project.assigned_to)}</TableCell>
+                    <TableCell className="text-gray-300">{getUserName(project.assigned_to)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
                         <Button
@@ -296,6 +379,8 @@ const ProjectsPage = () => {
                           variant="outline"
                           onClick={() => handleEdit(project)}
                           data-testid={`edit-project-${project.id}`}
+                          className="border hover:bg-gray-800"
+                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -304,8 +389,9 @@ const ProjectsPage = () => {
                           variant="outline"
                           onClick={() => handleDelete(project.id)}
                           data-testid={`delete-project-${project.id}`}
+                          className="border-red-500 text-red-500 hover:bg-red-950"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
