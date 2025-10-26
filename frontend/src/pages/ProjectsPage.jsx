@@ -337,17 +337,23 @@ const ProjectsPage = () => {
                 {/* Display selected files */}
                 {selectedFiles.length > 0 && (
                   <div className="mt-4 space-y-2">
+                    <p className="text-sm" style={{ color: ELEGANT_GOLD }}>Uploaded Files:</p>
                     {selectedFiles.map((file, index) => (
                       <div key={index} className="flex items-center justify-between p-2 bg-black border rounded" style={{ borderColor: ELEGANT_GOLD }}>
                         <div className="flex items-center gap-2">
-                          {file.preview ? (
-                            <img src={file.preview} alt={file.name} className="w-12 h-12 object-cover rounded" />
+                          {file.content_type?.startsWith('image/') ? (
+                            <img 
+                              src={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`} 
+                              alt={file.filename} 
+                              className="w-12 h-12 object-cover rounded" 
+                            />
                           ) : (
                             <FileImage className="h-8 w-8" style={{ color: ELEGANT_GOLD }} />
                           )}
                           <div>
-                            <p className="text-sm" style={{ color: ELEGANT_GOLD }}>{file.name}</p>
+                            <p className="text-sm" style={{ color: ELEGANT_GOLD }}>{file.filename}</p>
                             <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
+                            <p className="text-xs text-gray-400">Uploaded by: {file.uploaded_by}</p>
                           </div>
                         </div>
                         <Button
