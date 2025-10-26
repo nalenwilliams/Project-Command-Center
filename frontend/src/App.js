@@ -38,7 +38,7 @@ function App() {
             <Route path="clients" element={<ClientsPage />} />
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="tasks" element={<TasksPage />} />
-            <Route path="deals" element={<DealsPage />} />
+            <Route path="employees" element={<EmployeesPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
