@@ -316,6 +316,9 @@ const Layout = () => {
         <div className="p-6">
           <Outlet />
         </div>
+        
+        {/* AI Floating Chat Widget */}
+        <AIFloatingChat currentPage={location.pathname} />
       </main>
     </div>
   );
