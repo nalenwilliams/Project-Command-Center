@@ -54,3 +54,8 @@ code {
 .bg-elegant-gold-light {
   background-color: rgba(201, 169, 97, 0.1);
 }
+
+/* Hide Emergent Badge */
+#emergent-badge {
+  display: none !important;
+}
