@@ -165,7 +165,7 @@ const DealsPage = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingDeal(null)} data-testid="add-deal-button">
+            <Button onClick={() => setEditingDeal(null)} data-testid="add-deal-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
               <Plus className="mr-2 h-4 w-4" /> Add Deal
             </Button>
           </DialogTrigger>
