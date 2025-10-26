@@ -59,3 +59,30 @@ code {
 #emergent-badge {
   display: none !important;
 }
+
+/* Tab styling for black & gold theme */
+[data-state="active"][data-testid="login-tab"],
+[data-state="active"][data-testid="register-tab"] {
+  background-color: #C9A961 !important;
+  color: #000000 !important;
+}
+
+[data-state="inactive"][data-testid="login-tab"],
+[data-state="inactive"][data-testid="register-tab"] {
+  background-color: transparent !important;
+  color: #C9A961 !important;
+}
+
+/* Remove any blue backgrounds */
+.bg-gray-900 {
+  background-color: #000000 !important;
+}
+
+button[role="tab"]:hover {
+  background-color: #1F2937 !important;
+}
+
+button[role="tab"][data-state="active"]:hover {
+  background-color: #C9A961 !important;
+  opacity: 0.9;
+}
