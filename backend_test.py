@@ -334,6 +334,87 @@ class BackendTester:
             )
             return False
     
+    def test_ai_chat_functionality(self):
+        """Test AI chat endpoint functionality"""
+        if not self.auth_token:
+            self.log_result("AI Chat Functionality", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Test AI chat with a simple message
+            chat_data = {
+                "message": "Hello, can you help me?",
+                "conversation_history": [],
+                "current_page": "Dashboard"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/ai/chat",
+                json=chat_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "response" in data and data["response"]:
+                    ai_response = data["response"]
+                    
+                    # Check if response is meaningful (not an error message)
+                    error_indicators = [
+                        "error", "failed", "trouble", "unable", "cannot", 
+                        "exception", "invalid", "unauthorized"
+                    ]
+                    
+                    response_lower = ai_response.lower()
+                    has_error = any(indicator in response_lower for indicator in error_indicators)
+                    
+                    # Check if response is substantial (more than just a few words)
+                    is_substantial = len(ai_response.strip()) > 10
+                    
+                    if not has_error and is_substantial:
+                        self.log_result(
+                            "AI Chat Functionality", 
+                            True, 
+                            f"AI chat working correctly - received meaningful response: '{ai_response[:100]}...'" if len(ai_response) > 100 else f"AI chat working correctly - received response: '{ai_response}'"
+                        )
+                        return True
+                    else:
+                        self.log_result(
+                            "AI Chat Functionality", 
+                            False, 
+                            f"AI chat returned error or insufficient response: '{ai_response}'"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "AI Chat Functionality", 
+                        False, 
+                        "AI chat response missing 'response' field",
+                        f"Response: {data}"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "AI Chat Functionality", 
+                    False, 
+                    f"AI chat failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "AI Chat Functionality", 
+                False, 
+                f"AI chat request failed: {str(e)}"
+            )
+            return False
+    
     def run_all_tests(self):
         """Run all backend tests"""
         print(f"🚀 Starting Backend API Tests")
