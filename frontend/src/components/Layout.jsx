@@ -114,13 +114,14 @@ const Layout = () => {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <div className="lg:hidden p-4 bg-white border-b border-gray-200">
+      <main className="flex-1 overflow-auto bg-black">
+        <div className="lg:hidden p-4 bg-gray-900 border-b" style={{ borderColor: '#C9A961' }}>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(true)}
             data-testid="menu-button"
+            style={{ color: '#C9A961' }}
           >
             <Menu className="h-6 w-6" />
           </Button>
