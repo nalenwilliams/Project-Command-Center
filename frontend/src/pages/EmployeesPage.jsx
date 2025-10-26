@@ -330,23 +330,29 @@ const EmployeesPage = () => {
                     <TableCell>{getStatusBadge(employee.status)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(employee)}
-                          className="border hover:bg-gray-800"
-                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDelete(employee.id)}
-                          className="border-red-500 text-red-500 hover:bg-red-950"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {canEdit ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(employee)}
+                              className="border hover:bg-gray-800"
+                              style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(employee.id)}
+                              className="border-red-500 text-red-500 hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="text-sm text-gray-500">View Only</span>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
