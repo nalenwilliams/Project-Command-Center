@@ -97,7 +97,11 @@ const ExpensesPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const data = { ...formData, amount: parseFloat(formData.amount) };
+      const data = { 
+        ...formData, 
+        amount: parseFloat(formData.amount),
+        files: selectedFiles
+      };
       const url = editingExpense 
         ? `${backendUrl}/api/expenses/${editingExpense.id}`
         : `${backendUrl}/api/expenses`;
@@ -149,12 +153,14 @@ const ExpensesPage = () => {
       receipt_number: expense.receipt_number || '',
       notes: expense.notes || ''
     });
+    setSelectedFiles(expense.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingExpense(null);
+    setSelectedFiles([]);
     setFormData({
       description: '',
       amount: '',
