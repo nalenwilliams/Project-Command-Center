@@ -92,8 +92,8 @@ const Dashboard = () => {
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-5 w-5 ${stat.color}`} />
+                <div className="p-2 rounded-lg" style={{ backgroundColor: stat.bgColor }}>
+                  <Icon className="h-5 w-5" style={{ color: stat.color }} />
                 </div>
               </CardHeader>
               <CardContent>
