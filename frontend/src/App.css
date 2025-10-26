@@ -78,6 +78,16 @@ code {
   background-color: #000000 !important;
 }
 
+/* Ensure all inputs are black */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea,
+select {
+  background-color: #000000 !important;
+}
+
 button[role="tab"]:hover {
   background-color: #1F2937 !important;
 }
