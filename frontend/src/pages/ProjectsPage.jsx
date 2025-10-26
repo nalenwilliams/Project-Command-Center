@@ -474,6 +474,131 @@ const ProjectsPage = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* File Gallery Dialog */}
+      <Dialog open={filesDialogOpen} onOpenChange={setFilesDialogOpen}>
+        <DialogContent className="bg-gray-900 border max-w-4xl" style={{ borderColor: ELEGANT_GOLD }}>
+          <DialogHeader>
+            <DialogTitle style={{ color: ELEGANT_GOLD }}>
+              Project Files - {currentProject?.name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Upload New Files Section */}
+            <div className="border rounded p-4" style={{ borderColor: ELEGANT_GOLD }}>
+              <Label style={{ color: ELEGANT_GOLD }} className="mb-2 block">Add More Files</Label>
+              <Input
+                type="file"
+                multiple
+                onChange={async (e) => {
+                  const files = Array.from(e.target.files);
+                  const uploadPromises = files.map(async (file) => {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    try {
+                      const response = await api.post('/upload', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                      });
+                      return response.data;
+                    } catch (error) {
+                      toast.error(`Failed to upload ${file.name}`);
+                      return null;
+                    }
+                  });
+                  
+                  const uploaded = await Promise.all(uploadPromises);
+                  const successful = uploaded.filter(f => f !== null);
+                  
+                  if (successful.length > 0) {
+                    // Add files to current project
+                    const updatedFiles = [...(currentProject.files || []), ...successful];
+                    await api.put(`/projects/${currentProject.id}`, {
+                      files: updatedFiles
+                    });
+                    
+                    // Update local state
+                    setCurrentProject({ ...currentProject, files: updatedFiles });
+                    await fetchData();
+                    toast.success(`${successful.length} file(s) uploaded`);
+                  }
+                }}
+                className="bg-black border text-white"
+                style={{ borderColor: ELEGANT_GOLD }}
+              />
+            </div>
+
+            {/* Files Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+              {currentProject?.files && currentProject.files.length > 0 ? (
+                currentProject.files.map((file, index) => (
+                  <div key={index} className="border rounded p-3 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
+                    {file.content_type?.startsWith('image/') ? (
+                      <a
+                        href={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
+                          alt={file.filename}
+                          className="w-full h-40 object-cover rounded mb-2 cursor-pointer hover:opacity-80"
+                        />
+                      </a>
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center bg-gray-800 rounded mb-2">
+                        <FileImage className="h-16 w-16" style={{ color: ELEGANT_GOLD }} />
+                      </div>
+                    )}
+                    <p className="text-sm font-medium truncate" style={{ color: ELEGANT_GOLD }}>
+                      {file.filename}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {(file.size / 1024).toFixed(2)} KB
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      By: {file.uploaded_by}
+                    </p>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1"
+                        style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
+                        onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`, '_blank')}
+                      >
+                        View
+                      </Button>
+                      {canEdit && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-red-500 text-red-500"
+                          onClick={async () => {
+                            const updatedFiles = currentProject.files.filter((_, i) => i !== index);
+                            await api.put(`/projects/${currentProject.id}`, {
+                              files: updatedFiles
+                            });
+                            setCurrentProject({ ...currentProject, files: updatedFiles });
+                            await fetchData();
+                            toast.success('File removed');
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8 text-gray-400">
+                  No files uploaded yet. Add files using the upload section above.
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
