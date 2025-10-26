@@ -33,6 +33,12 @@ const Layout = () => {
     { path: '/employees', label: 'Employees', icon: TrendingUp },
   ];
 
+  // Add Admin link if user is admin
+  const isAdmin = user.role === 'admin';
+  if (isAdmin) {
+    navItems.push({ path: '/admin', label: 'Admin Panel', icon: Shield });
+  }
+
   return (
     <div className="flex h-screen bg-black" data-testid="main-layout">
       {/* Mobile sidebar backdrop */}
