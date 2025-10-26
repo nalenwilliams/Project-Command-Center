@@ -1983,6 +1983,85 @@ async def seed_test_users():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating test users: {str(e)}")
 
+# ============================================
+# AI SERVICE ROUTES
+# ============================================
+
+from ai_service import get_ai_service
+from pydantic import BaseModel
+
+class AIGenerateRequest(BaseModel):
+    prompt: str
+    context: Optional[str] = ""
+
+class AIAnalyzeRequest(BaseModel):
+    content: str
+    analysis_type: str  # summarize, risks, actions, insights
+
+class AITaskSuggestionRequest(BaseModel):
+    project_title: str
+    project_description: str
+
+class AIChatRequest(BaseModel):
+    message: str
+    conversation_history: Optional[list] = []
+    current_page: Optional[str] = "Dashboard"
+
+@api_router.post("/ai/generate")
+async def ai_generate_text(request: AIGenerateRequest, current_user: dict = Depends(get_current_user)):
+    """Generate text using AI"""
+    ai_service = get_ai_service()
+    result = await ai_service.generate_text(request.prompt, request.context)
+    return {"result": result}
+
+@api_router.post("/ai/analyze")
+async def ai_analyze_document(request: AIAnalyzeRequest, current_user: dict = Depends(get_current_user)):
+    """Analyze documents with AI"""
+    ai_service = get_ai_service()
+    result = await ai_service.analyze_document(request.content, request.analysis_type)
+    return {"result": result}
+
+@api_router.post("/ai/suggest-tasks")
+async def ai_suggest_tasks(request: AITaskSuggestionRequest, current_user: dict = Depends(get_current_user)):
+    """Get AI-generated task suggestions"""
+    ai_service = get_ai_service()
+    result = await ai_service.suggest_tasks(request.project_title, request.project_description)
+    return {"result": result}
+
+@api_router.post("/ai/categorize-expense")
+async def ai_categorize_expense(expense_description: str, current_user: dict = Depends(get_current_user)):
+    """Auto-categorize an expense"""
+    ai_service = get_ai_service()
+    result = await ai_service.categorize_expense(expense_description)
+    return {"category": result}
+
+@api_router.post("/ai/generate-invoice-description")
+async def ai_generate_invoice_description(project_name: str, work_items: list, current_user: dict = Depends(get_current_user)):
+    """Generate professional invoice description"""
+    ai_service = get_ai_service()
+    result = await ai_service.generate_invoice_description(project_name, work_items)
+    return {"description": result}
+
+@api_router.post("/ai/safety-analysis")
+async def ai_safety_analysis(incident_description: str, current_user: dict = Depends(get_current_user)):
+    """Analyze safety incidents"""
+    ai_service = get_ai_service()
+    result = await ai_service.safety_analysis(incident_description)
+    return result
+
+@api_router.post("/ai/chat")
+async def ai_chat_assistant(request: AIChatRequest, current_user: dict = Depends(get_current_user)):
+    """Chat with AI assistant"""
+    ai_service = get_ai_service()
+    user_context = {
+        "user_id": current_user['id'],
+        "username": current_user['username'],
+        "role": current_user['role'],
+        "current_page": request.current_page
+    }
+    result = await ai_service.chat_assistant(request.message, request.conversation_history, user_context)
+    return {"response": result}
+
 # Include the router in the main app
 app.include_router(api_router)
 
