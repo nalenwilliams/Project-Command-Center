@@ -7,6 +7,7 @@ import ClientsPage from './pages/ClientsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import TasksPage from './pages/TasksPage';
 import DealsPage from './pages/DealsPage';
+import ColorPicker from './pages/ColorPicker';
 import Layout from './components/Layout';
 import '@/App.css';
 
