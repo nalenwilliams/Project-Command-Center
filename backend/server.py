@@ -533,6 +533,152 @@ class Timesheet(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Safety Report Models
+class SafetyReportCreate(BaseModel):
+    incident_type: str  # injury, near_miss, hazard, violation
+    severity: str  # low, medium, high, critical
+    location: str
+    incident_date: datetime
+    reported_by: str
+    persons_involved: Optional[str] = None
+    description: str
+    corrective_action: Optional[str] = None
+    status: str = "open"  # open, under_review, resolved
+    files: Optional[List[dict]] = []
+
+class SafetyReportUpdate(BaseModel):
+    incident_type: Optional[str] = None
+    severity: Optional[str] = None
+    location: Optional[str] = None
+    incident_date: Optional[datetime] = None
+    reported_by: Optional[str] = None
+    persons_involved: Optional[str] = None
+    description: Optional[str] = None
+    corrective_action: Optional[str] = None
+    status: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class SafetyReport(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    incident_type: str
+    severity: str
+    location: str
+    incident_date: datetime
+    reported_by: str
+    persons_involved: Optional[str] = None
+    description: str
+    corrective_action: Optional[str] = None
+    status: str = "open"
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Certification Models
+class CertificationCreate(BaseModel):
+    employee_name: str
+    certification_type: str  # license, permit, training, qualification
+    certification_name: str
+    issuing_authority: Optional[str] = None
+    issue_date: Optional[datetime] = None
+    expiry_date: Optional[datetime] = None
+    status: str = "active"  # active, expired, pending_renewal
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class CertificationUpdate(BaseModel):
+    employee_name: Optional[str] = None
+    certification_type: Optional[str] = None
+    certification_name: Optional[str] = None
+    issuing_authority: Optional[str] = None
+    issue_date: Optional[datetime] = None
+    expiry_date: Optional[datetime] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Certification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    employee_name: str
+    certification_type: str
+    certification_name: str
+    issuing_authority: Optional[str] = None
+    issue_date: Optional[datetime] = None
+    expiry_date: Optional[datetime] = None
+    status: str = "active"
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Inventory Models
+class InventoryCreate(BaseModel):
+    item_name: str
+    category: str  # materials, supplies, parts, consumables
+    quantity: float
+    unit: str  # pieces, boxes, gallons, etc
+    location: Optional[str] = None
+    minimum_stock: Optional[float] = None
+    supplier: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class InventoryUpdate(BaseModel):
+    item_name: Optional[str] = None
+    category: Optional[str] = None
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+    location: Optional[str] = None
+    minimum_stock: Optional[float] = None
+    supplier: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Inventory(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    item_name: str
+    category: str
+    quantity: float
+    unit: str
+    location: Optional[str] = None
+    minimum_stock: Optional[float] = None
+    supplier: Optional[str] = None
+    notes: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Document/Report Models
+class DocumentCreate(BaseModel):
+    title: str
+    category: str  # report, procedure, form, general
+    document_type: Optional[str] = None
+    description: Optional[str] = None
+    tags: Optional[List[str]] = []
+    files: Optional[List[dict]] = []
+
+class DocumentUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[str] = None
+    document_type: Optional[str] = None
+    description: Optional[str] = None
+    tags: Optional[List[str]] = None
+    files: Optional[List[dict]] = None
+
+class Document(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    category: str
+    document_type: Optional[str] = None
+    description: Optional[str] = None
+    tags: Optional[List[str]] = []
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Notification Settings Models
 class NotificationSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
