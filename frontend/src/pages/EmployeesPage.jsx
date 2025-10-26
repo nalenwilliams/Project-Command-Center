@@ -8,27 +8,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Calendar } from 'lucide-react';
+import { Plus, Pencil, Trash2, Calendar, Mail, Phone, Briefcase, Upload, FileText, X } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const TasksPage = () => {
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [users, setUsers] = useState([]);
+const EmployeesPage = () => {
+  const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [handbookFiles, setHandbookFiles] = useState([]);
+  const [policyFiles, setPolicyFiles] = useState([]);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    project_id: '',
-    assigned_to: '',
-    status: 'todo',
-    due_date: '',
-    priority: 'medium',
+    name: '',
+    employee_id: '',
+    email: '',
+    phone: '',
+    department: '',
+    position: '',
+    hire_date: '',
+    status: 'active',
+    notes: '',
   });
 
   useEffect(() => {
