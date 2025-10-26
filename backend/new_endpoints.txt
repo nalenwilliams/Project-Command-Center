@@ -1,0 +1,127 @@
+# Add these routes to server.py after fleet-inspections endpoints
+
+# ===== INVOICES =====
+@api_router.get("/invoices", response_model=List[Invoice])
+async def get_invoices(current_user: dict = Depends(get_current_user)):
+    invoices = await db.invoices.find({}, {"_id": 0}).to_list(1000)
+    for invoice in invoices:
+        if isinstance(invoice.get('created_at'), str):
+            invoice['created_at'] = datetime.fromisoformat(invoice['created_at'])
+        if invoice.get('due_date') and isinstance(invoice['due_date'], str):
+            invoice['due_date'] = datetime.fromisoformat(invoice['due_date'])
+    return invoices
+
+@api_router.post("/invoices", response_model=Invoice)
+async def create_invoice(invoice: InvoiceCreate, current_user: dict = Depends(get_current_user)):
+    invoice_dict = invoice.model_dump()
+    invoice_dict['id'] = str(uuid.uuid4())
+    invoice_dict['created_by'] = current_user['username']
+    invoice_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if invoice_dict.get('due_date'):
+        invoice_dict['due_date'] = invoice_dict['due_date'].isoformat()
+    await db.invoices.insert_one(invoice_dict)
+    return invoice_dict
+
+@api_router.put("/invoices/{invoice_id}", response_model=Invoice)
+async def update_invoice(invoice_id: str, invoice: InvoiceUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = invoice.model_dump(exclude_unset=True)
+    if update_data.get('due_date'):
+        update_data['due_date'] = update_data['due_date'].isoformat()
+    result = await db.invoices.update_one({"id": invoice_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return await db.invoices.find_one({"id": invoice_id}, {"_id": 0})
+
+@api_router.delete("/invoices/{invoice_id}")
+async def delete_invoice(invoice_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.invoices.delete_one({"id": invoice_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return {"message": "Invoice deleted successfully"}
+
+# ===== EXPENSES =====
+@api_router.get("/expenses", response_model=List[Expense])
+async def get_expenses(current_user: dict = Depends(get_current_user)):
+    expenses = await db.expenses.find({}, {"_id": 0}).to_list(1000)
+    for expense in expenses:
+        if isinstance(expense.get('created_at'), str):
+            expense['created_at'] = datetime.fromisoformat(expense['created_at'])
+        if isinstance(expense.get('expense_date'), str):
+            expense['expense_date'] = datetime.fromisoformat(expense['expense_date'])
+    return expenses
+
+@api_router.post("/expenses", response_model=Expense)
+async def create_expense(expense: ExpenseCreate, current_user: dict = Depends(get_current_user)):
+    expense_dict = expense.model_dump()
+    expense_dict['id'] = str(uuid.uuid4())
+    expense_dict['created_by'] = current_user['username']
+    expense_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if expense_dict.get('expense_date'):
+        expense_dict['expense_date'] = expense_dict['expense_date'].isoformat()
+    await db.expenses.insert_one(expense_dict)
+    return expense_dict
+
+@api_router.put("/expenses/{expense_id}", response_model=Expense)
+async def update_expense(expense_id: str, expense: ExpenseUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = expense.model_dump(exclude_unset=True)
+    if update_data.get('expense_date'):
+        update_data['expense_date'] = update_data['expense_date'].isoformat()
+    result = await db.expenses.update_one({"id": expense_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return await db.expenses.find_one({"id": expense_id}, {"_id": 0})
+
+@api_router.delete("/expenses/{expense_id}")
+async def delete_expense(expense_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.expenses.delete_one({"id": expense_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return {"message": "Expense deleted successfully"}
+
+# ===== CONTRACTS (Admin/Manager only view) =====
+@api_router.get("/contracts", response_model=List[Contract])
+async def get_contracts(admin_user: dict = Depends(get_admin_user)):
+    contracts = await db.contracts.find({}, {"_id": 0}).to_list(1000)
+    for contract in contracts:
+        if isinstance(contract.get('created_at'), str):
+            contract['created_at'] = datetime.fromisoformat(contract['created_at'])
+        if contract.get('start_date') and isinstance(contract['start_date'], str):
+            contract['start_date'] = datetime.fromisoformat(contract['start_date'])
+        if contract.get('end_date') and isinstance(contract['end_date'], str):
+            contract['end_date'] = datetime.fromisoformat(contract['end_date'])
+    return contracts
+
+@api_router.post("/contracts", response_model=Contract)
+async def create_contract(contract: ContractCreate, admin_user: dict = Depends(get_admin_user)):
+    contract_dict = contract.model_dump()
+    contract_dict['id'] = str(uuid.uuid4())
+    contract_dict['created_by'] = admin_user['username']
+    contract_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    if contract_dict.get('start_date'):
+        contract_dict['start_date'] = contract_dict['start_date'].isoformat()
+    if contract_dict.get('end_date'):
+        contract_dict['end_date'] = contract_dict['end_date'].isoformat()
+    await db.contracts.insert_one(contract_dict)
+    return contract_dict
+
+@api_router.put("/contracts/{contract_id}", response_model=Contract)
+async def update_contract(contract_id: str, contract: ContractUpdate, admin_user: dict = Depends(get_admin_user)):
+    update_data = contract.model_dump(exclude_unset=True)
+    if update_data.get('start_date'):
+        update_data['start_date'] = update_data['start_date'].isoformat()
+    if update_data.get('end_date'):
+        update_data['end_date'] = update_data['end_date'].isoformat()
+    result = await db.contracts.update_one({"id": contract_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return await db.contracts.find_one({"id": contract_id}, {"_id": 0})
+
+@api_router.delete("/contracts/{contract_id}")
+async def delete_contract(contract_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.contracts.delete_one({"id": contract_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return {"message": "Contract deleted successfully"}
+
+# Continue with Equipment, Timesheets, Safety Reports, Certifications, Inventory, Documents...
+# (Similar pattern for each - get, post, put, delete with appropriate permissions)
