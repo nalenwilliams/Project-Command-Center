@@ -1092,6 +1092,69 @@ async def acknowledge_policy(policy_id: str, current_user: dict = Depends(get_cu
     return {"message": "Policy acknowledged successfully"}
 
 # ============================================
+# API ROUTES - FLEET INSPECTIONS
+# ============================================
+
+@api_router.get("/fleet-inspections", response_model=List[FleetInspection])
+async def get_fleet_inspections(current_user: dict = Depends(get_current_user)):
+    inspections = await db.fleet_inspections.find({}, {"_id": 0}).to_list(1000)
+    for inspection in inspections:
+        if isinstance(inspection.get('created_at'), str):
+            inspection['created_at'] = datetime.fromisoformat(inspection['created_at'])
+        if isinstance(inspection.get('inspection_date'), str):
+            inspection['inspection_date'] = datetime.fromisoformat(inspection['inspection_date'])
+    return inspections
+
+@api_router.post("/fleet-inspections", response_model=FleetInspection)
+async def create_fleet_inspection(inspection: FleetInspectionCreate, current_user: dict = Depends(get_current_user)):
+    """Everyone can create fleet inspection reports"""
+    inspection_dict = inspection.model_dump()
+    inspection_dict['id'] = str(uuid.uuid4())
+    inspection_dict['created_by'] = current_user['username']
+    inspection_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    
+    if inspection_dict.get('inspection_date'):
+        inspection_dict['inspection_date'] = inspection_dict['inspection_date'].isoformat()
+    
+    await db.fleet_inspections.insert_one(inspection_dict)
+    return inspection_dict
+
+@api_router.put("/fleet-inspections/{inspection_id}", response_model=FleetInspection)
+async def update_fleet_inspection(inspection_id: str, inspection: FleetInspectionUpdate, current_user: dict = Depends(get_current_user)):
+    """Everyone can update their reports, admins can update any"""
+    existing = await db.fleet_inspections.find_one({"id": inspection_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Inspection not found")
+    
+    # Check permissions - only creator or admin can edit
+    if existing['created_by'] != current_user['username'] and current_user.get('role') not in ['admin', 'manager']:
+        raise HTTPException(status_code=403, detail="Not authorized to edit this inspection")
+    
+    update_data = inspection.model_dump(exclude_unset=True)
+    
+    if update_data.get('inspection_date'):
+        update_data['inspection_date'] = update_data['inspection_date'].isoformat()
+    
+    result = await db.fleet_inspections.update_one(
+        {"id": inspection_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Inspection not found")
+    
+    updated_inspection = await db.fleet_inspections.find_one({"id": inspection_id}, {"_id": 0})
+    return updated_inspection
+
+@api_router.delete("/fleet-inspections/{inspection_id}")
+async def delete_fleet_inspection(inspection_id: str, admin_user: dict = Depends(get_admin_user)):
+    """Only admins/managers can delete inspections"""
+    result = await db.fleet_inspections.delete_one({"id": inspection_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Inspection not found")
+    return {"message": "Fleet inspection deleted successfully"}
+
+# ============================================
 # API ROUTES - DASHBOARD
 # ============================================
 
