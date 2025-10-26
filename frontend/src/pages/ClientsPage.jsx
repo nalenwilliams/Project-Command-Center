@@ -10,6 +10,8 @@ import { Plus, Pencil, Trash2, Mail, Phone, Building } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 
+const ELEGANT_GOLD = '#C9A961';
+
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,7 +103,7 @@ const ClientsPage = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingClient(null)} data-testid="add-client-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
+            <Button onClick={() => setEditingClient(null)} data-testid="add-client-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
               <Plus className="mr-2 h-4 w-4" /> Add Client
             </Button>
           </DialogTrigger>
@@ -161,7 +163,7 @@ const ClientsPage = () => {
                 <Button type="button" variant="outline" onClick={handleCloseDialog}>
                   Cancel
                 </Button>
-                <Button type="submit" data-testid="client-submit-button" className="bg-yellow-600 text-black hover:bg-yellow-500">
+                <Button type="submit" data-testid="client-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
                   {editingClient ? 'Update' : 'Create'}
                 </Button>
               </div>
