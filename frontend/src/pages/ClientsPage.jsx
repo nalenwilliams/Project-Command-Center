@@ -107,60 +107,70 @@ const ClientsPage = () => {
               <Plus className="mr-2 h-4 w-4" /> Add Client
             </Button>
           </DialogTrigger>
-          <DialogContent data-testid="client-dialog">
+          <DialogContent data-testid="client-dialog" className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
             <DialogHeader>
-              <DialogTitle>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
+              <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name" style={{ color: ELEGANT_GOLD }}>Name *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   data-testid="client-name-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" style={{ color: ELEGANT_GOLD }}>Email</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   data-testid="client-email-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone" style={{ color: ELEGANT_GOLD }}>Phone</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   data-testid="client-phone-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
+                <Label htmlFor="company" style={{ color: ELEGANT_GOLD }}>Company</Label>
                 <Input
                   id="company"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                   data-testid="client-company-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="notes" style={{ color: ELEGANT_GOLD }}>Notes</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   data-testid="client-notes-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
                 />
               </div>
               <div className="flex gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                <Button type="button" variant="outline" onClick={handleCloseDialog} className="border text-white hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD }}>
                   Cancel
                 </Button>
                 <Button type="submit" data-testid="client-submit-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
