@@ -32,6 +32,11 @@ const ProjectsPage = () => {
     files: [],
   });
 
+  // Get current user role
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const isEmployee = currentUser.role === 'employee';
+  const canEdit = !isEmployee; // Admin and Manager can edit
+
   useEffect(() => {
     fetchData();
   }, []);
