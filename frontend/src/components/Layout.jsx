@@ -12,6 +12,7 @@ import {
   X,
   Shield,
   BookOpen,
+  Truck,
 } from 'lucide-react';
 
 const Layout = () => {
@@ -33,6 +34,7 @@ const Layout = () => {
     { path: '/tasks', label: 'Tasks', icon: CheckSquare },
     { path: '/employees', label: 'Employees', icon: TrendingUp },
     { path: '/handbook', label: 'Handbook/Policies', icon: BookOpen },
+    { path: '/fleet', label: 'Fleet Inspections', icon: Truck },
   ];
 
   // Add Admin link if user is admin
