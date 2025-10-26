@@ -275,6 +275,19 @@ class DashboardStats(BaseModel):
 
 @api_router.post("/auth/register")
 async def register(user_data: UserCreate):
+    # Verify invitation code
+    invitation = await db.invitations.find_one({
+        "invitation_code": user_data.invitation_code,
+        "used": False
+    }, {"_id": 0})
+    
+    if not invitation:
+        raise HTTPException(status_code=400, detail="Invalid or expired invitation code")
+    
+    # Check if invitation has expired (7 days)
+    if datetime.fromisoformat(invitation['expires_at']) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Invitation code has expired")
+    
     # Check if user already exists
     existing_user = await db.users.find_one({"username": user_data.username}, {"_id": 0})
     if existing_user:
@@ -284,13 +297,23 @@ async def register(user_data: UserCreate):
     if existing_email:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Create new user
-    user = User(username=user_data.username, email=user_data.email)
+    # Verify email matches invitation
+    if user_data.email.lower() != invitation['email'].lower():
+        raise HTTPException(status_code=400, detail="Email must match the invited email")
+    
+    # Create new user with role from invitation
+    user = User(username=user_data.username, email=user_data.email, role=invitation['role'])
     user_dict = user.model_dump()
     user_dict['password_hash'] = get_password_hash(user_data.password)
     user_dict['created_at'] = user_dict['created_at'].isoformat()
     
     await db.users.insert_one(user_dict)
+    
+    # Mark invitation as used
+    await db.invitations.update_one(
+        {"invitation_code": user_data.invitation_code},
+        {"$set": {"used": True}}
+    )
     
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
@@ -298,7 +321,7 @@ async def register(user_data: UserCreate):
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {"id": user.id, "username": user.username, "email": user.email}
+        "user": {"id": user.id, "username": user.username, "email": user.email, "role": user.role}
     }
 
 @api_router.post("/auth/login")
