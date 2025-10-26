@@ -60,6 +60,39 @@ const ExpensesPage = () => {
     }
   };
 
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    const token = localStorage.getItem('token');
+    
+    const uploadPromises = files.map(async (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      try {
+        const response = await fetch(`${backendUrl}/api/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        return await response.json();
+      } catch (error) {
+        console.error('File upload failed:', error);
+        toast.error(`Failed to upload ${file.name}`);
+        return null;
+      }
+    });
+    
+    const uploadedFiles = await Promise.all(uploadPromises);
+    const successfulUploads = uploadedFiles.filter(f => f !== null);
+    
+    setSelectedFiles([...selectedFiles, ...successfulUploads]);
+    toast.success(`${successfulUploads.length} file(s) uploaded`);
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
