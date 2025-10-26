@@ -258,11 +258,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Admin Login Authentication"
-    - "User List Retrieval"
-    - "Task Creation and Assignment"
-    - "Task Verification"
-    - "Notification System Configuration"
+    - "Admin Login Authentication UI"
+    - "Dashboard Loading and Display"
+    - "Admin Navigation Sidebar - Financial Management"
+    - "Admin Navigation Sidebar - Contracts"
+    - "Admin Navigation Sidebar - Equipment"
+    - "Admin Navigation Sidebar - Operations"
+    - "Admin Navigation Sidebar - Safety & Compliance"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
