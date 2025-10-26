@@ -102,7 +102,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
             {/* Upload Section */}
             <div className="border rounded p-4" style={{ borderColor: ELEGANT_GOLD }}>
               <Label style={{ color: ELEGANT_GOLD }} className="mb-2 block">
-                Add Files (Photos, Plans, Documents)
+                Upload Files (PDFs, Documents, Images, Notes - All file types supported)
               </Label>
               <Input
                 type="file"
