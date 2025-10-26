@@ -104,14 +104,15 @@ const ClientsPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>Clients</h1>
-          <p className="text-gray-400 mt-1">Manage your client relationships</p>
+          <p className="text-gray-400 mt-1">Manage your client relationships{isEmployee ? ' (View Only)' : ''}</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingClient(null)} data-testid="add-client-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
-              <Plus className="mr-2 h-4 w-4" /> Add Client
-            </Button>
-          </DialogTrigger>
+        {canEdit && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setEditingClient(null)} data-testid="add-client-button" className="text-black hover:opacity-90" style={{ backgroundColor: ELEGANT_GOLD }}>
+                <Plus className="mr-2 h-4 w-4" /> Add Client
+              </Button>
+            </DialogTrigger>
           <DialogContent data-testid="client-dialog" className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
