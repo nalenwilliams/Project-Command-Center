@@ -66,7 +66,7 @@ const Layout = () => {
             />
             <div className="text-center">
               <h1 className="text-lg font-bold" style={{ color: '#C9A961' }}>Williams Diversified LLC</h1>
-              <p className="text-xs" style={{ color: '#C9A961', opacity: 0.8 }}>CRM & Project Management</p>
+              <p className="text-xs" style={{ color: '#C9A961', opacity: 0.8 }}>Project Command Center</p>
             </div>
             <Button
               variant="ghost"
