@@ -427,6 +427,19 @@ const ProjectsPage = () => {
                     <TableCell className="text-gray-300">{getUserName(project.assigned_to)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setCurrentProject(project);
+                            setFilesDialogOpen(true);
+                          }}
+                          className="border hover:bg-gray-800"
+                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
+                        >
+                          <FileImage className="h-4 w-4 mr-1" />
+                          Files ({project.files?.length || 0})
+                        </Button>
                         {canEdit ? (
                           <>
                             <Button
