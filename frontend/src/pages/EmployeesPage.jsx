@@ -295,6 +295,7 @@ const EmployeesPage = () => {
             </form>
           </DialogContent>
         </Dialog>
+        )}
       </div>
 
       <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
