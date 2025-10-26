@@ -331,6 +331,10 @@ async def login(credentials: UserLogin):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
+    # Check if user is active
+    if not user.get('is_active', True):
+        raise HTTPException(status_code=403, detail="Account is deactivated. Contact admin.")
+    
     # Verify password
     if not verify_password(credentials.password, user['password_hash']):
         raise HTTPException(status_code=401, detail="Invalid username or password")
@@ -341,12 +345,108 @@ async def login(credentials: UserLogin):
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {"id": user['id'], "username": user['username'], "email": user['email']}
+        "user": {"id": user['id'], "username": user['username'], "email": user['email'], "role": user.get('role', 'employee')}
     }
 
 @api_router.get("/auth/me")
 async def get_me(current_user: dict = Depends(get_current_user)):
-    return {"id": current_user['id'], "username": current_user['username'], "email": current_user['email']}
+    return {
+        "id": current_user['id'], 
+        "username": current_user['username'], 
+        "email": current_user['email'],
+        "role": current_user.get('role', 'employee'),
+        "is_active": current_user.get('is_active', True)
+    }
+
+# ============================================
+# API ROUTES - ADMIN - USER MANAGEMENT
+# ============================================
+
+@api_router.get("/admin/users", response_model=List[UserResponse])
+async def get_all_users(admin_user: dict = Depends(get_admin_user)):
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
+    return users
+
+@api_router.put("/admin/users/{user_id}")
+async def update_user(user_id: str, user_data: UserUpdate, admin_user: dict = Depends(get_admin_user)):
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {k: v for k, v in user_data.model_dump().items() if v is not None}
+    if update_data:
+        await db.users.update_one({"id": user_id}, {"$set": update_data})
+    
+    updated_user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    return updated_user
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, admin_user: dict = Depends(get_admin_user)):
+    # Prevent admin from deleting themselves
+    if user_id == admin_user['id']:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
+
+# ============================================
+# API ROUTES - ADMIN - INVITATIONS
+# ============================================
+
+@api_router.post("/admin/invitations")
+async def create_invitation(invitation_data: InvitationCreate, admin_user: dict = Depends(get_admin_user)):
+    # Check if email already invited and unused
+    existing = await db.invitations.find_one({
+        "email": invitation_data.email,
+        "used": False
+    }, {"_id": 0})
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Active invitation already exists for this email")
+    
+    # Check if user already registered
+    user_exists = await db.users.find_one({"email": invitation_data.email}, {"_id": 0})
+    if user_exists:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    # Generate unique invitation code
+    invitation_code = str(uuid.uuid4())[:8].upper()
+    
+    invitation = Invitation(
+        email=invitation_data.email,
+        role=invitation_data.role,
+        invitation_code=invitation_code,
+        created_by=admin_user['id'],
+        expires_at=datetime.now(timezone.utc) + timedelta(days=7)
+    )
+    
+    invitation_dict = invitation.model_dump()
+    invitation_dict['created_at'] = invitation_dict['created_at'].isoformat()
+    invitation_dict['expires_at'] = invitation_dict['expires_at'].isoformat()
+    
+    await db.invitations.insert_one(invitation_dict)
+    
+    return {
+        "message": "Invitation created successfully",
+        "invitation_code": invitation_code,
+        "email": invitation_data.email,
+        "role": invitation_data.role,
+        "expires_at": invitation_dict['expires_at']
+    }
+
+@api_router.get("/admin/invitations")
+async def get_invitations(admin_user: dict = Depends(get_admin_user)):
+    invitations = await db.invitations.find({}, {"_id": 0}).to_list(1000)
+    return invitations
+
+@api_router.delete("/admin/invitations/{invitation_id}")
+async def delete_invitation(invitation_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.invitations.delete_one({"id": invitation_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Invitation not found")
+    return {"message": "Invitation deleted successfully"}
 
 # ============================================
 # API ROUTES - USERS
