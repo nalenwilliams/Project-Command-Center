@@ -34,44 +34,50 @@ const EmployeesPage = () => {
   });
 
   useEffect(() => {
-    fetchData();
+    fetchEmployees();
   }, []);
 
-  const fetchData = async () => {
+  const fetchEmployees = async () => {
     try {
-      const [tasksRes, projectsRes, usersRes] = await Promise.all([
-        api.get('/tasks'),
-        api.get('/projects'),
-        api.get('/users'),
-      ]);
-      setTasks(tasksRes.data);
-      setProjects(projectsRes.data);
-      setUsers(usersRes.data);
+      const response = await api.get('/employees');
+      setEmployees(response.data);
     } catch (error) {
-      toast.error('Failed to load data');
+      toast.error('Failed to load employees');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleHandbookChange = (e) => {
+    const files = Array.from(e.target.files);
+    const fileNames = files.map(f => f.name);
+    setHandbookFiles([...handbookFiles, ...fileNames]);
+  };
+
+  const handlePolicyChange = (e) => {
+    const files = Array.from(e.target.files);
+    const fileNames = files.map(f => f.name);
+    setPolicyFiles([...policyFiles, ...fileNames]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const data = { ...formData };
-      if (data.due_date) {
-        data.due_date = new Date(data.due_date).toISOString();
+      if (data.hire_date) {
+        data.hire_date = new Date(data.hire_date).toISOString();
       }
-      if (!data.project_id) data.project_id = null;
-      if (!data.assigned_to) data.assigned_to = null;
+      data.handbooks = handbookFiles;
+      data.policies = policyFiles;
 
-      if (editingTask) {
-        await api.put(`/tasks/${editingTask.id}`, data);
-        toast.success('Task updated successfully');
+      if (editingEmployee) {
+        await api.put(`/employees/${editingEmployee.id}`, data);
+        toast.success('Employee updated successfully');
       } else {
-        await api.post('/tasks', data);
-        toast.success('Task created successfully');
+        await api.post('/employees', data);
+        toast.success('Employee created successfully');
       }
-      fetchData();
+      fetchEmployees();
       handleCloseDialog();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Operation failed');
@@ -79,72 +85,60 @@ const EmployeesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    if (!window.confirm('Are you sure you want to delete this employee?')) return;
     try {
-      await api.delete(`/tasks/${id}`);
-      toast.success('Task deleted successfully');
-      fetchData();
+      await api.delete(`/employees/${id}`);
+      toast.success('Employee deleted successfully');
+      fetchEmployees();
     } catch (error) {
-      toast.error('Failed to delete task');
+      toast.error('Failed to delete employee');
     }
   };
 
-  const handleEdit = (task) => {
-    setEditingTask(task);
+  const handleEdit = (employee) => {
+    setEditingEmployee(employee);
     setFormData({
-      title: task.title || '',
-      description: task.description || '',
-      project_id: task.project_id || '',
-      assigned_to: task.assigned_to || '',
-      status: task.status || 'todo',
-      due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '',
-      priority: task.priority || 'medium',
+      name: employee.name || '',
+      employee_id: employee.employee_id || '',
+      email: employee.email || '',
+      phone: employee.phone || '',
+      department: employee.department || '',
+      position: employee.position || '',
+      hire_date: employee.hire_date ? new Date(employee.hire_date).toISOString().split('T')[0] : '',
+      status: employee.status || 'active',
+      notes: employee.notes || '',
     });
+    setHandbookFiles(employee.handbooks || []);
+    setPolicyFiles(employee.policies || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setEditingTask(null);
+    setEditingEmployee(null);
+    setHandbookFiles([]);
+    setPolicyFiles([]);
     setFormData({
-      title: '',
-      description: '',
-      project_id: '',
-      assigned_to: '',
-      status: 'todo',
-      due_date: '',
-      priority: 'medium',
+      name: '',
+      employee_id: '',
+      email: '',
+      phone: '',
+      department: '',
+      position: '',
+      hire_date: '',
+      status: 'active',
+      notes: '',
     });
   };
 
   const getStatusBadge = (status) => {
     const variants = {
-      todo: { label: 'To Do', style: { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#9CA3AF' } },
-      in_progress: { label: 'In Progress', style: { backgroundColor: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' } },
-      completed: { label: 'Completed', style: { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#4ADE80' } },
+      active: { label: 'Active', style: { backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#4ADE80' } },
+      on_leave: { label: 'On Leave', style: { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#FACC15' } },
+      terminated: { label: 'Terminated', style: { backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#F87171' } },
     };
-    const variant = variants[status] || variants.todo;
+    const variant = variants[status] || variants.active;
     return <Badge style={variant.style}>{variant.label}</Badge>;
-  };
-
-  const getPriorityBadge = (priority) => {
-    const variants = {
-      low: { label: 'Low', style: { backgroundColor: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA' } },
-      medium: { label: 'Medium', style: { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#FACC15' } },
-      high: { label: 'High', style: { backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#F87171' } },
-    };
-    const variant = variants[priority] || variants.medium;
-    return <Badge style={variant.style}>{variant.label}</Badge>;
-  };
-
-  const getProjectName = (projectId) => {
-    const project = projects.find((p) => p.id === projectId);
-    return project ? project.name : 'N/A';
-  };
-
-  const getUserName = (userId) => {
-    const user = users.find((u) => u.id === userId);
-    return user ? user.username : 'Unassigned';
   };
 
   if (loading) {
