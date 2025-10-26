@@ -729,6 +729,95 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
         completed_tasks=completed_tasks
     )
 
+# ============================================
+# SEED ENDPOINT FOR TESTING
+# ============================================
+@api_router.post("/seed/admin")
+async def seed_admin_user():
+    """Create a test admin user for preview/testing purposes"""
+    try:
+        # Check if admin already exists
+        existing_admin = await db.users.find_one({"email": "admin@williamsdiversified.com"}, {"_id": 0})
+        if existing_admin:
+            return {
+                "message": "Admin user already exists",
+                "credentials": {
+                    "username": "admin",
+                    "password": "Admin123!",
+                    "email": "admin@williamsdiversified.com",
+                    "role": "admin"
+                }
+            }
+        
+        # Create admin user
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "username": "admin",
+            "email": "admin@williamsdiversified.com",
+            "password": get_password_hash("Admin123!"),
+            "role": "admin",
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.users.insert_one(admin_user)
+        
+        return {
+            "message": "Admin user created successfully",
+            "credentials": {
+                "username": "admin",
+                "password": "Admin123!",
+                "email": "admin@williamsdiversified.com",
+                "role": "admin"
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating admin user: {str(e)}")
+
+@api_router.post("/seed/test-users")
+async def seed_test_users():
+    """Create test users for different roles"""
+    try:
+        test_users = [
+            {
+                "id": str(uuid.uuid4()),
+                "username": "manager",
+                "email": "manager@williamsdiversified.com",
+                "password": get_password_hash("Manager123!"),
+                "role": "manager",
+                "is_active": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "username": "employee",
+                "email": "employee@williamsdiversified.com",
+                "password": get_password_hash("Employee123!"),
+                "role": "employee",
+                "is_active": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        ]
+        
+        created_users = []
+        for user in test_users:
+            existing = await db.users.find_one({"email": user["email"]}, {"_id": 0})
+            if not existing:
+                await db.users.insert_one(user)
+                created_users.append({
+                    "username": user["username"],
+                    "password": user["username"].capitalize() + "123!",
+                    "email": user["email"],
+                    "role": user["role"]
+                })
+        
+        return {
+            "message": f"Created {len(created_users)} test users",
+            "users": created_users
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating test users: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
