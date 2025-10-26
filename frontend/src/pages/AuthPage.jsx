@@ -48,7 +48,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4" data-testid="auth-page">
+    <div className="min-h-screen flex items-center justify-center bg-black p-4" data-testid="auth-page">
       <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
         <CardHeader className="space-y-3 text-center">
           <img 
@@ -63,9 +63,39 @@ const AuthPage = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-900">
-              <TabsTrigger value="login" data-testid="login-tab" className="data-[state=active]:text-black" style={{ '--tw-data-state-active-bg': '#C9A961' }}>Login</TabsTrigger>
-              <TabsTrigger value="register" data-testid="register-tab" className="data-[state=active]:text-black" style={{ '--tw-data-state-active-bg': '#C9A961' }}>Register</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-black border" style={{ borderColor: '#C9A961' }}>
+              <TabsTrigger 
+                value="login" 
+                data-testid="login-tab" 
+                className="data-[state=active]:text-black"
+                style={{
+                  color: '#C9A961',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1F2937'}
+                onMouseLeave={(e) => {
+                  if (e.currentTarget.getAttribute('data-state') !== 'active') {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="register" 
+                data-testid="register-tab" 
+                className="data-[state=active]:text-black"
+                style={{
+                  color: '#C9A961',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1F2937'}
+                onMouseLeave={(e) => {
+                  if (e.currentTarget.getAttribute('data-state') !== 'active') {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                Register
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
