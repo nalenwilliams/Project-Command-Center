@@ -380,25 +380,31 @@ const ProjectsPage = () => {
                     <TableCell className="text-gray-300">{getUserName(project.assigned_to)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(project)}
-                          data-testid={`edit-project-${project.id}`}
-                          className="border hover:bg-gray-800"
-                          style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDelete(project.id)}
-                          data-testid={`delete-project-${project.id}`}
-                          className="border-red-500 text-red-500 hover:bg-red-950"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {canEdit ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(project)}
+                              data-testid={`edit-project-${project.id}`}
+                              className="border hover:bg-gray-800"
+                              style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(project.id)}
+                              data-testid={`delete-project-${project.id}`}
+                              className="border-red-500 text-red-500 hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="text-sm text-gray-500">View Only</span>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
