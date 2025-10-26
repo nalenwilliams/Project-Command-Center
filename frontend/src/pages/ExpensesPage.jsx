@@ -29,6 +29,7 @@ const ExpensesPage = () => {
     receipt_number: '',
     notes: ''
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const canDelete = user.role === 'admin' || user.role === 'manager';
