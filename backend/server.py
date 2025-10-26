@@ -783,7 +783,7 @@ async def seed_test_users():
                 "id": str(uuid.uuid4()),
                 "username": "manager",
                 "email": "manager@williamsdiversified.com",
-                "password": get_password_hash("Manager123!"),
+                "password_hash": get_password_hash("Manager123!"),
                 "role": "manager",
                 "is_active": True,
                 "created_at": datetime.now(timezone.utc).isoformat()
@@ -792,7 +792,7 @@ async def seed_test_users():
                 "id": str(uuid.uuid4()),
                 "username": "employee",
                 "email": "employee@williamsdiversified.com",
-                "password": get_password_hash("Employee123!"),
+                "password_hash": get_password_hash("Employee123!"),
                 "role": "employee",
                 "is_active": True,
                 "created_at": datetime.now(timezone.utc).isoformat()
