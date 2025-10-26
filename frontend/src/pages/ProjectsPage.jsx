@@ -52,7 +52,12 @@ const ProjectsPage = () => {
       setClients(clientsRes.data);
       setUsers(usersRes.data);
     } catch (error) {
-      toast.error('Failed to load data');
+      console.error('Failed to load data:', error);
+      if (error.response?.status === 403) {
+        toast.error('Authentication error. Please log out and log back in.');
+      } else {
+        toast.error('Failed to load data');
+      }
     } finally {
       setLoading(false);
     }
