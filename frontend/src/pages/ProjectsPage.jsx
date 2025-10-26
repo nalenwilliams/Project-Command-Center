@@ -48,11 +48,15 @@ const ProjectsPage = () => {
         api.get('/clients'),
         api.get('/users'),
       ]);
-      setProjects(projectsRes.data);
-      setClients(clientsRes.data);
-      setUsers(usersRes.data);
+      setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
+      setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
+      setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
     } catch (error) {
       console.error('Failed to load data:', error);
+      // Set default empty arrays on error
+      setProjects([]);
+      setClients([]);
+      setUsers([]);
       if (error.response?.status === 403) {
         toast.error('Authentication error. Please log out and log back in.');
       } else {
