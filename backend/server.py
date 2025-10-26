@@ -78,6 +78,7 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    invitation_code: str  # Required for registration
 
 class UserLogin(BaseModel):
     username: str
@@ -88,12 +89,38 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
     email: EmailStr
+    role: str = "employee"  # admin, manager, employee
+    is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserResponse(BaseModel):
     id: str
     username: str
     email: str
+    role: str
+    is_active: bool
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+
+# Invitation Models
+class InvitationCreate(BaseModel):
+    email: EmailStr
+    role: str = "employee"
+
+class Invitation(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: EmailStr
+    role: str
+    invitation_code: str
+    used: bool = False
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: datetime
 
 # Client Models
 class ClientCreate(BaseModel):
