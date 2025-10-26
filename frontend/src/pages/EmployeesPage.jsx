@@ -162,108 +162,120 @@ const EmployeesPage = () => {
               <Plus className="mr-2 h-4 w-4" /> Add Employee
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="task-dialog">
+          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="employee-dialog">
             <DialogHeader>
-              <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingTask ? 'Edit Task' : 'Add New Task'}</DialogTitle>
+              <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingEmployee ? 'Edit Employee' : 'Add New Employee'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title" style={{ color: ELEGANT_GOLD }}>Task Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                  data-testid="task-title-input"
-                  className="bg-black border text-white"
-                  style={{ borderColor: ELEGANT_GOLD }}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description" style={{ color: ELEGANT_GOLD }}>Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  data-testid="task-description-input"
-                  className="bg-black border text-white"
-                  style={{ borderColor: ELEGANT_GOLD }}
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="project" style={{ color: ELEGANT_GOLD }}>Project</Label>
-                  <Select value={formData.project_id} onValueChange={(value) => setFormData({ ...formData, project_id: value })}>
-                    <SelectTrigger data-testid="task-project-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectValue placeholder="Select project" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
-                      {projects.map((project) => (
-                        <SelectItem key={project.id} value={project.id} className="text-white hover:bg-gray-800">
-                          {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assign To</Label>
-                  <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
-                    <SelectTrigger data-testid="task-assignee-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectValue placeholder="Select user" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
-                      {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
-                          {user.username}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="status" style={{ color: ELEGANT_GOLD }}>Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
-                    <SelectTrigger data-testid="task-status-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectItem value="todo" className="text-white hover:bg-gray-800">To Do</SelectItem>
-                      <SelectItem value="in_progress" className="text-white hover:bg-gray-800">In Progress</SelectItem>
-                      <SelectItem value="completed" className="text-white hover:bg-gray-800">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="priority" style={{ color: ELEGANT_GOLD }}>Priority</Label>
-                  <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-                    <SelectTrigger data-testid="task-priority-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
-                      <SelectItem value="low" className="text-white hover:bg-gray-800">Low</SelectItem>
-                      <SelectItem value="medium" className="text-white hover:bg-gray-800">Medium</SelectItem>
-                      <SelectItem value="high" className="text-white hover:bg-gray-800">High</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="due_date" style={{ color: ELEGANT_GOLD }}>Due Date</Label>
+                  <Label htmlFor="name" style={{ color: ELEGANT_GOLD }}>Full Name *</Label>
                   <Input
-                    id="due_date"
-                    type="date"
-                    value={formData.due_date}
-                    onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                    data-testid="task-due-date-input"
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
                     className="bg-black border text-white"
                     style={{ borderColor: ELEGANT_GOLD }}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="employee_id" style={{ color: ELEGANT_GOLD }}>Employee ID *</Label>
+                  <Input
+                    id="employee_id"
+                    value={formData.employee_id}
+                    onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
+                    required
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" style={{ color: ELEGANT_GOLD }}>Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" style={{ color: ELEGANT_GOLD }}>Phone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="department" style={{ color: ELEGANT_GOLD }}>Department</Label>
+                  <Input
+                    id="department"
+                    value={formData.department}
+                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="position" style={{ color: ELEGANT_GOLD }}>Position</Label>
+                  <Input
+                    id="position"
+                    value={formData.position}
+                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="hire_date" style={{ color: ELEGANT_GOLD }}>Hire Date</Label>
+                  <Input
+                    id="hire_date"
+                    type="date"
+                    value={formData.hire_date}
+                    onChange={(e) => setFormData({ ...formData, hire_date: e.target.value })}
+                    className="bg-black border text-white"
+                    style={{ borderColor: ELEGANT_GOLD }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status" style={{ color: ELEGANT_GOLD }}>Status</Label>
+                  <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                    <SelectTrigger className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+                      <SelectItem value="active" className="text-white hover:bg-gray-800">Active</SelectItem>
+                      <SelectItem value="on_leave" className="text-white hover:bg-gray-800">On Leave</SelectItem>
+                      <SelectItem value="terminated" className="text-white hover:bg-gray-800">Terminated</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="notes" style={{ color: ELEGANT_GOLD }}>Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
+                />
               </div>
 
               <div className="flex gap-2 justify-end">
