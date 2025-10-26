@@ -33,7 +33,7 @@ const Layout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50" data-testid="main-layout">
+    <div className="flex h-screen bg-black" data-testid="main-layout">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
