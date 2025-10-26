@@ -13,6 +13,16 @@ import {
   Shield,
   BookOpen,
   Truck,
+  DollarSign,
+  FileText,
+  Wrench,
+  Clock,
+  Package,
+  Calendar,
+  AlertTriangle,
+  Award,
+  FileBarChart,
+  ClipboardCheck,
 } from 'lucide-react';
 
 const Layout = () => {
