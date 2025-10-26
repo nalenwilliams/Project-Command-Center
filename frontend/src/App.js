@@ -8,6 +8,7 @@ import ProjectsPage from './pages/ProjectsPage';
 import TasksPage from './pages/TasksPage';
 import EmployeesPage from './pages/EmployeesPage';
 import HandbookPoliciesPage from './pages/HandbookPoliciesPage';
+import FleetInspectionPage from './pages/FleetInspectionPage';
 import AdminPanel from './pages/AdminPanel';
 import ColorPicker from './pages/ColorPicker';
 import Layout from './components/Layout';
