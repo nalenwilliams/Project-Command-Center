@@ -21,6 +21,8 @@ const TasksPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [updatingTask, setUpdatingTask] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -30,6 +32,11 @@ const TasksPage = () => {
     due_date: '',
     priority: 'medium',
   });
+
+  // Get current user role
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const isEmployee = currentUser.role === 'employee';
+  const canFullEdit = !isEmployee; // Admin and Manager can add/delete
 
   useEffect(() => {
     fetchData();
