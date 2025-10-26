@@ -1254,6 +1254,11 @@ async def update_task(task_id: str, task_data: TaskUpdate, current_user: dict = 
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     
+    # Check if assigned_to changed
+    old_assigned_to = task.get('assigned_to')
+    new_assigned_to = task_data.assigned_to if task_data.assigned_to is not None else old_assigned_to
+    assignment_changed = (task_data.assigned_to is not None) and (old_assigned_to != new_assigned_to)
+    
     update_data = {k: v for k, v in task_data.model_dump().items() if v is not None}
     if update_data.get('due_date'):
         update_data['due_date'] = update_data['due_date'].isoformat()
@@ -1266,6 +1271,20 @@ async def update_task(task_id: str, task_data: TaskUpdate, current_user: dict = 
         updated_task['created_at'] = datetime.fromisoformat(updated_task['created_at'])
     if updated_task.get('due_date') and isinstance(updated_task['due_date'], str):
         updated_task['due_date'] = datetime.fromisoformat(updated_task['due_date'])
+    
+    # Send notification if assignment changed
+    if assignment_changed and new_assigned_to:
+        assigned_user = await db.users.find_one({"id": new_assigned_to}, {"_id": 0})
+        if assigned_user and assigned_user.get('email'):
+            email_service = get_email_service()
+            email_service.send_assignment_notification(
+                user_email=assigned_user['email'],
+                user_name=assigned_user.get('username', 'User'),
+                item_type="Task",
+                item_title=updated_task['title'],
+                assigned_by=current_user.get('username', 'Unknown')
+            )
+    
     return updated_task
 
 @api_router.delete("/tasks/{task_id}")
