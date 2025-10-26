@@ -160,8 +160,8 @@ const DealsPage = () => {
     <div className="space-y-6" data-testid="deals-page">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Deals Pipeline</h1>
-          <p className="text-gray-500 mt-1">Track your sales pipeline</p>
+          <h1 className="text-3xl font-bold" style={{ color: '#C9A961' }}>Deals Pipeline</h1>
+          <p className="text-gray-400 mt-1">Track your sales pipeline</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
