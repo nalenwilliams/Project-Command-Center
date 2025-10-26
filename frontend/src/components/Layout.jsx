@@ -29,7 +29,7 @@ const Layout = () => {
     { path: '/clients', label: 'Clients', icon: Users },
     { path: '/projects', label: 'Projects', icon: FolderKanban },
     { path: '/tasks', label: 'Tasks', icon: CheckSquare },
-    { path: '/deals', label: 'Deals', icon: TrendingUp },
+    { path: '/employees', label: 'Employees', icon: TrendingUp },
   ];
 
   return (
