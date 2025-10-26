@@ -98,7 +98,11 @@ const InvoicesPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const data = { ...formData, amount: parseFloat(formData.amount) };
+      const data = { 
+        ...formData, 
+        amount: parseFloat(formData.amount),
+        files: selectedFiles
+      };
       const url = editingInvoice 
         ? `${backendUrl}/api/invoices/${editingInvoice.id}`
         : `${backendUrl}/api/invoices`;
