@@ -152,7 +152,7 @@ const ProjectsPage = () => {
       assigned_to: project.assigned_to || '',
       files: project.files || [],
     });
-    setSelectedFiles([]);
+    setSelectedFiles(project.files || []);
     setDialogOpen(true);
   };
 
