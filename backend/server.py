@@ -480,6 +480,131 @@ async def delete_invitation(invitation_id: str, admin_user: dict = Depends(get_a
     return {"message": "Invitation deleted successfully"}
 
 # ============================================
+# API ROUTES - NOTIFICATION SETTINGS
+# ============================================
+
+@api_router.get("/admin/notification-settings")
+async def get_notification_settings(admin_user: dict = Depends(get_admin_user)):
+    """Get notification settings"""
+    settings = await db.notification_settings.find_one({}, {"_id": 0})
+    if not settings:
+        # Return default settings
+        default_settings = {
+            "id": str(uuid.uuid4()),
+            "admin_email": "admin@williamsdiverse.com",
+            "smtp_server": "smtp.gmail.com",
+            "smtp_port": 587,
+            "smtp_username": "",
+            "smtp_password": "",
+            "smtp_from_email": "",
+            "notify_task_created": True,
+            "notify_file_upload": True,
+            "notify_status_change": True,
+            "notify_assignments": True,
+            "enabled": False,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notification_settings.insert_one(default_settings)
+        return default_settings
+    
+    if isinstance(settings.get('updated_at'), datetime):
+        settings['updated_at'] = settings['updated_at'].isoformat()
+    return settings
+
+@api_router.put("/admin/notification-settings")
+async def update_notification_settings(
+    settings_update: NotificationSettingsUpdate, 
+    admin_user: dict = Depends(get_admin_user)
+):
+    """Update notification settings"""
+    current_settings = await db.notification_settings.find_one({}, {"_id": 0})
+    
+    if not current_settings:
+        # Create new settings
+        new_settings = {
+            "id": str(uuid.uuid4()),
+            "admin_email": "admin@williamsdiverse.com",
+            "smtp_server": "smtp.gmail.com",
+            "smtp_port": 587,
+            "smtp_username": "",
+            "smtp_password": "",
+            "smtp_from_email": "",
+            "notify_task_created": True,
+            "notify_file_upload": True,
+            "notify_status_change": True,
+            "notify_assignments": True,
+            "enabled": False,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        current_settings = new_settings
+    
+    # Update with provided values
+    update_data = settings_update.model_dump(exclude_unset=True)
+    update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    for key, value in update_data.items():
+        current_settings[key] = value
+    
+    # Update or insert
+    await db.notification_settings.update_one(
+        {},
+        {"$set": current_settings},
+        upsert=True
+    )
+    
+    # Reload email service with new settings if enabled
+    if current_settings.get('enabled'):
+        get_email_service(
+            smtp_server=current_settings.get('smtp_server'),
+            smtp_port=current_settings.get('smtp_port'),
+            username=current_settings.get('smtp_username'),
+            password=current_settings.get('smtp_password'),
+            from_email=current_settings.get('smtp_from_email')
+        )
+    
+    return current_settings
+
+@api_router.post("/admin/test-notification")
+async def test_notification(admin_user: dict = Depends(get_admin_user)):
+    """Send a test notification email"""
+    settings = await db.notification_settings.find_one({}, {"_id": 0})
+    
+    if not settings or not settings.get('enabled'):
+        raise HTTPException(status_code=400, detail="Email notifications are not enabled")
+    
+    email_service = get_email_service(
+        smtp_server=settings.get('smtp_server'),
+        smtp_port=settings.get('smtp_port'),
+        username=settings.get('smtp_username'),
+        password=settings.get('smtp_password'),
+        from_email=settings.get('smtp_from_email')
+    )
+    
+    success = email_service.send_email(
+        to_email=settings.get('admin_email'),
+        subject="Test Notification - Project Command Center",
+        body="""
+        <html>
+            <body style="font-family: Arial, sans-serif;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #C9A961; border: 2px solid #C9A961; border-radius: 8px;">
+                    <h2 style="color: #C9A961;">Test Notification</h2>
+                    <p>This is a test email from your Project Command Center notification system.</p>
+                    <p>If you're seeing this, your email configuration is working correctly!</p>
+                    <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #C9A961; color: #888;">
+                        <em>Williams Diversified LLC - Project Command Center</em>
+                    </p>
+                </div>
+            </body>
+        </html>
+        """
+    )
+    
+    if success:
+        return {"message": "Test email sent successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send test email")
+
+# ============================================
 # API ROUTES - USERS
 # ============================================
 
