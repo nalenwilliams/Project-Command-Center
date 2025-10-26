@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from passlib.context import CryptContext
 import jwt
+from email_service import get_email_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
