@@ -182,38 +182,47 @@ class Task(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-# Deal Models
-class DealCreate(BaseModel):
-    title: str
-    client_id: Optional[str] = None
-    value: Optional[float] = None
-    stage: str = "lead"  # lead, qualified, proposal, negotiation, closed_won, closed_lost
-    probability: Optional[int] = None
-    expected_close_date: Optional[datetime] = None
+# Employee Models
+class EmployeeCreate(BaseModel):
+    name: str
+    employee_id: str
+    email: EmailStr
+    phone: Optional[str] = None
+    department: Optional[str] = None
+    position: Optional[str] = None
+    hire_date: Optional[datetime] = None
+    status: str = "active"  # active, on_leave, terminated
+    handbooks: Optional[List[str]] = []
+    policies: Optional[List[str]] = []
     notes: Optional[str] = None
-    assigned_to: Optional[str] = None
 
-class DealUpdate(BaseModel):
-    title: Optional[str] = None
-    client_id: Optional[str] = None
-    value: Optional[float] = None
-    stage: Optional[str] = None
-    probability: Optional[int] = None
-    expected_close_date: Optional[datetime] = None
+class EmployeeUpdate(BaseModel):
+    name: Optional[str] = None
+    employee_id: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    department: Optional[str] = None
+    position: Optional[str] = None
+    hire_date: Optional[datetime] = None
+    status: Optional[str] = None
+    handbooks: Optional[List[str]] = None
+    policies: Optional[List[str]] = None
     notes: Optional[str] = None
-    assigned_to: Optional[str] = None
 
-class Deal(BaseModel):
+class Employee(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    title: str
-    client_id: Optional[str] = None
-    value: Optional[float] = None
-    stage: str = "lead"
-    probability: Optional[int] = None
-    expected_close_date: Optional[datetime] = None
+    name: str
+    employee_id: str
+    email: EmailStr
+    phone: Optional[str] = None
+    department: Optional[str] = None
+    position: Optional[str] = None
+    hire_date: Optional[datetime] = None
+    status: str = "active"
+    handbooks: Optional[List[str]] = []
+    policies: Optional[List[str]] = []
     notes: Optional[str] = None
-    assigned_to: Optional[str] = None
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
