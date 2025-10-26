@@ -271,6 +271,43 @@ class Employee(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Policy/Handbook Models
+class PolicyCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    category: str  # handbook, safety, hr, compliance, general
+    file_id: Optional[str] = None
+    file_url: Optional[str] = None
+    version: str = "1.0"
+    effective_date: Optional[datetime] = None
+    requires_acknowledgment: bool = False
+
+class PolicyUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+    file_id: Optional[str] = None
+    file_url: Optional[str] = None
+    version: Optional[str] = None
+    effective_date: Optional[datetime] = None
+    requires_acknowledgment: Optional[bool] = None
+
+class Policy(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    category: str
+    file_id: Optional[str] = None
+    file_url: Optional[str] = None
+    version: str = "1.0"
+    effective_date: Optional[datetime] = None
+    requires_acknowledgment: bool = False
+    acknowledgments: Optional[List[dict]] = []  # [{user_id, user_name, acknowledged_at}]
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     total_clients: int
