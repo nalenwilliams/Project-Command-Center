@@ -343,6 +343,10 @@ const AdminPanel = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="notifications">
+          <NotificationSettings />
+        </TabsContent>
       </Tabs>
 
       {/* Edit User Dialog */}
