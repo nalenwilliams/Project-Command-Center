@@ -76,7 +76,7 @@ const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0,
             </DialogTitle>
             <div className="flex items-center gap-2">
               {/* Navigation */}
-              {allFiles.length > 1 && (
+              {files.length > 1 && (
                 <>
                   <Button
                     size="sm"
@@ -88,13 +88,13 @@ const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0,
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
                   <span className="text-gray-400 text-sm">
-                    {currentIndex + 1} / {allFiles.length}
+                    {currentIndex + 1} / {files.length}
                   </span>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleNext}
-                    disabled={currentIndex === allFiles.length - 1}
+                    disabled={currentIndex === files.length - 1}
                     className="text-white hover:bg-gray-800"
                   >
                     <ChevronRight className="h-5 w-5" />
