@@ -163,24 +163,15 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
 
   return (
     <div className="fixed inset-0 bg-black z-50 overflow-hidden flex flex-col">
-      {/* Header without grey background */}
+      {/* Clean Header */}
       <div className="border-b p-4 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 flex-1">
-              <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold" style={{ color: ELEGANT_GOLD }}>
-                  {getRecordTitle()}
-                </h1>
-                <p className="text-sm text-gray-400 mt-1">{getRecordDetails()}</p>
-              </div>
-            </div>
+            <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Back
+            </Button>
             <div className="flex items-center gap-4">
-              <span className="text-gray-400 text-sm">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
               <img 
                 src="/williams-logo.png" 
                 alt="Williams Diversified LLC" 
@@ -190,6 +181,117 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 <X className="h-5 w-5" />
               </Button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Project Title and Details Section */}
+      <div className="p-6 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6" style={{ color: ELEGANT_GOLD }}>
+            {getRecordTitle()}
+          </h1>
+          
+          {/* Detailed Information in Gold Labels */}
+          <div className="space-y-4">
+            {recordType === 'project' && record && (
+              <>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                  <p className="text-white mt-1">{record.address || record.location || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                  <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
+                  <p className="text-white mt-1">{record.assigned_to_name || record.manager || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
+                  <p className="text-white mt-1">{record.created_by || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
+                  <p className="text-white mt-1">{record.status || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Client</p>
+                  <p className="text-white mt-1">{record.client_name || 'N/A'}</p>
+                </div>
+              </>
+            )}
+            
+            {recordType === 'task' && record && (
+              <>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                  <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
+                  <p className="text-white mt-1">{record.assigned_to_name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
+                  <p className="text-white mt-1">{record.created_by || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Project</p>
+                  <p className="text-white mt-1">{record.project_name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
+                  <p className="text-white mt-1">{record.status || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Priority</p>
+                  <p className="text-white mt-1">{record.priority || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Due Date</p>
+                  <p className="text-white mt-1">{record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Location</p>
+                  <p className="text-white mt-1">{record.location || 'N/A'}</p>
+                </div>
+              </>
+            )}
+
+            {recordType === 'client' && record && (
+              <>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                  <p className="text-white mt-1">{record.address || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Email</p>
+                  <p className="text-white mt-1">{record.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Phone</p>
+                  <p className="text-white mt-1">{record.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Company</p>
+                  <p className="text-white mt-1">{record.company || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Account Manager</p>
+                  <p className="text-white mt-1">{record.account_manager || 'N/A'}</p>
+                </div>
+              </>
+            )}
+
+            {/* Generic details for other record types */}
+            {!['project', 'task', 'client'].includes(recordType) && record?.description && (
+              <div>
+                <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                <p className="text-white mt-1">{record.description}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
