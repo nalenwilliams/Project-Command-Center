@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { FileImage, Trash2, FileText, File, Eye, Download, Link as LinkIcon } from 'lucide-react';
+import { FileImage, Trash2, FileText, File, Eye, Download, Link as LinkIcon, Maximize2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import FilePreviewModal from './FilePreviewModal';
+import FileGalleryFullScreen from './FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
