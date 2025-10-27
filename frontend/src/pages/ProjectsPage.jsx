@@ -159,7 +159,7 @@ const ProjectsPage = () => {
       status: project.status || 'not_started',
       deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '',
       description: project.description || '',
-      assigned_to: project.assigned_to || '',
+      assigned_to: project.assigned_to || [],
       address: project.address || '',
       created_by: project.created_by || '',
       files: project.files || [],
