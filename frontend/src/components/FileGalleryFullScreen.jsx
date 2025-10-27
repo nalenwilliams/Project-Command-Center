@@ -401,16 +401,19 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
 
       {/* Upload Section at Bottom */}
       <div className="border-t p-4 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto text-center">
           <Button 
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full text-black hover:opacity-90 py-3 text-lg font-semibold"
+            className="w-full text-black hover:opacity-90 py-3 text-lg font-semibold mb-2"
             style={{ backgroundColor: ELEGANT_GOLD }}
           >
             <Upload className="h-5 w-5 mr-3" />
             {uploading ? 'Uploading Files...' : 'Upload Files'}
           </Button>
+          <p className="text-gray-400 text-sm mb-1">
+            {files.length} {files.length === 1 ? 'file' : 'files'}
+          </p>
           <input
             ref={fileInputRef}
             type="file"
@@ -419,7 +422,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
             onChange={handleFileUpload}
             className="hidden"
           />
-          <p className="text-xs text-gray-400 text-center mt-2">
+          <p className="text-xs text-gray-500">
             All file types supported: Images, PDFs, Documents, Notes, etc.
           </p>
         </div>
