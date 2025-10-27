@@ -109,21 +109,28 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
   };
 
   const getRecordTitle = () => {
+    if (!record) return 'Files';
+    
+    // Handle different record types and their name/title fields
+    const title = record.name || record.title || record.description;
+    
     switch(recordType) {
-      case 'project': return record?.name || 'Project';
-      case 'task': return record?.title || 'Task';
-      case 'client': return record?.name || 'Client';
-      case 'invoice': return `Invoice #${record?.invoice_number || ''}`;
-      case 'expense': return record?.description || 'Expense';
-      case 'contract': return record?.title || 'Contract';
-      case 'equipment': return record?.name || 'Equipment';
-      case 'timesheet': return `Timesheet - ${record?.employee_name || ''}`;
-      case 'safety-report': return record?.title || 'Safety Report';
-      case 'certification': return record?.name || 'Certification';
-      case 'inventory': return record?.item_name || 'Inventory Item';
-      case 'report': return record?.title || 'Report';
-      case 'compliance': return record?.title || 'Compliance';
-      default: return 'Files';
+      case 'project': return record.name || 'Project';
+      case 'task': return record.title || record.name || 'Task';
+      case 'client': return record.name || 'Client';
+      case 'invoice': return record.invoice_number ? `Invoice #${record.invoice_number}` : (record.description || 'Invoice');
+      case 'expense': return record.description || record.name || 'Expense';
+      case 'contract': return record.title || record.name || 'Contract';
+      case 'equipment': return record.name || record.title || 'Equipment';
+      case 'timesheet': return record.employee_name ? `Timesheet - ${record.employee_name}` : (record.name || record.title || 'Timesheet');
+      case 'safety-report': return record.title || record.name || 'Safety Report';
+      case 'certification': return record.name || record.title || 'Certification';
+      case 'inventory': return record.item_name || record.name || 'Inventory Item';
+      case 'report': return record.title || record.name || 'Report';
+      case 'compliance': return record.title || record.name || 'Compliance';
+      case 'tasks': return record.title || record.name || 'Task';  // Handle 'tasks' vs 'task'
+      case 'projects': return record.name || 'Project';  // Handle 'projects' vs 'project'
+      default: return title || 'Files';
     }
   };
 
