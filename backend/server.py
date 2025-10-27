@@ -201,17 +201,18 @@ class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
     project_id: Optional[str] = None
-    assigned_to: Optional[str] = None
+    assigned_to: Optional[List[str]] = []  # Changed to List for multiple users
     status: str = "todo"  # todo, in_progress, completed
     due_date: Optional[datetime] = None
     priority: str = "medium"  # low, medium, high
     files: Optional[List[dict]] = []
+    created_by: Optional[str] = None
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     project_id: Optional[str] = None
-    assigned_to: Optional[str] = None
+    assigned_to: Optional[List[str]] = None  # Changed to List for multiple users
     status: Optional[str] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
@@ -223,7 +224,7 @@ class Task(BaseModel):
     title: str
     description: Optional[str] = None
     project_id: Optional[str] = None
-    assigned_to: Optional[str] = None
+    assigned_to: Optional[List[str]] = []  # Changed to List for multiple users
     status: str = "todo"
     due_date: Optional[datetime] = None
     priority: str = "medium"
