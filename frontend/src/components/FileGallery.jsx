@@ -17,6 +17,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
 
   const getFileIcon = (file) => {
     const filename = file.filename?.toLowerCase() || '';
