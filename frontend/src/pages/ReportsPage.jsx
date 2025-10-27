@@ -124,12 +124,14 @@ const ReportsPage = () => {
       description: report.description || '',
       generated_by: report.generated_by || ''
     });
+    setSelectedFiles(report.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingReport(null);
+    setSelectedFiles([]);
     setFormData({ title: '', report_type: 'financial', period: '', description: '', generated_by: '' });
   };
 
