@@ -274,6 +274,16 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
         currentIndex={previewIndex}
         onNavigate={handleNavigate}
       />
+
+      <FileGalleryFullScreen
+        isOpen={isFullScreenOpen}
+        onClose={() => setIsFullScreenOpen(false)}
+        record={currentItem}
+        recordType={itemType}
+        files={currentItem.files || []}
+        onDelete={handleDeleteFile}
+        canDelete={canDelete}
+      />
     </>
   );
 };
