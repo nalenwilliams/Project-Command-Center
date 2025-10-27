@@ -79,12 +79,13 @@ const ReportsPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      const data = { ...formData, files: selectedFiles };
       const url = editingReport ? `${backendUrl}/api/reports/${editingReport.id}` : `${backendUrl}/api/reports`;
       
       const response = await fetch(url, {
         method: editingReport ? 'PUT' : 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
