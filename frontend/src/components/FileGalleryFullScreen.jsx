@@ -187,11 +187,84 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-7xl mx-auto flex gap-8">
-          {/* Left Side - Files Grid */}
-          <div className="flex-1">
+        <div className="max-w-7xl mx-auto">
+          {/* Project/Task Name and Details at Top */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-6" style={{ color: ELEGANT_GOLD }}>
+              {getRecordTitle()}
+            </h1>
+            
+            {/* Project/Task Details in Correct Order */}
+            <div className="space-y-3">
+              {recordType === 'project' && record && (
+                <>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1">{record.address || record.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
+                    <p className="text-white mt-1">{record.assigned_to_name || record.manager || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
+                    <p className="text-white mt-1">{record.created_by || 'Admin'}</p>
+                  </div>
+                </>
+              )}
+              
+              {recordType === 'task' && record && (
+                <>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
+                    <p className="text-white mt-1">{record.assigned_to_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
+                    <p className="text-white mt-1">{record.created_by || 'Admin'}</p>
+                  </div>
+                </>
+              )}
+
+              {recordType === 'client' && record && (
+                <>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1">{record.address || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Email</p>
+                    <p className="text-white mt-1">{record.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Phone</p>
+                    <p className="text-white mt-1">{record.phone || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
+              {/* Generic details for other record types */}
+              {!['project', 'task', 'client'].includes(recordType) && record?.description && (
+                <div>
+                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                  <p className="text-white mt-1">{record.description}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Files Grid UNDER the Details */}
+          <div>
             {files.length === 0 ? (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <File className="h-24 w-24 mx-auto mb-4 text-gray-600" />
                   <p className="text-gray-400 text-lg">No files attached yet</p>
