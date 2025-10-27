@@ -128,7 +128,7 @@ const Layout = () => {
 
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {/* Main Navigation */}
-            {navItems.map((item) => {
+            {navItems.filter(item => item.path !== '/tasks').map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
               return (
@@ -145,6 +145,34 @@ const Layout = () => {
                 </Link>
               );
             })}
+
+            {/* Tasks Section with Work Orders */}
+            <div className="pt-2">
+              <Link to="/tasks">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-gray-900"
+                  style={location.pathname === '/tasks' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                  data-testid="nav-tasks"
+                >
+                  <CheckSquare className="mr-3 h-5 w-5" />
+                  Tasks
+                </Button>
+              </Link>
+              <div className="ml-6 mt-1">
+                <Link to="/work-orders">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900 text-sm"
+                    style={location.pathname === '/work-orders' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid="nav-work-orders"
+                  >
+                    <ClipboardList className="mr-3 h-4 w-4" />
+                    Work Orders
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
             {/* Financial Management Section - Admin/Manager only */}
             {isAdminOrManager && (
