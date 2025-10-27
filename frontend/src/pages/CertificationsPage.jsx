@@ -81,6 +81,7 @@ const CertificationsPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      const data = { ...formData, files: selectedFiles };
       const url = editingCert 
         ? `${backendUrl}/api/certifications/${editingCert.id}`
         : `${backendUrl}/api/certifications`;
@@ -91,7 +92,7 @@ const CertificationsPage = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
