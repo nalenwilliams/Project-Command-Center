@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2, Calendar, Upload, FileImage, X, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 import MultiSelectUsers from '@/components/MultiSelectUsers';
 
 const ELEGANT_GOLD = '#C9A961';
