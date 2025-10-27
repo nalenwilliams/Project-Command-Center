@@ -132,12 +132,14 @@ const CertificationsPage = () => {
       expiry_date: cert.expiry_date ? new Date(cert.expiry_date).toISOString().split('T')[0] : '',
       issuing_authority: cert.issuing_authority || ''
     });
+    setSelectedFiles(cert.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingCert(null);
+    setSelectedFiles([]);
     setFormData({
       name: '',
       employee_name: '',
