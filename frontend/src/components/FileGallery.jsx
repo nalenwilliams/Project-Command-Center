@@ -270,12 +270,18 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
 
       <FileGalleryFullScreen
         isOpen={isFullScreenOpen}
-        onClose={() => setIsFullScreenOpen(false)}
+        onClose={() => {
+          setIsFullScreenOpen(false);
+          if (onUpdate) onUpdate();
+        }}
         record={currentItem}
         recordType={itemType}
         files={currentItem.files || []}
         onDelete={handleDeleteFile}
         canDelete={canDelete}
+        onUpdate={() => {
+          if (onUpdate) onUpdate();
+        }}
       />
     </>
   );
