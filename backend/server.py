@@ -1384,6 +1384,111 @@ async def delete_task(task_id: str, current_user: dict = Depends(get_current_use
     return {"message": "Task deleted successfully"}
 
 # ============================================
+# API ROUTES - WORK ORDERS
+# ============================================
+
+@api_router.get("/work-orders", response_model=List[WorkOrder])
+async def get_work_orders(current_user: dict = Depends(get_current_user)):
+    work_orders = await db.work_orders.find({}, {"_id": 0}).to_list(length=None)
+    for work_order in work_orders:
+        if isinstance(work_order['created_at'], str):
+            work_order['created_at'] = datetime.fromisoformat(work_order['created_at'])
+        if work_order.get('due_date') and isinstance(work_order['due_date'], str):
+            work_order['due_date'] = datetime.fromisoformat(work_order['due_date'])
+    return work_orders
+
+@api_router.post("/work-orders", response_model=WorkOrder)
+async def create_work_order(work_order_data: WorkOrderCreate, current_user: dict = Depends(get_current_user)):
+    work_order = WorkOrder(**work_order_data.model_dump(), created_by=current_user['id'])
+    work_order_dict = work_order.model_dump()
+    work_order_dict['created_at'] = work_order_dict['created_at'].isoformat()
+    if work_order_dict.get('due_date'):
+        work_order_dict['due_date'] = work_order_dict['due_date'].isoformat()
+    
+    await db.work_orders.insert_one(work_order_dict)
+    
+    # Send notifications to all assigned users
+    if work_order.assigned_to:
+        email_service = get_email_service()
+        for user_id in work_order.assigned_to:
+            try:
+                user = await db.users.find_one({"id": user_id}, {"_id": 0})
+                if user and user.get('email'):
+                    await email_service.send_assignment_notification(
+                        to_email=user['email'],
+                        user_name=user['username'],
+                        item_type="Work Order",
+                        item_name=work_order.title,
+                        assigned_by=current_user['username']
+                    )
+            except Exception as e:
+                print(f"Failed to send notification to user {user_id}: {e}")
+    
+    return work_order
+
+@api_router.get("/work-orders/{work_order_id}", response_model=WorkOrder)
+async def get_work_order(work_order_id: str, current_user: dict = Depends(get_current_user)):
+    work_order = await db.work_orders.find_one({"id": work_order_id}, {"_id": 0})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Work order not found")
+    
+    if isinstance(work_order['created_at'], str):
+        work_order['created_at'] = datetime.fromisoformat(work_order['created_at'])
+    if work_order.get('due_date') and isinstance(work_order['due_date'], str):
+        work_order['due_date'] = datetime.fromisoformat(work_order['due_date'])
+    return work_order
+
+@api_router.put("/work-orders/{work_order_id}", response_model=WorkOrder)
+async def update_work_order(work_order_id: str, work_order_data: WorkOrderUpdate, current_user: dict = Depends(get_current_user)):
+    work_order = await db.work_orders.find_one({"id": work_order_id}, {"_id": 0})
+    if not work_order:
+        raise HTTPException(status_code=404, detail="Work order not found")
+    
+    update_data = {k: v for k, v in work_order_data.model_dump().items() if v is not None}
+    if update_data.get('due_date'):
+        update_data['due_date'] = update_data['due_date'].isoformat()
+    
+    # Check for new user assignments
+    old_assigned = set(work_order.get('assigned_to', []))
+    new_assigned = set(update_data.get('assigned_to', []))
+    newly_assigned = new_assigned - old_assigned
+    
+    if update_data:
+        await db.work_orders.update_one({"id": work_order_id}, {"$set": update_data})
+    
+    # Send notifications to newly assigned users
+    if newly_assigned:
+        email_service = get_email_service()
+        for user_id in newly_assigned:
+            try:
+                user = await db.users.find_one({"id": user_id}, {"_id": 0})
+                if user and user.get('email'):
+                    await email_service.send_assignment_notification(
+                        to_email=user['email'],
+                        user_name=user['username'],
+                        item_type="Work Order",
+                        item_name=work_order['title'],
+                        assigned_by=current_user['username']
+                    )
+            except Exception as e:
+                print(f"Failed to send notification to user {user_id}: {e}")
+    
+    updated_work_order = await db.work_orders.find_one({"id": work_order_id}, {"_id": 0})
+    if isinstance(updated_work_order['created_at'], str):
+        updated_work_order['created_at'] = datetime.fromisoformat(updated_work_order['created_at'])
+    if updated_work_order.get('due_date') and isinstance(updated_work_order['due_date'], str):
+        updated_work_order['due_date'] = datetime.fromisoformat(updated_work_order['due_date'])
+    
+    return updated_work_order
+
+@api_router.delete("/work-orders/{work_order_id}")
+async def delete_work_order(work_order_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.work_orders.delete_one({"id": work_order_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Work order not found")
+    return {"message": "Work order deleted successfully"}
+
+# ============================================
 # API ROUTES - EMPLOYEES
 # ============================================
 
