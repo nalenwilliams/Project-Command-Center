@@ -42,7 +42,7 @@ const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0,
           details: {
             'Status': record.status || 'N/A',
             'Client': record.client_name || 'N/A',
-            'Budget': record.budget ? `$${record.budget}` : 'N/A',
+            'Manager': record.manager || 'N/A',
             'Start Date': record.start_date ? new Date(record.start_date).toLocaleDateString() : 'N/A',
             'End Date': record.end_date ? new Date(record.end_date).toLocaleDateString() : 'N/A'
           },
