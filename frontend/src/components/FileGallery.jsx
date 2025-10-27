@@ -125,6 +125,10 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
     }
   };
 
+  const getItemTitle = () => {
+    return item.name || item.title || item.description || 'Record';
+  };
+
   return (
     <>
       <Button
@@ -132,26 +136,13 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
         variant="outline"
         onClick={() => {
           setCurrentItem(item);
-          if (item.files && item.files.length > 0) {
-            setIsFullScreenOpen(true);
-          } else {
-            setIsOpen(true);
-          }
+          setIsFullScreenOpen(true);
         }}
         className="border hover:bg-gray-800"
         style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
       >
-        {item.files && item.files.length > 0 ? (
-          <>
-            <Maximize2 className="h-4 w-4 mr-1" />
-            View All Files ({item.files.length})
-          </>
-        ) : (
-          <>
-            <FileImage className="h-4 w-4 mr-1" />
-            Files (0)
-          </>
-        )}
+        <FileImage className="h-4 w-4 mr-1" />
+        {getItemTitle()} Files ({item.files?.length || 0})
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
