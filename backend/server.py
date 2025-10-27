@@ -1193,8 +1193,30 @@ async def update_project(project_id: str, project_data: ProjectUpdate, current_u
     if update_data.get('deadline'):
         update_data['deadline'] = update_data['deadline'].isoformat()
     
+    # Check for new user assignments
+    old_assigned = set(project.get('assigned_to', []))
+    new_assigned = set(update_data.get('assigned_to', []))
+    newly_assigned = new_assigned - old_assigned
+    
     if update_data:
         await db.projects.update_one({"id": project_id}, {"$set": update_data})
+    
+    # Send notifications to newly assigned users
+    if newly_assigned:
+        email_service = get_email_service()
+        for user_id in newly_assigned:
+            try:
+                user = await db.users.find_one({"id": user_id}, {"_id": 0})
+                if user and user.get('email'):
+                    await email_service.send_assignment_notification(
+                        to_email=user['email'],
+                        user_name=user['username'],
+                        item_type="Project",
+                        item_name=project['name'],
+                        assigned_by=current_user['username']
+                    )
+            except Exception as e:
+                print(f"Failed to send notification to user {user_id}: {e}")
     
     updated_project = await db.projects.find_one({"id": project_id}, {"_id": 0})
     if isinstance(updated_project['created_at'], str):
