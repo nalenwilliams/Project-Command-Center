@@ -232,6 +232,42 @@ class Task(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Work Order Models  
+class WorkOrderCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    project_id: Optional[str] = None
+    assigned_to: Optional[List[str]] = []
+    status: str = "todo"  # todo, in_progress, completed
+    due_date: Optional[datetime] = None
+    priority: str = "medium"  # urgent, high, medium, low
+    files: Optional[List[dict]] = []
+    created_by: Optional[str] = None
+
+class WorkOrderUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    project_id: Optional[str] = None
+    assigned_to: Optional[List[str]] = None
+    status: Optional[str] = None
+    due_date: Optional[datetime] = None
+    priority: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class WorkOrder(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    project_id: Optional[str] = None
+    assigned_to: Optional[List[str]] = []
+    status: str = "todo"
+    due_date: Optional[datetime] = None
+    priority: str = "medium"
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Employee Models
 class EmployeeCreate(BaseModel):
     name: str
