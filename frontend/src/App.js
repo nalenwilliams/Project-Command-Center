@@ -53,6 +53,7 @@ function App() {
             <Route path="clients" element={<ClientsPage />} />
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="tasks" element={<TasksPage />} />
+            <Route path="work-orders" element={<WorkOrdersPage />} />
             <Route path="employees" element={<EmployeesPage />} />
             <Route path="handbook" element={<HandbookPoliciesPage />} />
             <Route path="fleet" element={<FleetInspectionPage />} />
