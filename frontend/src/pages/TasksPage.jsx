@@ -108,7 +108,7 @@ const TasksPage = () => {
       title: task.title || '',
       description: task.description || '',
       project_id: task.project_id || '',
-      assigned_to: task.assigned_to || '',
+      assigned_to: task.assigned_to || [],
       status: task.status || 'todo',
       due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '',
       priority: task.priority || 'medium',
