@@ -32,6 +32,7 @@ const TasksPage = () => {
     status: 'todo',
     due_date: '',
     priority: 'medium',
+    created_by: '',
   });
 
   // Get current user role
