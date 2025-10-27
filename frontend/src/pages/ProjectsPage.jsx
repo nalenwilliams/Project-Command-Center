@@ -298,22 +298,12 @@ const ProjectsPage = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assign To</Label>
-                <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
-                  <SelectTrigger data-testid="project-assignee-select" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                    <SelectValue placeholder="Select user" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border z-[9999]" style={{ borderColor: ELEGANT_GOLD }} position="popper" sideOffset={5}>
-                    {Array.isArray(users) && users.length > 0 ? (
-                      users.map((user) => (
-                        <SelectItem key={user.id} value={user.id} className="text-white hover:bg-gray-800">
-                          {user.username}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="p-2 text-gray-400 text-sm">No users available.</div>
-                    )}
-                  </SelectContent>
-                </Select>
+                <MultiSelectUsers
+                  users={users}
+                  selectedUsers={formData.assigned_to}
+                  onSelectionChange={(selectedUserIds) => setFormData({ ...formData, assigned_to: selectedUserIds })}
+                  placeholder="Select users..."
+                />
               </div>
 
               <div className="space-y-2">
