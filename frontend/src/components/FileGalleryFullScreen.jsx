@@ -175,7 +175,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               <img 
                 src="/williams-logo.png" 
                 alt="Williams Diversified LLC" 
-                className="h-10 w-auto"
+                className="h-16 w-auto"
               />
               <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
                 <X className="h-5 w-5" />
@@ -185,129 +185,127 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
         </div>
       </div>
 
-      {/* Project Title and Details Section */}
-      <div className="p-6 bg-black">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6" style={{ color: ELEGANT_GOLD }}>
-            {getRecordTitle()}
-          </h1>
-          
-          {/* Detailed Information in Gold Labels */}
-          <div className="space-y-4">
-            {recordType === 'project' && record && (
-              <>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
-                  <p className="text-white mt-1">{record.address || record.location || 'N/A'}</p>
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-7xl mx-auto flex gap-8">
+          {/* Left Side - Files Grid */}
+          <div className="flex-1">
+            {files.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <File className="h-24 w-24 mx-auto mb-4 text-gray-600" />
+                  <p className="text-gray-400 text-lg">No files attached yet</p>
+                  <p className="text-gray-500 text-sm mt-2">Use the Upload Files button below to add files</p>
                 </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                  <p className="text-white mt-1">{record.description || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
-                  <p className="text-white mt-1">{record.assigned_to_name || record.manager || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
-                  <p className="text-white mt-1">{record.created_by || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
-                  <p className="text-white mt-1">{record.status || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Client</p>
-                  <p className="text-white mt-1">{record.client_name || 'N/A'}</p>
-                </div>
-              </>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {files.map((file, index) => (
+                  <div key={index} className="relative group">
+                    {/* File Preview */}
+                    <div 
+                      className="relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-opacity-100 transition-all"
+                      style={{ borderColor: 'transparent' }}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = ELEGANT_GOLD}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                      onClick={() => handlePreview(file, index)}
+                    >
+                      {file.content_type?.includes('image') ? (
+                        <div className="relative w-full h-48">
+                          <img
+                            src={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
+                            alt={file.filename}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center">
+                            <Eye className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 flex items-center justify-center">
+                          {getFileIcon(file)}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* File Info */}
+                    <div className="mt-2">
+                      <p className="text-sm text-white truncate font-medium" title={file.filename}>
+                        {file.filename}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {(file.size / 1024).toFixed(2)} KB
+                      </p>
+                      {file.uploaded_by && (
+                        <p className="text-xs text-gray-500">
+                          By: {file.uploaded_by}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="flex gap-1 mt-2">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handlePreview(file, index)}
+                        className="flex-1 text-xs h-8 hover:bg-gray-800"
+                        style={{ color: ELEGANT_GOLD }}
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handleDownload(file)}
+                        className="flex-1 text-xs h-8 hover:bg-gray-800"
+                        style={{ color: ELEGANT_GOLD }}
+                      >
+                        <Download className="h-3 w-3 mr-1" />
+                        Download
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handleCopyLink(file)}
+                        className="text-xs h-8 hover:bg-gray-800"
+                        style={{ color: ELEGANT_GOLD }}
+                      >
+                        <LinkIcon className="h-3 w-3" />
+                      </Button>
+                      {canDelete && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => onDelete(file.id)}
+                          className="text-xs h-8 text-red-500 hover:bg-red-950"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
+          </div>
+
+          {/* Right Side - Project/Task Name and Description Only */}
+          <div className="w-80 flex-shrink-0">
+            <h1 className="text-3xl font-bold mb-6" style={{ color: ELEGANT_GOLD }}>
+              {getRecordTitle()}
+            </h1>
             
-            {recordType === 'task' && record && (
-              <>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                  <p className="text-white mt-1">{record.description || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
-                  <p className="text-white mt-1">{record.assigned_to_name || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
-                  <p className="text-white mt-1">{record.created_by || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Project</p>
-                  <p className="text-white mt-1">{record.project_name || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
-                  <p className="text-white mt-1">{record.status || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Priority</p>
-                  <p className="text-white mt-1">{record.priority || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Due Date</p>
-                  <p className="text-white mt-1">{record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Location</p>
-                  <p className="text-white mt-1">{record.location || 'N/A'}</p>
-                </div>
-              </>
-            )}
-
-            {recordType === 'client' && record && (
-              <>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
-                  <p className="text-white mt-1">{record.address || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Email</p>
-                  <p className="text-white mt-1">{record.email || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Phone</p>
-                  <p className="text-white mt-1">{record.phone || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Company</p>
-                  <p className="text-white mt-1">{record.company || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Account Manager</p>
-                  <p className="text-white mt-1">{record.account_manager || 'N/A'}</p>
-                </div>
-              </>
-            )}
-
-            {/* Generic details for other record types */}
-            {!['project', 'task', 'client'].includes(recordType) && record?.description && (
+            {record?.description && (
               <div>
-                <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                <p className="text-white mt-1">{record.description}</p>
+                <p className="font-bold mb-2" style={{ color: ELEGANT_GOLD }}>Description</p>
+                <p className="text-white">{record.description}</p>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* File Grid */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {files.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <File className="h-24 w-24 mx-auto mb-4 text-gray-600" />
-              <p className="text-gray-400 text-lg">No files attached yet</p>
-              <p className="text-gray-500 text-sm mt-2">Use the Upload Files button below to add files</p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {files.map((file, index) => (
               <div key={index} className="relative group">
                 {/* File Preview */}
