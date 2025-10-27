@@ -328,7 +328,19 @@ const TasksPage = () => {
               </TableHeader>
               <TableBody>
                 {tasks.map((task) => (
-                  <TableRow key={task.id} data-testid={`task-row-${task.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={task.id} 
+                    data-testid={`task-row-${task.id}`} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      // Trigger the FileGallery functionality
+                      const fileGalleryButton = document.querySelector(`[data-testid="task-row-${task.id}"] button`);
+                      if (fileGalleryButton) {
+                        fileGalleryButton.click();
+                      }
+                    }}
+                  >
                     <TableCell>
                       <div>
                         <div className="font-medium text-white">{task.title}</div>
