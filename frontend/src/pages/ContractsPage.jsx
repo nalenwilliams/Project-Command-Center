@@ -266,7 +266,7 @@ const ContractsPage = () => {
               <Textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} rows={3} />
             </div>
             <div className="flex gap-2 justify-end">
-              <Button type="button" variant="outline" onClick={handleCloseDialog} className="border hover:bg-gray-800" style={{ borderColor: "#C9A961", color: "#C9A961" }}>Cancel</Button>
+              <Button type="button" onClick={handleCloseDialog} className="text-black hover:opacity-90" style={{ backgroundColor: "#C9A961" }}>Cancel</Button>
               <Button type="submit" className="text-black" style={{ backgroundColor: ELEGANT_GOLD }}>{editingContract ? 'Update' : 'Create'}</Button>
             </div>
           </form>
