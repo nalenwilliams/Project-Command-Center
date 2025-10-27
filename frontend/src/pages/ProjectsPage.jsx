@@ -200,10 +200,21 @@ const ProjectsPage = () => {
     return client ? client.name : 'N/A';
   };
 
-  const getUserName = (userId) => {
-    if (!Array.isArray(users) || !userId) return 'Unassigned';
-    const user = users.find((u) => u.id === userId);
-    return user ? user.username : 'Unassigned';
+  const getUserName = (userIds) => {
+    if (!Array.isArray(users)) return 'Unassigned';
+    
+    // Handle both single ID (legacy) and array of IDs
+    if (!userIds) return 'Unassigned';
+    
+    const userIdArray = Array.isArray(userIds) ? userIds : [userIds];
+    if (userIdArray.length === 0) return 'Unassigned';
+    
+    const userNames = userIdArray.map(userId => {
+      const user = users.find((u) => u.id === userId);
+      return user ? user.username : 'Unknown';
+    });
+    
+    return userNames.join(', ');
   };
 
   if (loading) {
