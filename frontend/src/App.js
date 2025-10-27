@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import ClientsPage from './pages/ClientsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import TasksPage from './pages/TasksPage';
+import WorkOrdersPage from './pages/WorkOrdersPage';
 import EmployeesPage from './pages/EmployeesPage';
 import HandbookPoliciesPage from './pages/HandbookPoliciesPage';
 import FleetInspectionPage from './pages/FleetInspectionPage';
