@@ -6,12 +6,61 @@ import FilePreviewModal from './FilePreviewModal';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = [], onDelete, canDelete = false }) => {
+const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = [], onDelete, canDelete = false, onUpdate }) => {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   if (!isOpen) return null;
+
+  const handleFileUpload = async (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length === 0) return;
+
+    setUploading(true);
+    const token = localStorage.getItem('token');
+    
+    try {
+      const uploadPromises = selectedFiles.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch(`${backendUrl}/api/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        return await response.json();
+      });
+      
+      const uploadedFiles = await Promise.all(uploadPromises);
+      const successfulUploads = uploadedFiles.filter(f => f !== null);
+      
+      // Update the record with new files
+      const updatedFiles = [...files, ...successfulUploads];
+      
+      // Save to backend
+      const updateUrl = `${backendUrl}/api/${recordType}s/${record.id}`;
+      await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...record, files: updatedFiles })
+      });
+      
+      toast.success(`${successfulUploads.length} file(s) uploaded successfully`);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload files');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const getFileIcon = (file) => {
     const filename = file.filename?.toLowerCase() || '';
