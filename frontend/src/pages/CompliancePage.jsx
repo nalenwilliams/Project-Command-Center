@@ -127,12 +127,14 @@ const CompliancePage = () => {
       due_date: doc.due_date ? new Date(doc.due_date).toISOString().split('T')[0] : '',
       responsible_party: doc.responsible_party || ''
     });
+    setSelectedFiles(doc.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingDoc(null);
+    setSelectedFiles([]);
     setFormData({ title: '', compliance_type: 'regulatory', requirement: '', status: 'pending', due_date: '', responsible_party: '' });
   };
 
