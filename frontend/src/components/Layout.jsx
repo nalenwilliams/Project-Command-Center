@@ -24,6 +24,7 @@ import {
   Award,
   FileBarChart,
   ClipboardCheck,
+  ClipboardList,
 } from 'lucide-react';
 
 const Layout = () => {
