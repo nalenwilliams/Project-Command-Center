@@ -34,6 +34,8 @@ const ProjectsPage = () => {
     status: 'not_started',
     deadline: '',
     assigned_to: '',
+    address: '',
+    created_by: '',
     files: [],
   });
 
