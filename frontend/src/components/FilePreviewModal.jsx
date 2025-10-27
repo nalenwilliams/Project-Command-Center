@@ -58,7 +58,7 @@ const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0,
   };
 
   const handleNext = () => {
-    if (onNavigate && currentIndex < allFiles.length - 1) {
+    if (onNavigate && currentIndex < files.length - 1) {
       onNavigate(currentIndex + 1);
     }
   };
