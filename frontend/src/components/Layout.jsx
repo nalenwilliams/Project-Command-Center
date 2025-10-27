@@ -44,6 +44,7 @@ const Layout = () => {
     { path: '/clients', label: 'Clients', icon: Users },
     { path: '/projects', label: 'Projects', icon: FolderKanban },
     { path: '/tasks', label: 'Tasks', icon: CheckSquare },
+    { path: '/work-orders', label: 'Work Orders', icon: ClipboardList },
     { path: '/employees', label: 'Employees', icon: TrendingUp },
     { path: '/handbook', label: 'Handbook/Policies', icon: BookOpen },
     { path: '/fleet', label: 'Fleet Inspections', icon: Truck },
