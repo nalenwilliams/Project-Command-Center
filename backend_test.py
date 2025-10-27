@@ -417,6 +417,783 @@ class BackendTester:
             )
             return False
     
+    def test_file_upload_endpoint(self):
+        """Test the /api/upload endpoint for file uploads"""
+        if not self.auth_token:
+            self.log_result("File Upload Endpoint", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}"
+            }
+            
+            # Create a test file
+            test_content = b"This is a test file for file management testing"
+            test_filename = "test_document.txt"
+            
+            files = {
+                'file': (test_filename, io.BytesIO(test_content), 'text/plain')
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/upload",
+                files=files,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ['id', 'filename', 'stored_filename', 'size', 'content_type', 'uploaded_by', 'uploaded_at']
+                
+                if all(field in data for field in required_fields):
+                    self.log_result(
+                        "File Upload Endpoint", 
+                        True, 
+                        f"Successfully uploaded file '{data['filename']}' as '{data['stored_filename']}'"
+                    )
+                    return data
+                else:
+                    missing_fields = [field for field in required_fields if field not in data]
+                    self.log_result(
+                        "File Upload Endpoint", 
+                        False, 
+                        f"Upload response missing required fields: {missing_fields}",
+                        f"Response: {data}"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "File Upload Endpoint", 
+                    False, 
+                    f"File upload failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "File Upload Endpoint", 
+                False, 
+                f"File upload request failed: {str(e)}"
+            )
+            return False
+
+    def test_file_serving_endpoint(self, uploaded_file):
+        """Test the /api/uploads/{filename} endpoint for file serving"""
+        if not uploaded_file:
+            self.log_result("File Serving Endpoint", False, "No uploaded file available")
+            return False
+            
+        try:
+            stored_filename = uploaded_file['stored_filename']
+            
+            response = self.session.get(
+                f"{self.base_url}/uploads/{stored_filename}"
+            )
+            
+            if response.status_code == 200:
+                # Check if we got file content back
+                if len(response.content) > 0:
+                    self.log_result(
+                        "File Serving Endpoint", 
+                        True, 
+                        f"Successfully retrieved file '{stored_filename}' ({len(response.content)} bytes)"
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "File Serving Endpoint", 
+                        False, 
+                        f"File retrieved but content is empty"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "File Serving Endpoint", 
+                    False, 
+                    f"File serving failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "File Serving Endpoint", 
+                False, 
+                f"File serving request failed: {str(e)}"
+            )
+            return False
+
+    def test_project_file_operations(self, uploaded_file):
+        """Test file operations with projects"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Project File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create a project with file attachment
+            project_data = {
+                "name": "Test Project with Files",
+                "description": "Project created for file management testing",
+                "status": "in_progress",
+                "files": [uploaded_file]
+            }
+            
+            # Create project
+            response = self.session.post(
+                f"{self.base_url}/projects",
+                json=project_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_project = response.json()
+                project_id = created_project['id']
+                
+                # Verify file is associated
+                if created_project.get('files') and len(created_project['files']) > 0:
+                    # Test updating project with additional file
+                    update_data = {
+                        "description": "Updated project description",
+                        "files": created_project['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/projects/{project_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_project = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_project.get('files') and len(updated_project['files']) > 0:
+                            self.log_result(
+                                "Project File Operations", 
+                                True, 
+                                f"Successfully created project with files and preserved files during update"
+                            )
+                            return created_project
+                        else:
+                            self.log_result(
+                                "Project File Operations", 
+                                False, 
+                                "Files were lost during project update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Project File Operations", 
+                            False, 
+                            f"Project update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Project File Operations", 
+                        False, 
+                        "Project created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Project File Operations", 
+                    False, 
+                    f"Project creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Project File Operations", 
+                False, 
+                f"Project file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_task_file_operations(self, uploaded_file):
+        """Test file operations with tasks"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Task File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create a task with file attachment
+            task_data = {
+                "title": "Test Task with Files",
+                "description": "Task created for file management testing",
+                "status": "todo",
+                "priority": "high",
+                "files": [uploaded_file]
+            }
+            
+            # Create task
+            response = self.session.post(
+                f"{self.base_url}/tasks",
+                json=task_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_task = response.json()
+                task_id = created_task['id']
+                
+                # Verify file is associated
+                if created_task.get('files') and len(created_task['files']) > 0:
+                    # Test updating task with preserved files
+                    update_data = {
+                        "status": "in_progress",
+                        "files": created_task['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/tasks/{task_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_task = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_task.get('files') and len(updated_task['files']) > 0:
+                            self.log_result(
+                                "Task File Operations", 
+                                True, 
+                                f"Successfully created task with files and preserved files during update"
+                            )
+                            return created_task
+                        else:
+                            self.log_result(
+                                "Task File Operations", 
+                                False, 
+                                "Files were lost during task update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Task File Operations", 
+                            False, 
+                            f"Task update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Task File Operations", 
+                        False, 
+                        "Task created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Task File Operations", 
+                    False, 
+                    f"Task creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Task File Operations", 
+                False, 
+                f"Task file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_client_file_operations(self, uploaded_file):
+        """Test file operations with clients"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Client File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create a client with file attachment
+            client_data = {
+                "name": "Test Client with Files",
+                "email": "testclient@example.com",
+                "company": "Test Company LLC",
+                "notes": "Client created for file management testing",
+                "files": [uploaded_file]
+            }
+            
+            # Create client
+            response = self.session.post(
+                f"{self.base_url}/clients",
+                json=client_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_client = response.json()
+                client_id = created_client['id']
+                
+                # Verify file is associated
+                if created_client.get('files') and len(created_client['files']) > 0:
+                    # Test updating client with preserved files
+                    update_data = {
+                        "notes": "Updated client notes",
+                        "files": created_client['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/clients/{client_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_client = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_client.get('files') and len(updated_client['files']) > 0:
+                            self.log_result(
+                                "Client File Operations", 
+                                True, 
+                                f"Successfully created client with files and preserved files during update"
+                            )
+                            return created_client
+                        else:
+                            self.log_result(
+                                "Client File Operations", 
+                                False, 
+                                "Files were lost during client update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Client File Operations", 
+                            False, 
+                            f"Client update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Client File Operations", 
+                        False, 
+                        "Client created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Client File Operations", 
+                    False, 
+                    f"Client creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Client File Operations", 
+                False, 
+                f"Client file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_invoice_file_operations(self, uploaded_file):
+        """Test file operations with invoices"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Invoice File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create an invoice with file attachment
+            invoice_data = {
+                "invoice_number": "INV-TEST-001",
+                "amount": 1500.00,
+                "status": "draft",
+                "notes": "Invoice created for file management testing",
+                "files": [uploaded_file]
+            }
+            
+            # Create invoice
+            response = self.session.post(
+                f"{self.base_url}/invoices",
+                json=invoice_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_invoice = response.json()
+                invoice_id = created_invoice['id']
+                
+                # Verify file is associated
+                if created_invoice.get('files') and len(created_invoice['files']) > 0:
+                    # Test updating invoice with preserved files
+                    update_data = {
+                        "status": "sent",
+                        "files": created_invoice['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/invoices/{invoice_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_invoice = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_invoice.get('files') and len(updated_invoice['files']) > 0:
+                            self.log_result(
+                                "Invoice File Operations", 
+                                True, 
+                                f"Successfully created invoice with files and preserved files during update"
+                            )
+                            return created_invoice
+                        else:
+                            self.log_result(
+                                "Invoice File Operations", 
+                                False, 
+                                "Files were lost during invoice update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Invoice File Operations", 
+                            False, 
+                            f"Invoice update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Invoice File Operations", 
+                        False, 
+                        "Invoice created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Invoice File Operations", 
+                    False, 
+                    f"Invoice creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Invoice File Operations", 
+                False, 
+                f"Invoice file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_expense_file_operations(self, uploaded_file):
+        """Test file operations with expenses"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Expense File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create an expense with file attachment
+            expense_data = {
+                "description": "Test Expense with Receipt",
+                "amount": 250.00,
+                "category": "materials",
+                "expense_date": datetime.now(timezone.utc).isoformat(),
+                "receipt_number": "RCP-001",
+                "notes": "Expense created for file management testing",
+                "files": [uploaded_file]
+            }
+            
+            # Create expense
+            response = self.session.post(
+                f"{self.base_url}/expenses",
+                json=expense_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_expense = response.json()
+                expense_id = created_expense['id']
+                
+                # Verify file is associated
+                if created_expense.get('files') and len(created_expense['files']) > 0:
+                    # Test updating expense with preserved files
+                    update_data = {
+                        "category": "equipment",
+                        "files": created_expense['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/expenses/{expense_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_expense = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_expense.get('files') and len(updated_expense['files']) > 0:
+                            self.log_result(
+                                "Expense File Operations", 
+                                True, 
+                                f"Successfully created expense with files and preserved files during update"
+                            )
+                            return created_expense
+                        else:
+                            self.log_result(
+                                "Expense File Operations", 
+                                False, 
+                                "Files were lost during expense update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Expense File Operations", 
+                            False, 
+                            f"Expense update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Expense File Operations", 
+                        False, 
+                        "Expense created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Expense File Operations", 
+                    False, 
+                    f"Expense creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Expense File Operations", 
+                False, 
+                f"Expense file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_contract_file_operations(self, uploaded_file):
+        """Test file operations with contracts (admin only)"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Contract File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create a contract with file attachment
+            contract_data = {
+                "title": "Test Contract with Documents",
+                "contract_number": "CTR-TEST-001",
+                "value": 50000.00,
+                "status": "active",
+                "notes": "Contract created for file management testing",
+                "files": [uploaded_file]
+            }
+            
+            # Create contract
+            response = self.session.post(
+                f"{self.base_url}/contracts",
+                json=contract_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_contract = response.json()
+                contract_id = created_contract['id']
+                
+                # Verify file is associated
+                if created_contract.get('files') and len(created_contract['files']) > 0:
+                    # Test updating contract with preserved files
+                    update_data = {
+                        "status": "completed",
+                        "files": created_contract['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/contracts/{contract_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_contract = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_contract.get('files') and len(updated_contract['files']) > 0:
+                            self.log_result(
+                                "Contract File Operations", 
+                                True, 
+                                f"Successfully created contract with files and preserved files during update"
+                            )
+                            return created_contract
+                        else:
+                            self.log_result(
+                                "Contract File Operations", 
+                                False, 
+                                "Files were lost during contract update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Contract File Operations", 
+                            False, 
+                            f"Contract update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Contract File Operations", 
+                        False, 
+                        "Contract created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Contract File Operations", 
+                    False, 
+                    f"Contract creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Contract File Operations", 
+                False, 
+                f"Contract file operations failed: {str(e)}"
+            )
+            return False
+
+    def test_equipment_file_operations(self, uploaded_file):
+        """Test file operations with equipment"""
+        if not self.auth_token or not uploaded_file:
+            self.log_result("Equipment File Operations", False, "No auth token or uploaded file available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create equipment with file attachment
+            equipment_data = {
+                "name": "Test Equipment with Manual",
+                "equipment_type": "machinery",
+                "serial_number": "EQ-TEST-001",
+                "location": "Warehouse A",
+                "status": "available",
+                "notes": "Equipment created for file management testing",
+                "files": [uploaded_file]
+            }
+            
+            # Create equipment
+            response = self.session.post(
+                f"{self.base_url}/equipment",
+                json=equipment_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                created_equipment = response.json()
+                equipment_id = created_equipment['id']
+                
+                # Verify file is associated
+                if created_equipment.get('files') and len(created_equipment['files']) > 0:
+                    # Test updating equipment with preserved files
+                    update_data = {
+                        "status": "in_use",
+                        "files": created_equipment['files']  # Preserve existing files
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/equipment/{equipment_id}",
+                        json=update_data,
+                        headers=headers
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_equipment = update_response.json()
+                        
+                        # Verify files are preserved after update
+                        if updated_equipment.get('files') and len(updated_equipment['files']) > 0:
+                            self.log_result(
+                                "Equipment File Operations", 
+                                True, 
+                                f"Successfully created equipment with files and preserved files during update"
+                            )
+                            return created_equipment
+                        else:
+                            self.log_result(
+                                "Equipment File Operations", 
+                                False, 
+                                "Files were lost during equipment update"
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Equipment File Operations", 
+                            False, 
+                            f"Equipment update failed with status {update_response.status_code}"
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Equipment File Operations", 
+                        False, 
+                        "Equipment created but files not properly associated"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Equipment File Operations", 
+                    False, 
+                    f"Equipment creation failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Equipment File Operations", 
+                False, 
+                f"Equipment file operations failed: {str(e)}"
+            )
+            return False
+    
     def run_all_tests(self):
         """Run all file management tests"""
         print(f"🚀 Starting File Management Tests")
