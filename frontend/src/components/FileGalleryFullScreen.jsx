@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Eye, Download, Link as LinkIcon, Trash2, FileText, File, ArrowLeft } from 'lucide-react';
+import { X, Eye, Download, Link as LinkIcon, Trash2, FileText, File, ArrowLeft, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import FilePreviewModal from './FilePreviewModal';
 
@@ -11,6 +11,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
   const [previewIndex, setPreviewIndex] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   if (!isOpen) return null;
