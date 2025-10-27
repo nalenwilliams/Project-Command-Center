@@ -399,6 +399,32 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
         )}
       </div>
 
+      {/* Upload Section at Bottom */}
+      <div className="border-t p-4 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
+        <div className="max-w-7xl mx-auto">
+          <Button 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="w-full text-black hover:opacity-90 py-3 text-lg font-semibold"
+            style={{ backgroundColor: ELEGANT_GOLD }}
+          >
+            <Upload className="h-5 w-5 mr-3" />
+            {uploading ? 'Uploading Files...' : 'Upload Files'}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.md"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          <p className="text-xs text-gray-400 text-center mt-2">
+            All file types supported: Images, PDFs, Documents, Notes, etc.
+          </p>
+        </div>
+      </div>
+
       {/* File Preview Modal */}
       <FilePreviewModal
         isOpen={isPreviewOpen}
