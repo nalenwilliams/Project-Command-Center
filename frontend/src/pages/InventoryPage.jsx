@@ -80,7 +80,7 @@ const InventoryPage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const data = { ...formData, quantity: parseInt(formData.quantity) };
+      const data = { ...formData, quantity: parseInt(formData.quantity), files: selectedFiles };
       const url = editingItem ? `${backendUrl}/api/inventory/${editingItem.id}` : `${backendUrl}/api/inventory`;
       
       const response = await fetch(url, {
