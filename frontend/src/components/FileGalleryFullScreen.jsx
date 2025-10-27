@@ -163,51 +163,36 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
 
   return (
     <div className="fixed inset-0 bg-black z-50 overflow-hidden flex flex-col">
-      {/* Enhanced Header with Full Details */}
-      <div className="border-b p-6" style={{ borderColor: ELEGANT_GOLD, backgroundColor: '#1a1a1a' }}>
+      {/* Header without grey background */}
+      <div className="border-b p-4 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 flex-1">
               <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back
               </Button>
               <div className="flex-1">
-                <h1 className="text-3xl font-bold" style={{ color: ELEGANT_GOLD }}>
+                <h1 className="text-2xl font-bold" style={{ color: ELEGANT_GOLD }}>
                   {getRecordTitle()}
                 </h1>
                 <p className="text-sm text-gray-400 mt-1">{getRecordDetails()}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button 
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="text-black hover:opacity-90"
-                style={{ backgroundColor: ELEGANT_GOLD }}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {uploading ? 'Uploading...' : 'Upload Files'}
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.md"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
               <span className="text-gray-400 text-sm">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
               <img 
                 src="/williams-logo.png" 
                 alt="Williams Diversified LLC" 
-                className="h-12 w-auto"
+                className="h-10 w-auto"
               />
               <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
                 <X className="h-5 w-5" />
               </Button>
             </div>
           </div>
+        </div>
+      </div>
 
           {/* Detailed Information Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t" style={{ borderColor: '#374151' }}>
