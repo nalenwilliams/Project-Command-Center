@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0, onNavigate }) => {
+const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0, onNavigate, record = null, recordType = null }) => {
   const [zoom, setZoom] = useState(100);
   const [loading, setLoading] = useState(true);
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -23,6 +23,136 @@ const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0,
   const fileType = file.content_type?.toLowerCase() || '';
   const filename = file.filename || '';
   const fileUrl = `${backendUrl}/api/uploads/${file.stored_filename}`;
+
+  const getRecordInfo = () => {
+    if (!record || !recordType) return null;
+
+    const commonFields = {
+      name: '',
+      details: {},
+      assignedTo: '',
+      address: '',
+      allFiles: files
+    };
+
+    switch(recordType) {
+      case 'project':
+        return {
+          name: record.name || 'Project',
+          details: {
+            'Status': record.status || 'N/A',
+            'Client': record.client_name || 'N/A',
+            'Budget': record.budget ? `$${record.budget}` : 'N/A',
+            'Start Date': record.start_date ? new Date(record.start_date).toLocaleDateString() : 'N/A',
+            'End Date': record.end_date ? new Date(record.end_date).toLocaleDateString() : 'N/A'
+          },
+          assignedTo: record.manager || 'Not assigned',
+          address: record.address || record.location || 'No address',
+          allFiles: files
+        };
+      case 'task':
+        return {
+          name: record.title || 'Task',
+          details: {
+            'Status': record.status || 'N/A',
+            'Priority': record.priority || 'N/A',
+            'Project': record.project_name || 'N/A',
+            'Due Date': record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'
+          },
+          assignedTo: record.assigned_to_name || 'Not assigned',
+          address: record.location || 'N/A',
+          allFiles: files
+        };
+      case 'client':
+        return {
+          name: record.name || 'Client',
+          details: {
+            'Email': record.email || 'N/A',
+            'Phone': record.phone || 'N/A',
+            'Company': record.company || 'N/A'
+          },
+          assignedTo: record.account_manager || 'N/A',
+          address: record.address || 'No address',
+          allFiles: files
+        };
+      case 'invoice':
+        return {
+          name: `Invoice #${record.invoice_number || ''}`,
+          details: {
+            'Amount': record.amount ? `$${record.amount}` : 'N/A',
+            'Status': record.status || 'N/A',
+            'Client': record.client_name || 'N/A',
+            'Due Date': record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'
+          },
+          assignedTo: record.created_by_name || 'N/A',
+          address: 'N/A',
+          allFiles: files
+        };
+      case 'expense':
+        return {
+          name: record.description || 'Expense',
+          details: {
+            'Amount': record.amount ? `$${record.amount}` : 'N/A',
+            'Category': record.category || 'N/A',
+            'Date': record.expense_date ? new Date(record.expense_date).toLocaleDateString() : 'N/A',
+            'Project': record.project_name || 'N/A'
+          },
+          assignedTo: record.created_by_name || 'N/A',
+          address: 'N/A',
+          allFiles: files
+        };
+      case 'contract':
+        return {
+          name: record.title || 'Contract',
+          details: {
+            'Status': record.status || 'N/A',
+            'Client': record.client_name || 'N/A',
+            'Start Date': record.start_date ? new Date(record.start_date).toLocaleDateString() : 'N/A',
+            'End Date': record.end_date ? new Date(record.end_date).toLocaleDateString() : 'N/A',
+            'Value': record.contract_value ? `$${record.contract_value}` : 'N/A'
+          },
+          assignedTo: record.assigned_to || 'N/A',
+          address: 'N/A',
+          allFiles: files
+        };
+      case 'equipment':
+        return {
+          name: record.name || 'Equipment',
+          details: {
+            'Status': record.status || 'N/A',
+            'Location': record.location || 'N/A',
+            'Serial Number': record.serial_number || 'N/A',
+            'Purchase Date': record.purchase_date ? new Date(record.purchase_date).toLocaleDateString() : 'N/A'
+          },
+          assignedTo: record.assigned_to || 'Not assigned',
+          address: record.location || 'N/A',
+          allFiles: files
+        };
+      case 'safety-report':
+        return {
+          name: record.title || 'Safety Report',
+          details: {
+            'Severity': record.severity || 'N/A',
+            'Status': record.status || 'N/A',
+            'Location': record.location || 'N/A',
+            'Date': record.incident_date ? new Date(record.incident_date).toLocaleDateString() : 'N/A'
+          },
+          assignedTo: record.reported_by || 'N/A',
+          address: record.location || 'N/A',
+          allFiles: files
+        };
+      default:
+        return {
+          name: 'Record',
+          details: {},
+          assignedTo: 'N/A',
+          address: 'N/A',
+          allFiles: files
+        };
+    }
+  };
+
+  const recordInfo = getRecordInfo();
 
   const isImage = fileType.includes('image') || /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(filename);
   const isPDF = fileType.includes('pdf') || filename.endsWith('.pdf');
