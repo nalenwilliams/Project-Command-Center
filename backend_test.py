@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Project Command Center
-Tests login functionality, user management, and task assignment notifications
+Tests file management functionality across all record types
 """
 
 import requests
 import json
 import os
+import io
 from datetime import datetime, timezone
 import sys
+import tempfile
 
 # Get backend URL from frontend .env file
 BACKEND_URL = "https://taskflow-hub-131.preview.emergentagent.com/api"
