@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const FilePreviewModal = ({ isOpen, onClose, file, allFiles = [], currentIndex = 0, onNavigate }) => {
+const FilePreviewModal = ({ isOpen, onClose, file, files = [], currentIndex = 0, onNavigate }) => {
   const [zoom, setZoom] = useState(100);
   const [loading, setLoading] = useState(true);
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     if (isOpen && file) {
@@ -21,7 +22,7 @@ const FilePreviewModal = ({ isOpen, onClose, file, allFiles = [], currentIndex =
 
   const fileType = file.content_type?.toLowerCase() || '';
   const filename = file.filename || '';
-  const fileUrl = file.url || '';
+  const fileUrl = `${backendUrl}/api/uploads/${file.stored_filename}`;
 
   const isImage = fileType.includes('image') || /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(filename);
   const isPDF = fileType.includes('pdf') || filename.endsWith('.pdf');
