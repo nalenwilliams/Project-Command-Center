@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2, Calendar, Upload, FileImage, X } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
@@ -21,6 +22,7 @@ const ProjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filesDialogOpen, setFilesDialogOpen] = useState(false);
+  const [filesFullScreenOpen, setFilesFullScreenOpen] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [editingProject, setEditingProject] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
