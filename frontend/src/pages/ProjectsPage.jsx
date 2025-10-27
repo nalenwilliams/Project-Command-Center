@@ -412,7 +412,16 @@ const ProjectsPage = () => {
               </TableHeader>
               <TableBody>
                 {projects.map((project) => (
-                  <TableRow key={project.id} data-testid={`project-row-${project.id}`} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={project.id} 
+                    data-testid={`project-row-${project.id}`} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setCurrentProject(project);
+                      setFilesFullScreenOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{project.name}</TableCell>
                     <TableCell className="text-gray-300">{getClientName(project.client_id)}</TableCell>
                     <TableCell>{getStatusBadge(project.status)}</TableCell>
@@ -428,19 +437,19 @@ const ProjectsPage = () => {
                     </TableCell>
                     <TableCell className="text-gray-300">{getUserName(project.assigned_to)}</TableCell>
                     <TableCell className="text-right">
-                      <div className="flex gap-2 justify-end">
+                      <div className="flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => {
                             setCurrentProject(project);
-                            setFilesDialogOpen(true);
+                            setFilesFullScreenOpen(true);
                           }}
                           className="border hover:bg-gray-800"
                           style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
                         >
                           <FileImage className="h-4 w-4 mr-1" />
-                          Files ({project.files?.length || 0})
+                          {project.name} Files ({project.files?.length || 0})
                         </Button>
                         {canEdit ? (
                           <>
