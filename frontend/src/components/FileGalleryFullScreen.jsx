@@ -172,8 +172,30 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 <p className="text-sm text-gray-400 mt-1">{getRecordDetails()}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="text-black hover:opacity-90"
+                style={{ backgroundColor: ELEGANT_GOLD }}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {uploading ? 'Uploading...' : 'Upload Files'}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.md"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
               <span className="text-gray-400 text-sm">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
+              <img 
+                src="/williams-logo.png" 
+                alt="Williams Diversified LLC" 
+                className="h-12 w-auto"
+              />
               <Button variant="ghost" onClick={onClose} className="text-white hover:bg-gray-800">
                 <X className="h-5 w-5" />
               </Button>
