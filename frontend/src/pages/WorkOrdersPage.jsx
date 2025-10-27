@@ -303,25 +303,12 @@ const WorkOrdersPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assigned To</Label>
-                      <Select 
-                        value={formData.assigned_to.length > 0 ? formData.assigned_to.join(',') : ''} 
-                        onValueChange={(value) => {
-                          const users = value ? value.split(',') : [];
-                          setFormData({ ...formData, assigned_to: users });
-                        }}
-                      >
-                        <SelectTrigger 
-                          className="bg-black border text-white" 
-                          style={{ borderColor: ELEGANT_GOLD }}
-                        >
-                          <SelectValue placeholder="Select users" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                          {users.map((user) => (
-                            <SelectItem key={user.id} value={user.id}>{user.username}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <MultiSelectUsers
+                        users={users}
+                        selectedUsers={formData.assigned_to}
+                        onSelectionChange={(selectedUserIds) => setFormData({ ...formData, assigned_to: selectedUserIds })}
+                        placeholder="Select users..."
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="status" style={{ color: ELEGANT_GOLD }}>Status</Label>
