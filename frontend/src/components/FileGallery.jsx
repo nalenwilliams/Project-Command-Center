@@ -48,7 +48,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
   };
 
   const handleCopyLink = (file) => {
-    navigator.clipboard.writeText(file.url);
+    navigator.clipboard.writeText(`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`);
     toast.success('File link copied!');
   };
 
