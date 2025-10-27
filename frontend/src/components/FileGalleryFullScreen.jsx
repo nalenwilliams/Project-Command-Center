@@ -117,6 +117,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
     switch(recordType) {
       case 'project': return record.name || 'Project';
       case 'task': return record.title || record.name || 'Task';
+      case 'work-order': return record.title || record.name || 'Work Order';
       case 'client': return record.name || 'Client';
       case 'invoice': return record.invoice_number ? `Invoice #${record.invoice_number}` : (record.description || 'Invoice');
       case 'expense': return record.description || record.name || 'Expense';
