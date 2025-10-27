@@ -261,7 +261,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
             </div>
           </div>
 
-          {/* Files Grid UNDER the Details */}
+          {/* Files Grid UNDER the Details - Separated by Type */}
           <div>
             {files.length === 0 ? (
               <div className="flex items-center justify-center h-64">
@@ -272,7 +272,180 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="space-y-8">
+                {/* Photos Section */}
+                {files.filter(file => file.content_type?.includes('image')).length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4" style={{ color: ELEGANT_GOLD }}>Photos</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {files.filter(file => file.content_type?.includes('image')).map((file, index) => (
+                        <div key={index} className="relative group">
+                          {/* Photo Preview */}
+                          <div 
+                            className="relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-opacity-100 transition-all"
+                            style={{ borderColor: 'transparent' }}
+                            onMouseEnter={(e) => e.currentTarget.style.borderColor = ELEGANT_GOLD}
+                            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                            onClick={() => handlePreview(file, files.indexOf(file))}
+                          >
+                            <div className="relative w-full h-48">
+                              <img
+                                src={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
+                                alt={file.filename}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center">
+                                <Eye className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition" />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Photo Info */}
+                          <div className="mt-2">
+                            <p className="text-sm text-white truncate font-medium" title={file.filename}>
+                              {file.filename}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {(file.size / 1024).toFixed(2)} KB
+                            </p>
+                            {file.uploaded_by && (
+                              <p className="text-xs text-gray-500">
+                                By: {file.uploaded_by}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Quick Actions */}
+                          <div className="flex gap-1 mt-2">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handlePreview(file, files.indexOf(file))}
+                              className="flex-1 text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              View
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handleDownload(file)}
+                              className="flex-1 text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <Download className="h-3 w-3 mr-1" />
+                              Download
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handleCopyLink(file)}
+                              className="text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <LinkIcon className="h-3 w-3" />
+                            </Button>
+                            {canDelete && (
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={() => onDelete(file.id)}
+                                className="text-xs h-8 text-red-500 hover:bg-red-950"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Files Section */}
+                {files.filter(file => !file.content_type?.includes('image')).length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4" style={{ color: ELEGANT_GOLD }}>Files</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {files.filter(file => !file.content_type?.includes('image')).map((file, index) => (
+                        <div key={index} className="relative group">
+                          {/* File Preview */}
+                          <div 
+                            className="relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-opacity-100 transition-all"
+                            style={{ borderColor: 'transparent' }}
+                            onMouseEnter={(e) => e.currentTarget.style.borderColor = ELEGANT_GOLD}
+                            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                            onClick={() => handlePreview(file, files.indexOf(file))}
+                          >
+                            <div className="w-full h-48 flex items-center justify-center">
+                              {getFileIcon(file)}
+                            </div>
+                          </div>
+
+                          {/* File Info */}
+                          <div className="mt-2">
+                            <p className="text-sm text-white truncate font-medium" title={file.filename}>
+                              {file.filename}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {(file.size / 1024).toFixed(2)} KB
+                            </p>
+                            {file.uploaded_by && (
+                              <p className="text-xs text-gray-500">
+                                By: {file.uploaded_by}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Quick Actions */}
+                          <div className="flex gap-1 mt-2">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handlePreview(file, files.indexOf(file))}
+                              className="flex-1 text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              View
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handleDownload(file)}
+                              className="flex-1 text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <Download className="h-3 w-3 mr-1" />
+                              Download
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => handleCopyLink(file)}
+                              className="text-xs h-8 hover:bg-gray-800"
+                              style={{ color: ELEGANT_GOLD }}
+                            >
+                              <LinkIcon className="h-3 w-3" />
+                            </Button>
+                            {canDelete && (
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={() => onDelete(file.id)}
+                                className="text-xs h-8 text-red-500 hover:bg-red-950"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
                 {files.map((file, index) => (
                   <div key={index} className="relative group">
                     {/* File Preview */}
