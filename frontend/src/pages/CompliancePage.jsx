@@ -27,6 +27,7 @@ const CompliancePage = () => {
     due_date: '',
     responsible_party: ''
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const canDelete = user.role === 'admin' || user.role === 'manager';
