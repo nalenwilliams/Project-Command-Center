@@ -13,6 +13,9 @@ const ELEGANT_GOLD = '#C9A961';
 const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(item);
+  const [previewFile, setPreviewFile] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const getFileIcon = (file) => {
     const filename = file.filename?.toLowerCase() || '';
