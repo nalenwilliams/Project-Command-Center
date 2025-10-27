@@ -627,6 +627,27 @@ const ProjectsPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Full Screen File Gallery */}
+      <FileGalleryFullScreen
+        isOpen={filesFullScreenOpen}
+        onClose={() => {
+          setFilesFullScreenOpen(false);
+          fetchData();
+        }}
+        record={currentProject}
+        recordType="project"
+        files={currentProject?.files || []}
+        onDelete={async (fileId) => {
+          if (!currentProject) return;
+          const updatedFiles = currentProject.files.filter(f => f.id !== fileId);
+          await api.put(`/projects/${currentProject.id}`, { files: updatedFiles });
+          setCurrentProject({ ...currentProject, files: updatedFiles });
+          fetchData();
+        }}
+        canDelete={canEdit}
+        onUpdate={fetchData}
+      />
     </div>
   );
 };
