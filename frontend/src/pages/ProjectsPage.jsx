@@ -12,6 +12,7 @@ import { Plus, Pencil, Trash2, Calendar, Upload, FileImage, X } from 'lucide-rea
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
+import MultiSelectUsers from '@/components/MultiSelectUsers';
 
 const ELEGANT_GOLD = '#C9A961';
 
