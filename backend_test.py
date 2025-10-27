@@ -418,8 +418,8 @@ class BackendTester:
             return False
     
     def run_all_tests(self):
-        """Run all backend tests"""
-        print(f"🚀 Starting Backend API Tests")
+        """Run all file management tests"""
+        print(f"🚀 Starting File Management Tests")
         print(f"Backend URL: {self.base_url}")
         print("=" * 60)
         
@@ -430,21 +430,24 @@ class BackendTester:
             print("\n❌ Cannot proceed with other tests - admin login failed")
             return self.generate_summary()
         
-        # Test 2: AI Chat Functionality (Priority test as requested)
-        self.test_ai_chat_functionality()
+        # Test 2: File Upload Endpoint
+        uploaded_file = self.test_file_upload_endpoint()
         
-        # Test 3: Get Users List
-        users_list = self.test_get_users_list()
+        if not uploaded_file:
+            print("\n❌ Cannot proceed with file operations tests - file upload failed")
+            return self.generate_summary()
         
-        # Test 4: Check Notification System
-        self.test_notification_system_status()
+        # Test 3: File Serving Endpoint
+        self.test_file_serving_endpoint(uploaded_file)
         
-        # Test 5: Create and Assign Task
-        created_task = self.test_create_and_assign_task(users_list)
-        
-        # Test 6: Verify Task Creation
-        if created_task:
-            self.test_verify_task_creation(created_task)
+        # Test 4-11: File Operations for All Record Types
+        self.test_project_file_operations(uploaded_file)
+        self.test_task_file_operations(uploaded_file)
+        self.test_client_file_operations(uploaded_file)
+        self.test_invoice_file_operations(uploaded_file)
+        self.test_expense_file_operations(uploaded_file)
+        self.test_contract_file_operations(uploaded_file)
+        self.test_equipment_file_operations(uploaded_file)
         
         return self.generate_summary()
     
