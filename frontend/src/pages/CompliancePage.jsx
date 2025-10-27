@@ -81,12 +81,13 @@ const CompliancePage = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      const data = { ...formData, files: selectedFiles };
       const url = editingDoc ? `${backendUrl}/api/compliance/${editingDoc.id}` : `${backendUrl}/api/compliance`;
       
       const response = await fetch(url, {
         method: editingDoc ? 'PUT' : 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
