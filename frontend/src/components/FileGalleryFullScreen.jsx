@@ -238,6 +238,8 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
         files={files}
         currentIndex={previewIndex}
         onNavigate={handleNavigate}
+        record={record}
+        recordType={recordType}
       />
     </div>
   );
