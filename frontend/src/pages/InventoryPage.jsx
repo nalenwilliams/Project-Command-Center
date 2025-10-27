@@ -126,12 +126,14 @@ const InventoryPage = () => {
       location: item.location || '',
       description: item.description || ''
     });
+    setSelectedFiles(item.files || []);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingItem(null);
+    setSelectedFiles([]);
     setFormData({ item_name: '', category: '', quantity: '', unit: '', location: '', description: '' });
   };
 
