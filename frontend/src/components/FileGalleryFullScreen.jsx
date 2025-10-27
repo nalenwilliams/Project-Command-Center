@@ -194,109 +194,6 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
         </div>
       </div>
 
-          {/* Detailed Information Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t" style={{ borderColor: '#374151' }}>
-            {recordType === 'project' && record && (
-              <>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Status</p>
-                  <p className="text-white font-medium">{record.status || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Client</p>
-                  <p className="text-white font-medium">{record.client_name || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Start Date</p>
-                  <p className="text-white font-medium">{record.start_date ? new Date(record.start_date).toLocaleDateString() : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">End Date</p>
-                  <p className="text-white font-medium">{record.end_date ? new Date(record.end_date).toLocaleDateString() : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Manager</p>
-                  <p className="text-white font-medium">{record.manager || 'N/A'}</p>
-                </div>
-                <div className="col-span-3">
-                  <p className="text-xs text-gray-500 mb-1">Address</p>
-                  <p className="text-white font-medium">{record.address || record.location || 'N/A'}</p>
-                </div>
-              </>
-            )}
-            
-            {recordType === 'task' && record && (
-              <>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Status</p>
-                  <p className="text-white font-medium">{record.status || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Priority</p>
-                  <p className="text-white font-medium">{record.priority || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Assigned To</p>
-                  <p className="text-white font-medium">{record.assigned_to_name || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Due Date</p>
-                  <p className="text-white font-medium">{record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-xs text-gray-500 mb-1">Project</p>
-                  <p className="text-white font-medium">{record.project_name || 'N/A'}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-xs text-gray-500 mb-1">Location</p>
-                  <p className="text-white font-medium">{record.location || 'N/A'}</p>
-                </div>
-              </>
-            )}
-
-            {recordType === 'client' && record && (
-              <>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Email</p>
-                  <p className="text-white font-medium">{record.email || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Phone</p>
-                  <p className="text-white font-medium">{record.phone || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Company</p>
-                  <p className="text-white font-medium">{record.company || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Account Manager</p>
-                  <p className="text-white font-medium">{record.account_manager || 'N/A'}</p>
-                </div>
-                <div className="col-span-4">
-                  <p className="text-xs text-gray-500 mb-1">Address</p>
-                  <p className="text-white font-medium">{record.address || 'N/A'}</p>
-                </div>
-              </>
-            )}
-
-            {/* Add similar blocks for other record types */}
-            {!['project', 'task', 'client'].includes(recordType) && (
-              <div className="col-span-4">
-                <p className="text-gray-400 text-sm">{getRecordDetails()}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Description if available */}
-          {record?.description && (
-            <div className="mt-4 pt-4 border-t" style={{ borderColor: '#374151' }}>
-              <p className="text-xs text-gray-500 mb-2">Description</p>
-              <p className="text-white text-sm">{record.description}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* File Grid */}
       <div className="flex-1 overflow-y-auto p-6">
         {files.length === 0 ? (
@@ -304,6 +201,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
             <div className="text-center">
               <File className="h-24 w-24 mx-auto mb-4 text-gray-600" />
               <p className="text-gray-400 text-lg">No files attached yet</p>
+              <p className="text-gray-500 text-sm mt-2">Use the Upload Files button below to add files</p>
             </div>
           </div>
         ) : (
