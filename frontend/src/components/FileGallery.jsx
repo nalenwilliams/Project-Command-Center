@@ -169,51 +169,67 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {currentItem.files && currentItem.files.length > 0 ? (
                 currentItem.files.map((file, index) => (
-                  <div key={index} className="border rounded p-3 bg-black" style={{ borderColor: ELEGANT_GOLD }}>
-                    {file.content_type?.startsWith('image/') ? (
-                      <a
-                        href={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                  <div key={index} className="relative group">
+                    {file.content_type?.includes('image') ? (
+                      <div className="relative">
                         <img
                           src={`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`}
                           alt={file.filename}
-                          className="w-full h-40 object-cover rounded mb-2 cursor-pointer hover:opacity-80"
+                          className="w-full h-40 object-cover rounded cursor-pointer hover:opacity-80 transition"
+                          onClick={() => handlePreview(file, index)}
                         />
-                      </a>
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <Button size="sm" variant="ghost" onClick={() => handlePreview(file, index)} className="text-white">
+                            <Eye className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </div>
                     ) : (
-                      <div className="w-full h-40 flex items-center justify-center bg-gray-800 rounded mb-2">
+                      <div className="w-full h-40 flex items-center justify-center bg-gray-800 rounded cursor-pointer hover:bg-gray-700 transition" onClick={() => handlePreview(file, index)}>
                         {getFileIcon(file)}
                       </div>
                     )}
-                    <p className="text-sm font-medium truncate" style={{ color: ELEGANT_GOLD }} title={file.filename}>
+                    <p className="text-xs text-gray-300 mt-2 truncate" title={file.filename}>
                       {file.filename}
                     </p>
-                    <p className="text-xs text-gray-400">
-                      {(file.size / 1024).toFixed(2)} KB
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Uploaded by: {file.uploaded_by}
-                    </p>
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex-1"
-                        style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
-                        onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`, '_blank')}
+                    <div className="flex gap-1 mt-1">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handlePreview(file, index)}
+                        className="flex-1 text-xs h-7 hover:bg-gray-700"
+                        style={{ color: ELEGANT_GOLD }}
                       >
-                        View/Download
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handleDownload(file)}
+                        className="flex-1 text-xs h-7 hover:bg-gray-700"
+                        style={{ color: ELEGANT_GOLD }}
+                      >
+                        <Download className="h-3 w-3 mr-1" />
+                        Download
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => handleCopyLink(file)}
+                        className="text-xs h-7 hover:bg-gray-700"
+                        style={{ color: ELEGANT_GOLD }}
+                      >
+                        <LinkIcon className="h-3 w-3" />
                       </Button>
                       {canDelete && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-red-500 text-red-500"
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
                           onClick={() => handleDeleteFile(index)}
+                          className="text-xs h-7 text-red-500 hover:bg-red-950"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       )}
                     </div>
