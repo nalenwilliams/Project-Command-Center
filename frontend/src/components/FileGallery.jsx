@@ -132,13 +132,26 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
         variant="outline"
         onClick={() => {
           setCurrentItem(item);
-          setIsOpen(true);
+          if (item.files && item.files.length > 0) {
+            setIsFullScreenOpen(true);
+          } else {
+            setIsOpen(true);
+          }
         }}
         className="border hover:bg-gray-800"
         style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}
       >
-        <FileImage className="h-4 w-4 mr-1" />
-        Files ({item.files?.length || 0})
+        {item.files && item.files.length > 0 ? (
+          <>
+            <Maximize2 className="h-4 w-4 mr-1" />
+            View All Files ({item.files.length})
+          </>
+        ) : (
+          <>
+            <FileImage className="h-4 w-4 mr-1" />
+            Files (0)
+          </>
+        )}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
