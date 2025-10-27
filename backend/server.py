@@ -1302,18 +1302,22 @@ async def create_task(task_data: TaskCreate, current_user: dict = Depends(get_cu
     
     await db.tasks.insert_one(task_dict)
     
-    # Send notification if task is assigned to someone
+    # Send notifications to all assigned users
     if task.assigned_to:
-        assigned_user = await db.users.find_one({"id": task.assigned_to}, {"_id": 0})
-        if assigned_user and assigned_user.get('email'):
-            email_service = get_email_service()
-            email_service.send_assignment_notification(
-                user_email=assigned_user['email'],
-                user_name=assigned_user.get('username', 'User'),
-                item_type="Task",
-                item_title=task.title,
-                assigned_by=current_user.get('username', 'Unknown')
-            )
+        email_service = get_email_service()
+        for user_id in task.assigned_to:
+            try:
+                user = await db.users.find_one({"id": user_id}, {"_id": 0})
+                if user and user.get('email'):
+                    await email_service.send_assignment_notification(
+                        to_email=user['email'],
+                        user_name=user['username'],
+                        item_type="Task",
+                        item_name=task.title,
+                        assigned_by=current_user['username']
+                    )
+            except Exception as e:
+                print(f"Failed to send notification to user {user_id}: {e}")
     
     return task
 
