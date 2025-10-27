@@ -390,14 +390,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "AI Chat Functionality"
-    - "Admin Login Authentication UI"
-    - "Dashboard Loading and Display"
-    - "Admin Navigation Sidebar - Financial Management"
-    - "Admin Navigation Sidebar - Contracts"
-    - "Admin Navigation Sidebar - Equipment"
-    - "Admin Navigation Sidebar - Operations"
-    - "Admin Navigation Sidebar - Safety & Compliance"
+    - "File Upload Endpoint"
+    - "File Serving Endpoint"
+    - "Project File Operations"
+    - "Task File Operations"
+    - "Client File Operations"
+    - "Invoice File Operations"
+    - "Expense File Operations"
+    - "Contract File Operations"
+    - "Equipment File Operations"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
