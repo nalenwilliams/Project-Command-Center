@@ -71,6 +71,11 @@ const TasksPage = () => {
       if (!data.project_id) data.project_id = null;
       if (!data.assigned_to) data.assigned_to = null;
 
+      // Add current user as created_by for new tasks
+      if (!editingTask) {
+        data.created_by = localStorage.getItem('username') || 'Admin';
+      }
+
       if (editingTask) {
         await api.put(`/tasks/${editingTask.id}`, data);
         toast.success('Task updated successfully');
