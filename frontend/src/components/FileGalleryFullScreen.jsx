@@ -363,20 +363,6 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               </div>
             )}
           </div>
-
-          {/* Right Side - Project/Task Name and Description Only */}
-          <div className="w-80 flex-shrink-0">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: ELEGANT_GOLD }}>
-              {getRecordTitle()}
-            </h1>
-            
-            {record?.description && (
-              <div>
-                <p className="font-bold mb-2" style={{ color: ELEGANT_GOLD }}>Description</p>
-                <p className="text-white">{record.description}</p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
