@@ -246,7 +246,7 @@ const InventoryPage = () => {
               )}
             </div>
             <div className="flex gap-2 justify-end">
-              <Button type="button" variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleCloseDialog} className="border hover:bg-gray-800" style={{ borderColor: "#C9A961", color: "#C9A961" }}>Cancel</Button>
               <Button type="submit" className="text-black" style={{ backgroundColor: ELEGANT_GOLD }}>{editingItem ? 'Update' : 'Create'}</Button>
             </div>
           </form>
