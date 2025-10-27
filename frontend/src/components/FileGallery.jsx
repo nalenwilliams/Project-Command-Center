@@ -273,6 +273,8 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
         files={currentItem.files || []}
         currentIndex={previewIndex}
         onNavigate={handleNavigate}
+        record={currentItem}
+        recordType={itemType}
       />
 
       <FileGalleryFullScreen
