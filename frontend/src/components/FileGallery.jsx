@@ -54,7 +54,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
 
   const handleDownload = (file) => {
     const link = document.createElement('a');
-    link.href = file.url;
+    link.href = `${process.env.REACT_APP_BACKEND_URL}/api/uploads/${file.stored_filename}`;
     link.download = file.filename;
     document.body.appendChild(link);
     link.click();
