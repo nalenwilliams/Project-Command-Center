@@ -320,6 +320,18 @@ const ProjectsPage = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="address" style={{ color: ELEGANT_GOLD }}>Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  data-testid="project-address-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
+                />
+              </div>
+
               {/* File Upload Section */}
               <div className="space-y-2">
                 <Label style={{ color: ELEGANT_GOLD }}>Project Files & Photos</Label>
