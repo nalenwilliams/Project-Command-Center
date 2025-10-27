@@ -1151,6 +1151,24 @@ async def create_project(project_data: ProjectCreate, current_user: dict = Depen
         project_dict['deadline'] = project_dict['deadline'].isoformat()
     
     await db.projects.insert_one(project_dict)
+    
+    # Send notifications to all assigned users
+    if project.assigned_to:
+        email_service = get_email_service()
+        for user_id in project.assigned_to:
+            try:
+                user = await db.users.find_one({"id": user_id}, {"_id": 0})
+                if user and user.get('email'):
+                    await email_service.send_assignment_notification(
+                        to_email=user['email'],
+                        user_name=user['username'],
+                        item_type="Project",
+                        item_name=project.name,
+                        assigned_by=current_user['username']
+                    )
+            except Exception as e:
+                print(f"Failed to send notification to user {user_id}: {e}")
+    
     return project
 
 @api_router.get("/projects/{project_id}", response_model=Project)
