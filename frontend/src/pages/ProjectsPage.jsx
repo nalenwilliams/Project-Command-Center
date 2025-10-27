@@ -117,6 +117,11 @@ const ProjectsPage = () => {
       if (!data.client_id) data.client_id = null;
       if (!data.assigned_to) data.assigned_to = null;
       
+      // Add current user as created_by for new projects
+      if (!editingProject) {
+        data.created_by = localStorage.getItem('username') || 'Admin';
+      }
+      
       // Include uploaded file information
       data.files = selectedFiles;
 
