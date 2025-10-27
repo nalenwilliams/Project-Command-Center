@@ -34,7 +34,7 @@ const ProjectsPage = () => {
     client_id: '',
     status: 'not_started',
     deadline: '',
-    assigned_to: '',
+    assigned_to: [],
     address: '',
     created_by: '',
     files: [],
@@ -178,7 +178,7 @@ const ProjectsPage = () => {
       status: 'not_started',
       deadline: '',
       description: '',
-      assigned_to: '',
+      assigned_to: [],
       files: [],
     });
   };
