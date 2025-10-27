@@ -167,8 +167,10 @@ class ProjectCreate(BaseModel):
     status: str = "not_started"  # not_started, in_progress, completed, on_hold
     deadline: Optional[datetime] = None
     description: Optional[str] = None
-    assigned_to: Optional[str] = None
+    address: Optional[str] = None
+    assigned_to: Optional[List[str]] = []  # Changed to List for multiple users
     files: Optional[List[dict]] = []
+    created_by: Optional[str] = None
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None
@@ -176,7 +178,8 @@ class ProjectUpdate(BaseModel):
     status: Optional[str] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
-    assigned_to: Optional[str] = None
+    address: Optional[str] = None
+    assigned_to: Optional[List[str]] = None  # Changed to List for multiple users
     files: Optional[List[dict]] = None
 
 class Project(BaseModel):
@@ -187,7 +190,8 @@ class Project(BaseModel):
     status: str = "not_started"
     deadline: Optional[datetime] = None
     description: Optional[str] = None
-    assigned_to: Optional[str] = None
+    address: Optional[str] = None
+    assigned_to: Optional[List[str]] = []  # Changed to List for multiple users
     files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
