@@ -34,6 +34,34 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
     }
   };
 
+  const handlePreview = (file, index) => {
+    setPreviewFile(file);
+    setPreviewIndex(index);
+    setIsPreviewOpen(true);
+  };
+
+  const handleNavigate = (newIndex) => {
+    if (currentItem.files && currentItem.files[newIndex]) {
+      setPreviewFile(currentItem.files[newIndex]);
+      setPreviewIndex(newIndex);
+    }
+  };
+
+  const handleCopyLink = (file) => {
+    navigator.clipboard.writeText(file.url);
+    toast.success('File link copied!');
+  };
+
+  const handleDownload = (file) => {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.download = file.filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Download started');
+  };
+
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     
