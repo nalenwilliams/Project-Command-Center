@@ -250,6 +250,15 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <FilePreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        file={previewFile}
+        files={currentItem.files || []}
+        currentIndex={previewIndex}
+        onNavigate={handleNavigate}
+      />
     </>
   );
 };
