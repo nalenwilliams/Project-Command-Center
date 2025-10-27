@@ -154,11 +154,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                   <p className="text-xs text-gray-500 mb-1">Manager</p>
                   <p className="text-white font-medium">{record.manager || 'N/A'}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Budget</p>
-                  <p className="text-white font-medium">{record.budget ? `$${record.budget}` : 'N/A'}</p>
-                </div>
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <p className="text-xs text-gray-500 mb-1">Address</p>
                   <p className="text-white font-medium">{record.address || record.location || 'N/A'}</p>
                 </div>
