@@ -239,7 +239,11 @@ const ProjectsPage = () => {
                 <Plus className="mr-2 h-4 w-4" /> Add Project
               </Button>
             </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="project-dialog">
+          <DialogContent 
+            className="max-w-2xl bg-gray-900 border max-h-[90vh] overflow-y-auto" 
+            style={{ borderColor: ELEGANT_GOLD }} 
+            data-testid="project-dialog"
+          >
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
             </DialogHeader>
