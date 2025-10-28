@@ -13,7 +13,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 async def create_test_users():
     client = AsyncIOMotorClient('mongodb://localhost:27017')
-    db = client['test_database']
+    db = client['crm_db']
     
     print("Creating test users for onboarding...")
     print("=" * 60)
