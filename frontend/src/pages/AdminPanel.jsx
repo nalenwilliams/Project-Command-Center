@@ -138,6 +138,8 @@ const AdminPanel = () => {
     setEditData({
       username: user.username,
       email: user.email,
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
       role: user.role,
       is_active: user.is_active
     });
@@ -147,7 +149,7 @@ const AdminPanel = () => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingUser(null);
-    setEditData({ username: '', email: '', role: '', is_active: true });
+    setEditData({ username: '', email: '', first_name: '', last_name: '', role: '', is_active: true });
   };
 
   const getRoleBadge = (role) => {
