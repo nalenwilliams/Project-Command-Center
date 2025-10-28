@@ -249,12 +249,12 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               {(recordType === 'task' || recordType === 'tasks') && record && (
                 <>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                    <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1">{record.address || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Priority</p>
-                    <p className="text-white mt-1">{record.priority ? record.priority.toUpperCase() : 'N/A'}</p>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1">{record.description || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
@@ -264,23 +264,15 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
                     <p className="text-white mt-1">{record.created_by || 'Admin'}</p>
                   </div>
-                  <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Project</p>
-                    <p className="text-white mt-1">{record.project_name || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
-                    <p className="text-white mt-1">{record.status ? record.status.replace('_', ' ').toUpperCase() : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Due Date</p>
-                    <p className="text-white mt-1">{record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'}</p>
-                  </div>
                 </>
               )}
 
               {recordType === 'work-order' && record && (
                 <>
+                  <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1">{record.address || 'N/A'}</p>
+                  </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
                     <p className="text-white mt-1">{record.description || 'N/A'}</p>
