@@ -695,13 +695,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Payroll Module Proxy Endpoints"
-    - "Vendor Portal Proxy Endpoints"
-    - "Payroll Management Page"
-    - "Vendor Portal Page"
-    - "App.js Route Configuration"
-    - "Layout Navigation - Payroll Section"
-    - "Layout Navigation - Vendor Portal Section"
+    - "Registration Form - First/Last Name Fields"
+    - "FileGalleryFullScreen - Display Full Names"
+    - "AdminPanel - User Management with Names"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
