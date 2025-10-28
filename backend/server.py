@@ -1160,6 +1160,62 @@ async def logout(response: Response, current_user: dict = Depends(get_current_us
         raise HTTPException(status_code=500, detail="Logout failed")
 
 # ============================================
+# AI SERVICE PROXY - Routes requests to AI server on port 3001
+# ============================================
+
+import httpx
+
+AI_SERVER_URL = "http://localhost:3001"
+
+@api_router.post("/ai/chat")
+async def ai_chat_proxy(request: Request, current_user: dict = Depends(get_current_user)):
+    """Proxy AI chat requests to the AI server"""
+    try:
+        body = await request.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{AI_SERVER_URL}/ai/chat",
+                json=body,
+                timeout=30.0
+            )
+            return response.json()
+    except Exception as e:
+        logging.error(f"AI chat proxy error: {str(e)}")
+        raise HTTPException(status_code=500, detail="AI service unavailable")
+
+@api_router.post("/ai/proposal")
+async def ai_proposal_proxy(request: Request, current_user: dict = Depends(get_current_user)):
+    """Proxy AI proposal generation to the AI server"""
+    try:
+        body = await request.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{AI_SERVER_URL}/ai/proposal",
+                json=body,
+                timeout=60.0
+            )
+            return response.json()
+    except Exception as e:
+        logging.error(f"AI proposal proxy error: {str(e)}")
+        raise HTTPException(status_code=500, detail="AI service unavailable")
+
+@api_router.post("/ai/form-fill")
+async def ai_formfill_proxy(request: Request, current_user: dict = Depends(get_current_user)):
+    """Proxy AI form fill to the AI server"""
+    try:
+        body = await request.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{AI_SERVER_URL}/ai/form-fill",
+                json=body,
+                timeout=30.0
+            )
+            return response.json()
+    except Exception as e:
+        logging.error(f"AI form fill proxy error: {str(e)}")
+        raise HTTPException(status_code=500, detail="AI service unavailable")
+
+# ============================================
 # API ROUTES - ADMIN - USER MANAGEMENT
 # ============================================
 
