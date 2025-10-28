@@ -34,9 +34,11 @@ const AIFloatingChat = ({ currentPage = "Dashboard" }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${aiServerUrl}/ai/chat`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${backendUrl}/api/ai/chat`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
