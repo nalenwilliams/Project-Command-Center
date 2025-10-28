@@ -1,4 +1,4 @@
-import { randomUUID } from 'uuid'
+import { v4 as randomUUID } from 'uuid'
 const db = { vendors: new Map(), vendor_invoices: new Map(), vendor_payments: new Map() }
 export function upsertVendor(v){ const id = v.id || randomUUID(); const rec = { id, name:'', ein:'', email:'', w9_on_file:false, bank_token:null, insurance_expires:null, ...v }; db.vendors.set(id, rec); return rec }
 export function listVendors(){ return Array.from(db.vendors.values()) }
