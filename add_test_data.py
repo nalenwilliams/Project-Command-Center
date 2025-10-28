@@ -17,7 +17,17 @@ login_response = requests.post(
     f"{BACKEND_URL}/api/auth/login",
     json={"username": "admin", "password": "Admin123!"}
 )
-token = login_response.json()['token']
+
+if login_response.status_code != 200:
+    print(f"❌ Login failed: {login_response.text}")
+    exit(1)
+
+login_data = login_response.json()
+token = login_data.get('token') or login_data.get('access_token')
+if not token:
+    print(f"❌ No token in response: {login_data}")
+    exit(1)
+
 headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
 print(f"✅ Logged in successfully")
 
