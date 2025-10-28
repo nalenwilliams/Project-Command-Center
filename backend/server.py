@@ -176,6 +176,7 @@ class UserUpdate(BaseModel):
     picture: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
+    onboarding_completed: Optional[bool] = None
 
 class UserSession(BaseModel):
     model_config = ConfigDict(extra="ignore")
