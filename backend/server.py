@@ -3567,6 +3567,106 @@ async def approve_vendor_document(
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
         
+        # Update document status
+        await db.vendor_documents.update_one(
+            {"id": document_id},
+            {"$set": {
+                "status": "approved",
+                "approved_by": current_user["id"],
+                "approved_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Get vendor info
+        vendor = await db.vendors.find_one({"id": document["vendor_id"]}, {"_id": 0})
+        if vendor:
+            # Send approval notification
+            from email_templates import vendor_document_status_email
+            email_service = get_email_service()
+            email_content = vendor_document_status_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                document_type=document["document_type"],
+                status="approved"
+            )
+            email_service.send_email(
+                to_email=vendor.get("email"),
+                subject=email_content["subject"],
+                body=email_content["html"],
+                html=True
+            )
+        
+        return {"message": "Document approved successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/vendor-documents/{document_id}/reject")
+async def reject_vendor_document(
+    document_id: str,
+    rejection_data: dict,
+    current_user: dict = Depends(get_admin_user)
+):
+    """Reject vendor document (Admin only)"""
+    try:
+        document = await db.vendor_documents.find_one({"id": document_id}, {"_id": 0})
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        reason = rejection_data.get("reason", "Document does not meet requirements")
+        
+        # Update document status
+        await db.vendor_documents.update_one(
+            {"id": document_id},
+            {"$set": {
+                "status": "rejected",
+                "rejection_reason": reason,
+                "rejected_by": current_user["id"],
+                "rejected_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Get vendor info
+        vendor = await db.vendors.find_one({"id": document["vendor_id"]}, {"_id": 0})
+        if vendor:
+            # Send rejection notification
+            from email_templates import vendor_document_status_email
+            email_service = get_email_service()
+            email_content = vendor_document_status_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                document_type=document["document_type"],
+                status="rejected",
+                reason=reason
+            )
+            email_service.send_email(
+                to_email=vendor.get("email"),
+                subject=email_content["subject"],
+                body=email_content["html"],
+                html=True
+            )
+        
+        return {"message": "Document rejected successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Endpoint to serve vendor documents
+from fastapi.responses import FileResponse
+
+@api_router.get("/vendor_documents/{filename}")
+async def serve_vendor_document(
+    filename: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Serve vendor document file"""
+    file_path = ROOT_DIR / "vendor_documents" / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return FileResponse(file_path)
 
 
 # ============================================
