@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,9 @@ import api from '@/lib/api';
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const [processingSession, setProcessingSession] = useState(false);
 
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [registerData, setRegisterData] = useState({ 
@@ -21,6 +23,69 @@ const AuthPage = () => {
     last_name: '',
     invitation_code: '' 
   });
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      try {
+        const response = await api.get('/auth/me');
+        if (response.data) {
+          // User is already authenticated, redirect to dashboard
+          navigate('/');
+        }
+      } catch (error) {
+        // No existing session, stay on auth page
+      }
+    };
+
+    checkExistingSession();
+  }, [navigate]);
+
+  // Handle session_id from URL fragment (Emergent Auth callback)
+  useEffect(() => {
+    const processSessionId = async () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('session_id=')) {
+        setProcessingSession(true);
+        const sessionId = hash.split('session_id=')[1].split('&')[0];
+        
+        try {
+          // Call backend to process session
+          const response = await api.post('/auth/session', null, {
+            headers: {
+              'X-Session-ID': sessionId
+            }
+          });
+          
+          if (response.data.success) {
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            toast.success('Welcome! Logged in with Google');
+            
+            // Clear URL fragment
+            window.history.replaceState(null, '', window.location.pathname);
+            
+            // Navigate to dashboard
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('Session processing error:', error);
+          toast.error('Authentication failed. Please try again.');
+          setProcessingSession(false);
+          
+          // Clear URL fragment
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    };
+
+    processSessionId();
+  }, [navigate]);
+
+  const handleGoogleLogin = () => {
+    const redirectUrl = `${window.location.origin}/`;
+    const emergentAuthUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    window.location.href = emergentAuthUrl;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
