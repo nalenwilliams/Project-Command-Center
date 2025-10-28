@@ -20,6 +20,8 @@ const TimesheetsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTimesheet, setEditingTimesheet] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedTimesheet, setSelectedTimesheet] = useState(null);
   const [formData, setFormData] = useState({
     employee_name: '',
     date: '',
