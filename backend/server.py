@@ -1160,60 +1160,117 @@ async def logout(response: Response, current_user: dict = Depends(get_current_us
         raise HTTPException(status_code=500, detail="Logout failed")
 
 # ============================================
-# AI SERVICE PROXY - Routes requests to AI server on port 3001
+# AI SERVICE - Direct Gemini 2.5 Pro Integration
 # ============================================
 
-import httpx
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
-AI_SERVER_URL = "http://localhost:3001"
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
 @api_router.post("/ai/chat")
-async def ai_chat_proxy(request: Request, current_user: dict = Depends(get_current_user)):
-    """Proxy AI chat requests to the AI server"""
+async def ai_chat(request: Request, current_user: dict = Depends(get_current_user)):
+    """AI chat assistant using Gemini 2.5 Pro"""
     try:
         body = await request.json()
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{AI_SERVER_URL}/ai/chat",
-                json=body,
-                timeout=30.0
-            )
-            return response.json()
+        message = body.get('message', '')
+        context = body.get('context', {})
+        
+        # Initialize chat with Gemini 2.5 Pro
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"user_{current_user['id']}",
+            system_message=f"You are the Williams Diversified LLC assistant. Timezone: {os.environ.get('TIMEZONE', 'America/Chicago')}. User context: {context}"
+        ).with_model("gemini", "gemini-2.5-pro")
+        
+        # Create user message
+        user_message = UserMessage(text=message)
+        
+        # Get response
+        response = await chat.send_message(user_message)
+        
+        return {"reply": response}
     except Exception as e:
-        logging.error(f"AI chat proxy error: {str(e)}")
-        raise HTTPException(status_code=500, detail="AI service unavailable")
+        logging.error(f"AI chat error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
 @api_router.post("/ai/proposal")
-async def ai_proposal_proxy(request: Request, current_user: dict = Depends(get_current_user)):
-    """Proxy AI proposal generation to the AI server"""
+async def ai_proposal(request: Request, current_user: dict = Depends(get_current_user)):
+    """Generate construction proposal using Gemini 2.5 Pro"""
     try:
         body = await request.json()
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{AI_SERVER_URL}/ai/proposal",
-                json=body,
-                timeout=60.0
-            )
-            return response.json()
+        project = body.get('project', {})
+        notes = body.get('notes', '')
+        
+        # Initialize chat
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"proposal_{current_user['id']}",
+            system_message="You are a construction proposal expert for Williams Diversified LLC. Generate detailed proposals in JSON format."
+        ).with_model("gemini", "gemini-2.5-pro")
+        
+        prompt = f"""Generate a construction proposal for this project:
+Project: {project}
+Notes: {notes}
+
+Return a JSON object with these fields:
+- scopeOfWork: Detailed description
+- inclusions: Array of trade items
+- itemizedPricing: Array of cost items
+- totalLumpSum: Total cost
+- notes: Additional terms"""
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Try to parse as JSON
+        import json
+        try:
+            proposal_data = json.loads(response)
+            return proposal_data
+        except:
+            return {"error": "Could not parse proposal", "raw_response": response}
+            
     except Exception as e:
-        logging.error(f"AI proposal proxy error: {str(e)}")
-        raise HTTPException(status_code=500, detail="AI service unavailable")
+        logging.error(f"AI proposal error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
 @api_router.post("/ai/form-fill")
-async def ai_formfill_proxy(request: Request, current_user: dict = Depends(get_current_user)):
-    """Proxy AI form fill to the AI server"""
+async def ai_formfill(request: Request, current_user: dict = Depends(get_current_user)):
+    """Extract structured data from notes using Gemini 2.5 Pro"""
     try:
         body = await request.json()
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{AI_SERVER_URL}/ai/form-fill",
-                json=body,
-                timeout=30.0
-            )
-            return response.json()
+        notes = body.get('notes', '')
+        schema = body.get('schema', '')
+        defaults = body.get('defaults', {})
+        
+        # Initialize chat
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"formfill_{current_user['id']}",
+            system_message="You are a data extraction expert. Convert notes into structured JSON data."
+        ).with_model("gemini", "gemini-2.5-pro")
+        
+        prompt = f"""Extract data from these notes and return JSON matching this schema:
+Schema: {schema}
+Notes: {notes}
+Defaults: {defaults}
+
+Return a JSON object with the extracted data."""
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Try to parse as JSON
+        import json
+        try:
+            form_data = json.loads(response)
+            return form_data
+        except:
+            return {"error": "Could not parse form data", "raw_response": response}
+            
     except Exception as e:
-        logging.error(f"AI form fill proxy error: {str(e)}")
-        raise HTTPException(status_code=500, detail="AI service unavailable")
+        logging.error(f"AI form fill error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
 # ============================================
 # API ROUTES - ADMIN - USER MANAGEMENT
