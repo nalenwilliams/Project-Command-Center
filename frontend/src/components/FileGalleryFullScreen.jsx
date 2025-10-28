@@ -40,10 +40,18 @@ const FileGalleryFullScreen = ({
       const user = users.find(u => u.id === userId);
       if (!user) return 'Unknown';
       
-      // Format the display name - use email if it looks like a name, otherwise use username
+      // Prioritize first_name and last_name if available
+      if (user.first_name && user.last_name) {
+        return `${user.first_name} ${user.last_name}`;
+      } else if (user.first_name) {
+        return user.first_name;
+      } else if (user.last_name) {
+        return user.last_name;
+      }
+      
+      // Fallback to email formatting if it looks like a name
       if (user.email && user.email.includes('@')) {
         const emailPart = user.email.split('@')[0];
-        // If email looks like a name (has dots), format it nicely
         if (emailPart.includes('.')) {
           return emailPart.split('.').map(part => 
             part.charAt(0).toUpperCase() + part.slice(1)
@@ -51,7 +59,7 @@ const FileGalleryFullScreen = ({
         }
       }
       
-      // Fallback to username with proper capitalization
+      // Final fallback to username with proper capitalization
       return user.username.charAt(0).toUpperCase() + user.username.slice(1);
     });
     
