@@ -82,7 +82,7 @@ const AuthPage = () => {
     };
 
     processSessionId();
-  }, [navigate]);
+  }, []); // Empty dependency array - run only once on mount
 
   const handleGoogleLogin = () => {
     const redirectUrl = `${window.location.origin}/`;
