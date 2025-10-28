@@ -103,9 +103,13 @@ const MultiSelectUsers = ({ users = [], selectedUsers = [], onSelectionChange, p
 
             {/* User List */}
             <div className="max-h-48 overflow-y-auto">
-              {filteredUsers.length === 0 ? (
+              {users.length === 0 ? (
                 <div className="p-3 text-gray-400 text-center">
-                  No users found
+                  No users available (0 users loaded)
+                </div>
+              ) : filteredUsers.length === 0 ? (
+                <div className="p-3 text-gray-400 text-center">
+                  No users found ({users.length} total users, search: "{searchTerm}")
                 </div>
               ) : (
                 filteredUsers.map((user) => {
