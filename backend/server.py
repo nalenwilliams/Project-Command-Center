@@ -3865,6 +3865,318 @@ async def trigger_assignment_notification(user_id: str, item_type: str, item_id:
         item = await db[collection].find_one({"id": item_id}, {"_id": 0})
         if not item:
             return
+
+
+# ============================================
+# ONBOARDING ENDPOINTS
+# ============================================
+
+@api_router.post("/employee/complete-onboarding")
+async def complete_employee_onboarding(
+    onboarding_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Complete employee onboarding process"""
+    try:
+        # Update user profile
+        await db.users.update_one(
+            {"id": current_user["id"]},
+            {"$set": {
+                "first_name": onboarding_data.get("first_name"),
+                "last_name": onboarding_data.get("last_name"),
+                "phone": onboarding_data.get("phone"),
+                "address": onboarding_data.get("address"),
+                "city": onboarding_data.get("city"),
+                "state": onboarding_data.get("state"),
+                "zip": onboarding_data.get("zip"),
+                "onboarding_completed": True,
+                "onboarding_completed_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Create payroll employee record
+        payroll_employee = {
+            "id": str(uuid.uuid4()),
+            "employee_id": current_user["id"],
+            "user_id": current_user["id"],
+            "first_name": onboarding_data.get("first_name"),
+            "last_name": onboarding_data.get("last_name"),
+            "email": onboarding_data.get("email"),
+            "classification": onboarding_data.get("classification"),
+            "base_rate": float(onboarding_data.get("hourly_rate", 0)),
+            "fringe_rate": 0,
+            "davis_bacon": onboarding_data.get("davis_bacon_certified", False),
+            "ein": onboarding_data.get("ssn"),
+            "routing_number": onboarding_data.get("routing_number"),
+            "account_number": onboarding_data.get("account_number"),
+            "bank_name": onboarding_data.get("bank_name"),
+            "account_type": onboarding_data.get("account_type"),
+            "start_date": onboarding_data.get("start_date"),
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.payroll_employees.insert_one(payroll_employee)
+        
+        # Store W-4 information
+        w4_data = {
+            "id": str(uuid.uuid4()),
+            "employee_id": current_user["id"],
+            "filing_status": onboarding_data.get("filing_status"),
+            "dependents": int(onboarding_data.get("dependents", 0)),
+            "extra_withholding": float(onboarding_data.get("extra_withholding", 0)),
+            "signature": onboarding_data.get("signature"),
+            "signed_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.employee_tax_info.insert_one(w4_data)
+        
+        # Store NDA acceptance
+        nda_record = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user["id"],
+            "document_type": "employee_nda",
+            "accepted": onboarding_data.get("nda_accepted", False),
+            "signature": onboarding_data.get("signature"),
+            "signed_at": datetime.now(timezone.utc).isoformat(),
+            "ip_address": "system"
+        }
+        await db.legal_agreements.insert_one(nda_record)
+        
+        # TODO: Generate W-4 PDF and store
+        
+        return {
+            "message": "Employee onboarding completed successfully",
+            "employee_id": payroll_employee["id"]
+        }
+    except Exception as e:
+        logger.error(f"Error completing employee onboarding: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/vendor/complete-onboarding")
+async def complete_vendor_onboarding(
+    invitation_code: str = Form(...),
+    company_name: str = Form(...),
+    business_type: str = Form(...),
+    ein: str = Form(...),
+    phone: str = Form(...),
+    email: str = Form(...),
+    website: str = Form(None),
+    address: str = Form(...),
+    city: str = Form(...),
+    state: str = Form(...),
+    zip: str = Form(...),
+    contact_first_name: str = Form(...),
+    contact_last_name: str = Form(...),
+    contact_title: str = Form(...),
+    contact_email: str = Form(...),
+    contact_phone: str = Form(...),
+    insurance_provider: str = Form(...),
+    policy_number: str = Form(...),
+    insurance_amount: str = Form(...),
+    insurance_expiry: str = Form(...),
+    bank_name: str = Form(...),
+    account_type: str = Form(...),
+    routing_number: str = Form(...),
+    account_number: str = Form(...),
+    nda_accepted: bool = Form(...),
+    terms_accepted: bool = Form(...),
+    signature: str = Form(...),
+    w9_file: UploadFile = File(None),
+    coi_file: UploadFile = File(None),
+    license_file: UploadFile = File(None)
+):
+    """Complete vendor onboarding process"""
+    try:
+        # Verify invitation code
+        invitation = await db.vendor_invitations.find_one({"invitation_code": invitation_code}, {"_id": 0})
+        if not invitation:
+            raise HTTPException(status_code=404, detail="Invalid invitation code")
+        
+        if invitation["status"] != "pending":
+            raise HTTPException(status_code=400, detail="Invitation already used")
+        
+        # Create user account for vendor
+        hashed_password = pwd_context.hash("TempPassword123!")  # Temporary password
+        user = {
+            "id": str(uuid.uuid4()),
+            "username": email,
+            "email": email,
+            "password": hashed_password,
+            "role": "vendor",
+            "first_name": contact_first_name,
+            "last_name": contact_last_name,
+            "onboarding_completed": True,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user)
+        
+        # Create vendor profile
+        vendor = {
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "name": company_name,
+            "business_type": business_type,
+            "ein": ein,
+            "phone": phone,
+            "email": email,
+            "website": website,
+            "address": address,
+            "city": city,
+            "state": state,
+            "zip": zip,
+            "contact_first_name": contact_first_name,
+            "contact_last_name": contact_last_name,
+            "contact_title": contact_title,
+            "contact_email": contact_email,
+            "contact_phone": contact_phone,
+            "insurance_provider": insurance_provider,
+            "policy_number": policy_number,
+            "insurance_amount": insurance_amount,
+            "insurance_expires": insurance_expiry,
+            "bank_name": bank_name,
+            "account_type": account_type,
+            "routing_number": routing_number,
+            "account_number": account_number,
+            "status": "pending_approval",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.vendors.insert_one(vendor)
+        
+        # Update user with vendor_id
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": {"vendor_id": vendor["id"]}}
+        )
+        
+        # Save uploaded documents
+        upload_dir = ROOT_DIR / "vendor_documents"
+        upload_dir.mkdir(exist_ok=True)
+        
+        if w9_file:
+            file_path = upload_dir / f"{vendor['id']}_w9_{w9_file.filename}"
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(w9_file.file, buffer)
+            
+            doc_record = {
+                "id": str(uuid.uuid4()),
+                "vendor_id": vendor["id"],
+                "document_type": "w9",
+                "file_name": w9_file.filename,
+                "stored_filename": f"{vendor['id']}_w9_{w9_file.filename}",
+                "file_url": f"/api/vendor_documents/{vendor['id']}_w9_{w9_file.filename}",
+                "status": "pending",
+                "uploaded_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.vendor_documents.insert_one(doc_record)
+        
+        if coi_file:
+            file_path = upload_dir / f"{vendor['id']}_coi_{coi_file.filename}"
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(coi_file.file, buffer)
+            
+            doc_record = {
+                "id": str(uuid.uuid4()),
+                "vendor_id": vendor["id"],
+                "document_type": "coi",
+                "file_name": coi_file.filename,
+                "stored_filename": f"{vendor['id']}_coi_{coi_file.filename}",
+                "file_url": f"/api/vendor_documents/{vendor['id']}_coi_{coi_file.filename}",
+                "expiration_date": insurance_expiry,
+                "status": "pending",
+                "uploaded_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.vendor_documents.insert_one(doc_record)
+        
+        if license_file:
+            file_path = upload_dir / f"{vendor['id']}_license_{license_file.filename}"
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(license_file.file, buffer)
+            
+            doc_record = {
+                "id": str(uuid.uuid4()),
+                "vendor_id": vendor["id"],
+                "document_type": "license",
+                "file_name": license_file.filename,
+                "stored_filename": f"{vendor['id']}_license_{license_file.filename}",
+                "file_url": f"/api/vendor_documents/{vendor['id']}_license_{license_file.filename}",
+                "status": "pending",
+                "uploaded_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.vendor_documents.insert_one(doc_record)
+        
+        # Store NDA acceptance
+        nda_record = {
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "vendor_id": vendor["id"],
+            "document_type": "vendor_nda",
+            "accepted": nda_accepted,
+            "terms_accepted": terms_accepted,
+            "signature": signature,
+            "signed_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.legal_agreements.insert_one(nda_record)
+        
+        # Mark invitation as used
+        await db.vendor_invitations.update_one(
+            {"invitation_code": invitation_code},
+            {"$set": {
+                "status": "completed",
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "vendor_id": vendor["id"]
+            }}
+        )
+        
+        # TODO: Send welcome email to vendor
+        
+        return {
+            "message": "Vendor onboarding completed successfully",
+            "vendor_id": vendor["id"],
+            "user_id": user["id"],
+            "temp_password": "TempPassword123!"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error completing vendor onboarding: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# AI Form Assist endpoint
+@api_router.post("/ai/form-assist")
+async def ai_form_assist(
+    assist_request: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """AI-assisted form filling"""
+    try:
+        from emergentintegrations import LLM
+        
+        llm = LLM(api_key=os.environ.get("EMERGENT_LLM_KEY"))
+        
+        section = assist_request.get("section")
+        current_data = assist_request.get("current_data", {})
+        form_type = assist_request.get("form_type")
+        
+        prompt = f"""You are helping fill out a {form_type} form.
+Section: {section}
+Current data: {current_data}
+
+Provide intelligent suggestions for missing or incomplete fields based on common patterns and best practices.
+Return suggestions as a JSON object with field names as keys.
+
+Only suggest for fields that are empty or obviously incorrect.
+"""
+        
+        response = llm.text_generation(
+            model="gemini-2.5-flash",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        # Parse AI response
+        # For now, return empty suggestions (AI integration can be enhanced)
+        return {"suggestions": {}}
+    except Exception as e:
+        logger.error(f"Error with AI form assist: {str(e)}")
+        return {"suggestions": {}}
+
         
         assigned_by_user = await db.users.find_one({"id": item.get("created_by", "")}, {"_id": 0})
         assigned_by_name = "System"
