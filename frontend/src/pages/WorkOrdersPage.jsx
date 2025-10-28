@@ -529,6 +529,7 @@ const WorkOrdersPage = () => {
           record={currentWorkOrder}
           recordType="work-order"
           files={currentWorkOrder?.files || []}
+          users={users}
           onDelete={async (fileId) => {
             if (!currentWorkOrder) return;
             const updatedFiles = currentWorkOrder.files.filter(f => f.id !== fileId);
