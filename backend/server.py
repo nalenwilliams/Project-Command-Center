@@ -1327,6 +1327,109 @@ Return a JSON object with the extracted data."""
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
 # ============================================
+# AI COMMAND ROUTER - Natural Language Navigation
+# ============================================
+
+# Screen registry for Williams Diversified app
+SCREEN_REGISTRY = [
+    {"key": "dashboard", "path": "/", "aliases": ["home", "command center", "main"]},
+    {"key": "projects", "path": "/projects", "aliases": ["jobs", "sites"]},
+    {"key": "tasks", "path": "/tasks", "aliases": ["to-do", "todos"]},
+    {"key": "work-orders", "path": "/work-orders", "aliases": ["work orders", "jobs"]},
+    {"key": "clients", "path": "/clients", "aliases": ["customers", "contacts"]},
+    {"key": "employees", "path": "/employees", "aliases": ["staff", "team", "workers"]},
+    {"key": "invoices", "path": "/invoices", "aliases": ["billing", "accounts receivable"]},
+    {"key": "expenses", "path": "/expenses", "aliases": ["costs", "spending"]},
+    {"key": "contracts", "path": "/contracts", "aliases": ["agreements"]},
+    {"key": "equipment", "path": "/equipment", "aliases": ["tools", "machinery"]},
+    {"key": "timesheets", "path": "/timesheets", "aliases": ["timecards", "hours", "clock"]},
+    {"key": "inventory", "path": "/inventory", "aliases": ["stock", "materials"]},
+    {"key": "schedules", "path": "/schedules", "aliases": ["calendar", "appointments"]},
+    {"key": "safety", "path": "/safety-reports", "aliases": ["safety reports", "incidents"]},
+    {"key": "certifications", "path": "/certifications", "aliases": ["licenses", "credentials"]},
+    {"key": "reports", "path": "/reports", "aliases": ["analytics", "metrics"]},
+    {"key": "compliance", "path": "/compliance", "aliases": ["regulations"]},
+    {"key": "handbook", "path": "/handbook-policies", "aliases": ["policies", "procedures"]},
+    {"key": "fleet", "path": "/fleet", "aliases": ["fleet inspection", "trucks", "vehicles"]},
+    {"key": "admin", "path": "/admin", "aliases": ["admin panel", "settings", "users"]},
+    {"key": "notifications", "path": "/notifications", "aliases": ["alerts", "email settings"]},
+    {"key": "payroll", "path": "/payroll", "aliases": ["certified payroll", "wh-347", "pay run"]},
+]
+
+@api_router.post("/ai/command")
+async def ai_command_router(request: Request, current_user: dict = Depends(get_current_user)):
+    """Natural language navigation - e.g. 'open payroll', 'show me projects'"""
+    try:
+        body = await request.json()
+        command = body.get('command', '').strip()
+        
+        if not command:
+            return {"error": "Missing command"}
+        
+        # Try simple keyword matching first (fast)
+        command_lower = command.lower()
+        for screen in SCREEN_REGISTRY:
+            if screen['key'] in command_lower or screen['path'] in command_lower:
+                return {
+                    "intent": "NAVIGATE",
+                    "route": screen['path'],
+                    "screen_key": screen['key'],
+                    "confidence": 0.9,
+                    "reason": "keyword_match"
+                }
+            for alias in screen['aliases']:
+                if alias in command_lower:
+                    return {
+                        "intent": "NAVIGATE",
+                        "route": screen['path'],
+                        "screen_key": screen['key'],
+                        "confidence": 0.85,
+                        "reason": "alias_match"
+                    }
+        
+        # If no simple match, use AI (Gemini Flash for speed)
+        system_message = """You map user commands to app navigation routes.
+Screen registry available:
+""" + str([{"key": s['key'], "path": s['path'], "aliases": s['aliases']} for s in SCREEN_REGISTRY]) + """
+
+Return JSON with:
+- intent: "NAVIGATE" or "UNKNOWN"
+- route: the path (e.g. "/projects") or empty
+- screen_key: the screen key or empty
+- confidence: 0-1
+- reason: brief explanation"""
+
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"nav_{current_user['id']}",
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.5-flash")
+        
+        user_message = UserMessage(text=f"User command: {command}")
+        response = await chat.send_message(user_message)
+        
+        # Parse AI response
+        import json
+        try:
+            result = json.loads(response)
+            if result.get('intent') == 'NAVIGATE' and result.get('route'):
+                return result
+            else:
+                return {
+                    "intent": "UNKNOWN",
+                    "suggestions": [s['path'] for s in SCREEN_REGISTRY[:5]]
+                }
+        except:
+            return {
+                "intent": "UNKNOWN",
+                "suggestions": [s['path'] for s in SCREEN_REGISTRY[:5]]
+            }
+            
+    except Exception as e:
+        logging.error(f"Command router error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Command router error: {str(e)}")
+
+# ============================================
 # API ROUTES - ADMIN - USER MANAGEMENT
 # ============================================
 
