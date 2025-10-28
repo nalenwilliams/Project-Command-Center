@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Calendar as CalendarIcon, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const localizer = momentLocalizer(moment);
 const ELEGANT_GOLD = '#C9A961';
