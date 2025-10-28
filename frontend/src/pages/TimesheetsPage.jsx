@@ -10,6 +10,7 @@ import { Plus, Clock, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
