@@ -240,7 +240,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
-                    <p className="text-white mt-1">{record.assigned_to_name || 'N/A'}</p>
+                    <p className="text-white mt-1">{getUserNames(record.assigned_to)}</p>
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
@@ -261,7 +261,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
-                    <p className="text-white mt-1">{record.assigned_to_name || 'N/A'}</p>
+                    <p className="text-white mt-1">{getUserNames(record.assigned_to)}</p>
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
