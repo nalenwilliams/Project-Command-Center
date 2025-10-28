@@ -166,6 +166,7 @@ class UserResponse(BaseModel):
     picture: Optional[str] = None
     role: str
     is_active: bool
+    onboarding_completed: bool = False
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
