@@ -483,6 +483,31 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
 
+              {recordType === 'schedule' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Employee Name</p>
+                    <p className="text-white mt-1 text-left">{record.employee_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Start Time</p>
+                    <p className="text-white mt-1 text-left">{record.start_time ? new Date(record.start_time).toLocaleString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>End Time</p>
+                    <p className="text-white mt-1 text-left">{record.end_time ? new Date(record.end_time).toLocaleString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Location</p>
+                    <p className="text-white mt-1 text-left">{record.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1 text-left">{record.description || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
