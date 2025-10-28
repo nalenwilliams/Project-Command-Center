@@ -45,7 +45,7 @@ const AuthPage = () => {
     };
 
     checkExistingSession();
-  }, [navigate]);
+  }, []); // Empty dependency array - run only once on mount
 
   // Handle session_id from URL fragment (Emergent Auth callback)
   useEffect(() => {
