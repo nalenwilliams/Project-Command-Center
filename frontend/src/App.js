@@ -80,13 +80,10 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          {/* Vendor onboarding is public - accessible via invitation code only */}
           <Route 
             path="/vendor-onboarding" 
-            element={
-              <ProtectedRoute>
-                <VendorOnboardingPage />
-              </ProtectedRoute>
-            } 
+            element={<VendorOnboardingPage />} 
           />
           
           {/* Main app routes with Layout */}
