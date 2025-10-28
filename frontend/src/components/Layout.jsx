@@ -311,6 +311,28 @@ const Layout = () => {
               </>
             )}
 
+            {/* My Payroll Documents Section - Employees only (not vendors) */}
+            {!isVendor && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    My Payroll
+                  </p>
+                </div>
+                <Link to="/my-payroll-documents">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={location.pathname === '/my-payroll-documents' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid="nav-my-payroll-documents"
+                  >
+                    <Receipt className="mr-3 h-5 w-5" />
+                    My Payroll Documents
+                  </Button>
+                </Link>
+              </>
+            )}
+
             {/* Payroll Section - Admin/Manager only */}
             {isAdminOrManager && (
               <>
