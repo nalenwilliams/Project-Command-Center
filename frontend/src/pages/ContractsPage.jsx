@@ -282,6 +282,17 @@ const ContractsPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing contract details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedContract}
+        recordType="contract"
+        files={selectedContract?.files || []}
+        onUpdate={fetchData}
+        canDelete={isAdminOrManager}
+      />
     </div>
   );
 };
