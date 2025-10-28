@@ -1622,7 +1622,14 @@ async def delete_task(task_id: str, current_user: dict = Depends(get_current_use
 
 @api_router.get("/work-orders", response_model=List[WorkOrder])
 async def get_work_orders(current_user: dict = Depends(get_current_user)):
-    work_orders = await db.work_orders.find({}, {"_id": 0}).to_list(length=None)
+    # Employees only see work orders assigned to them
+    if current_user.get('role') == 'employee':
+        query = {"assigned_to": {"$in": [current_user['id']]}}
+    else:
+        # Admins and managers see all work orders
+        query = {}
+    
+    work_orders = await db.work_orders.find(query, {"_id": 0}).to_list(length=None)
     for work_order in work_orders:
         if isinstance(work_order['created_at'], str):
             work_order['created_at'] = datetime.fromisoformat(work_order['created_at'])
