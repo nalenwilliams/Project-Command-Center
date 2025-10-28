@@ -324,7 +324,7 @@ const EmployeesPage = () => {
               </TableHeader>
               <TableBody>
                 {employees.map((employee) => (
-                  <TableRow key={employee.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: '#374151' }} onClick={() => { setSelectedItem(employee.id); setGalleryOpen(true); }}>
+                  <TableRow key={employee.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: '#374151' }} onClick={() => { setSelectedItem(employee); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">{employee.name}</TableCell>
                     <TableCell className="text-gray-300">{employee.employee_id}</TableCell>
                     <TableCell className="text-gray-300">{employee.email}</TableCell>
