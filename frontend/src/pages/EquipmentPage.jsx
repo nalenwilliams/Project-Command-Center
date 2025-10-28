@@ -21,6 +21,8 @@ const EquipmentPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     equipment_type: 'tool',
