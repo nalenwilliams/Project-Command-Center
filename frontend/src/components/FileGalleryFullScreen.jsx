@@ -316,8 +316,8 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
-                  <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                  <p className="text-white mt-1">{record.description}</p>
+                  <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                  <p className="text-white mt-1 text-left">{record.description}</p>
                 </div>
               )}
             </div>
