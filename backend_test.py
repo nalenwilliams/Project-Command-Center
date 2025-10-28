@@ -1629,6 +1629,218 @@ class BackendTester:
                 f"User update request failed: {str(e)}"
             )
             return False
+
+    def test_employee_login(self):
+        """Test employee login with john.smith credentials"""
+        try:
+            login_data = {
+                "username": "john.smith",
+                "password": "Employee123!"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=login_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "access_token" in data and "user" in data:
+                    employee_token = data["access_token"]
+                    user_info = data["user"]
+                    
+                    # Verify employee role
+                    if user_info.get("role") == "employee":
+                        self.log_result(
+                            "Employee Login", 
+                            True, 
+                            f"Successfully logged in as employee: {user_info.get('username')}"
+                        )
+                        return employee_token, user_info
+                    else:
+                        self.log_result(
+                            "Employee Login", 
+                            False, 
+                            f"User logged in but role is '{user_info.get('role')}', expected 'employee'"
+                        )
+                        return False, None
+                else:
+                    self.log_result(
+                        "Employee Login", 
+                        False, 
+                        "Login response missing required fields",
+                        f"Response: {data}"
+                    )
+                    return False, None
+            else:
+                self.log_result(
+                    "Employee Login", 
+                    False, 
+                    f"Employee login failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False, None
+                
+        except Exception as e:
+            self.log_result(
+                "Employee Login", 
+                False, 
+                f"Employee login request failed: {str(e)}"
+            )
+            return False, None
+
+    def test_ai_form_assist_endpoint(self, auth_token):
+        """Test AI Form Assist endpoint"""
+        if not auth_token:
+            self.log_result("AI Form Assist Endpoint", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Test AI form assist request
+            assist_data = {
+                "section": "Personal Information",
+                "current_data": {
+                    "first_name": "John",
+                    "last_name": "Smith"
+                },
+                "form_type": "employee_onboarding"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/ai/form-assist",
+                json=assist_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "suggestions" in data:
+                    self.log_result(
+                        "AI Form Assist Endpoint", 
+                        True, 
+                        f"AI form assist endpoint working - returned suggestions: {data.get('suggestions', {})}"
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "AI Form Assist Endpoint", 
+                        False, 
+                        "AI form assist response missing 'suggestions' field",
+                        f"Response: {data}"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "AI Form Assist Endpoint", 
+                    False, 
+                    f"AI form assist failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "AI Form Assist Endpoint", 
+                False, 
+                f"AI form assist request failed: {str(e)}"
+            )
+            return False
+
+    def test_employee_onboarding_submission(self, auth_token):
+        """Test Employee Onboarding Submission endpoint"""
+        if not auth_token:
+            self.log_result("Employee Onboarding Submission", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Complete onboarding data
+            onboarding_data = {
+                # Personal Information
+                "first_name": "John",
+                "last_name": "Smith",
+                "email": "john.smith@williamsdiverse.com",
+                "phone": "(555) 123-4567",
+                "address": "123 Main Street",
+                "city": "Springfield",
+                "state": "IL",
+                "zip": "62701",
+                "ssn": "123-45-6789",
+                "date_of_birth": "1990-01-15",
+                
+                # Job Information
+                "job_title": "Construction Worker",
+                "department": "Construction",
+                "start_date": "2025-01-15",
+                "classification": "laborer",
+                "hourly_rate": "25.00",
+                "davis_bacon_certified": True,
+                
+                # Tax Information
+                "filing_status": "single",
+                "dependents": "0",
+                "extra_withholding": "0.00",
+                
+                # Banking Information
+                "bank_name": "First National Bank",
+                "account_type": "checking",
+                "routing_number": "123456789",
+                "account_number": "987654321",
+                
+                # Legal Documents
+                "nda_accepted": True,
+                "signature": "John Smith"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/employee/complete-onboarding",
+                json=onboarding_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "employee_id" in data:
+                    self.log_result(
+                        "Employee Onboarding Submission", 
+                        True, 
+                        f"Employee onboarding completed successfully - Employee ID: {data.get('employee_id')}"
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Employee Onboarding Submission", 
+                        False, 
+                        "Onboarding response missing required fields",
+                        f"Response: {data}"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Employee Onboarding Submission", 
+                    False, 
+                    f"Employee onboarding failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Employee Onboarding Submission", 
+                False, 
+                f"Employee onboarding request failed: {str(e)}"
+            )
+            return False
     
     def run_all_tests(self):
         """Run all backend tests including new first/last name and work orders filtering"""
