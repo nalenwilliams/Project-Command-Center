@@ -1030,34 +1030,78 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
         notification_settings = await db.notification_settings.find_one({}, {"_id": 0})
         
         if notification_settings and notification_settings.get('smtp_server'):
-            # Create registration link - using frontend URL
-            frontend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:3000').replace('/api', '')
+            # Create registration link - fix the URL construction
+            frontend_url = os.environ.get('REACT_APP_BACKEND_URL', '').replace('/api', '')
+            if not frontend_url:
+                # Fallback to request host
+                frontend_url = "https://" + os.environ.get('HOST', 'localhost:3000')
+            
             registration_link = f"{frontend_url}/auth?invite={invitation_code}"
             
-            # Email subject and body
+            # Email subject
             subject = f"Invitation to Join Williams Diversified LLC - Project Command Center"
+            
+            # Professional HTML email body
             body = f"""
-Hello,
-
-You have been invited to join Williams Diversified LLC's Project Command Center.
-
-Your invitation details:
-- Role: {invitation_data.role.upper()}
-- Invitation Code: {invitation_code}
-- Expires: {datetime.fromisoformat(invitation_dict['expires_at']).strftime('%B %d, %Y at %I:%M %p')}
-
-To complete your registration, please click the link below:
-{registration_link}
-
-Or visit the registration page and enter the invitation code: {invitation_code}
-
-If you have any questions, please contact your administrator.
-
-Best regards,
-Williams Diversified LLC Team
-
----
-This invitation will expire in 7 days.
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #C9A961; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }}
+        .content {{ background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }}
+        .button {{ display: inline-block; background-color: #C9A961; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }}
+        .button:hover {{ background-color: #b89951; }}
+        .info-box {{ background: #f9f9f9; border-left: 4px solid #C9A961; padding: 15px; margin: 20px 0; }}
+        .code {{ font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; color: #C9A961; background: #f5f5f5; padding: 8px 12px; border-radius: 4px; }}
+        .footer {{ text-align: center; color: #666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0; font-size: 28px;">Williams Diversified LLC</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px;">Project Command Center</p>
+        </div>
+        
+        <div class="content">
+            <h2 style="color: #1a1a1a; margin-top: 0;">You've Been Invited!</h2>
+            
+            <p>Hello,</p>
+            
+            <p>You have been invited to join <strong>Williams Diversified LLC's Project Command Center</strong> as a <strong>{invitation_data.role.upper()}</strong>.</p>
+            
+            <div class="info-box">
+                <p style="margin: 5px 0;"><strong>Your Invitation Details:</strong></p>
+                <p style="margin: 5px 0;">👤 Role: <strong>{invitation_data.role.title()}</strong></p>
+                <p style="margin: 5px 0;">🔑 Invitation Code: <span class="code">{invitation_code}</span></p>
+                <p style="margin: 5px 0;">⏰ Expires: <strong>{datetime.fromisoformat(invitation_dict['expires_at']).strftime('%B %d, %Y at %I:%M %p UTC')}</strong></p>
+            </div>
+            
+            <p><strong>To complete your registration, click the button below:</strong></p>
+            
+            <div style="text-align: center;">
+                <a href="{registration_link}" class="button">Complete Registration</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666;">Or copy and paste this link into your browser:</p>
+            <p style="font-size: 12px; background: #f5f5f5; padding: 10px; border-radius: 4px; word-break: break-all;">{registration_link}</p>
+            
+            <p style="margin-top: 30px;">If you have any questions or need assistance, please contact your administrator.</p>
+            
+            <p style="margin-top: 20px;">Best regards,<br>
+            <strong>Williams Diversified LLC Team</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>This invitation will expire in 7 days.</p>
+            <p>If you did not expect this invitation, please disregard this email.</p>
+            <p>&copy; 2025 Williams Diversified LLC. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
 """
             
             # Send email using email service
