@@ -313,6 +313,60 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
 
+              {recordType === 'invoice' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Invoice Number</p>
+                    <p className="text-white mt-1 text-left">{record.invoice_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Amount</p>
+                    <p className="text-white mt-1 text-left">${record.amount ? record.amount.toFixed(2) : '0.00'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Due Date</p>
+                    <p className="text-white mt-1 text-left">{record.due_date ? new Date(record.due_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Status</p>
+                    <p className="text-white mt-1 text-left">{record.status ? record.status.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
+              {recordType === 'expense' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1 text-left">{record.description || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Amount</p>
+                    <p className="text-white mt-1 text-left">${record.amount ? record.amount.toFixed(2) : '0.00'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Category</p>
+                    <p className="text-white mt-1 text-left">{record.category ? record.category.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Expense Date</p>
+                    <p className="text-white mt-1 text-left">{record.expense_date ? new Date(record.expense_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Receipt Number</p>
+                    <p className="text-white mt-1 text-left">{record.receipt_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
