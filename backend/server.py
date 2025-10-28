@@ -2438,6 +2438,70 @@ async def ai_chat_assistant(request: AIChatRequest, current_user: dict = Depends
     result = await ai_service.chat_assistant(request.message, request.conversation_history, user_context)
     return {"response": result}
 
+# Inventory Endpoints (Project-Based)
+@api_router.get("/inventory/by-project")
+async def get_inventory_by_project(current_user: dict = Depends(get_current_user)):
+    """Get inventory grouped by project with totals"""
+    try:
+        # Get all projects
+        projects = await db.projects.find({}, {"_id": 0}).to_list(length=None)
+        
+        result = []
+        for project in projects:
+            # Get inventory items for this project
+            items = await db.inventory.find({"project_id": project["id"]}, {"_id": 0}).to_list(length=None)
+            
+            # Calculate totals
+            total_items = len(items)
+            total_value = sum(item.get("unit_cost", 0) * item.get("quantity", 0) for item in items)
+            
+            result.append({
+                "project_id": project["id"],
+                "project_name": project.get("name", "Unknown Project"),
+                "project_status": project.get("status", "active"),
+                "total_items": total_items,
+                "total_value": round(total_value, 2),
+                "items": items
+            })
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/inventory", response_model=List[Inventory])
+async def get_inventory(project_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    """Get all inventory items, optionally filtered by project"""
+    query = {"project_id": project_id} if project_id else {}
+    items = await db.inventory.find(query, {"_id": 0}).to_list(length=None)
+    return [Inventory(**item) for item in items]
+
+@api_router.post("/inventory", response_model=Inventory)
+async def create_inventory(inventory: InventoryCreate, current_user: dict = Depends(get_current_user)):
+    inventory_dict = inventory.model_dump()
+    inventory_dict["id"] = str(uuid.uuid4())
+    inventory_dict["created_by"] = current_user.get("username", "unknown")
+    inventory_dict["created_at"] = datetime.now(timezone.utc)
+    await db.inventory.insert_one(prepare_for_mongo(inventory_dict))
+    return Inventory(**inventory_dict)
+
+@api_router.put("/inventory/{inventory_id}", response_model=Inventory)
+async def update_inventory(inventory_id: str, inventory: InventoryUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = {k: v for k, v in inventory.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.inventory.update_one({"id": inventory_id}, {"$set": prepare_for_mongo(update_data)})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    return await db.inventory.find_one({"id": inventory_id}, {"_id": 0})
+
+@api_router.delete("/inventory/{inventory_id}")
+async def delete_inventory(inventory_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.inventory.delete_one({"id": inventory_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    return {"message": "Inventory item deleted"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
