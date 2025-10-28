@@ -314,6 +314,17 @@ const SafetyReportsPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing safety report details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedReport}
+        recordType="safety-report"
+        files={selectedReport?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
