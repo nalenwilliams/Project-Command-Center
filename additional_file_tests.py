@@ -10,7 +10,7 @@ import io
 from datetime import datetime, timezone
 import sys
 
-BACKEND_URL = "https://project-command-5.preview.emergentagent.com/api"
+BACKEND_URL = "https://taskflow-center.preview.emergentagent.com/api"
 
 def test_multiple_file_types():
     """Test uploading different file types"""

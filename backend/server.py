@@ -1033,7 +1033,7 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
             # Create registration link
             # Frontend is on the same domain as backend (which includes /api)
             # Get backend URL from environment or use default
-            frontend_url = "https://project-command-5.preview.emergentagent.com"
+            frontend_url = "https://taskflow-center.preview.emergentagent.com"
             
             # Registration link with invitation code as query parameter
             registration_link = f"{frontend_url}/auth?invite={invitation_code}"
