@@ -44,11 +44,20 @@ const AuthPage = () => {
           });
           
           if (response.data.success) {
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            toast.success('Welcome! Logged in with Google');
+            const userData = response.data.user;
+            localStorage.setItem('user', JSON.stringify(userData));
             
-            // Navigate to dashboard
-            navigate('/', { replace: true });
+            // Show personalized welcome message
+            const userName = userData.first_name 
+              ? `${userData.first_name} ${userData.last_name || ''}`.trim()
+              : userData.email.split('@')[0];
+            
+            toast.success(`Welcome back, ${userName}!`);
+            
+            // Small delay for user to see the success message
+            setTimeout(() => {
+              navigate('/', { replace: true });
+            }, 1000);
           }
         } catch (error) {
           console.error('Session processing error:', error);
