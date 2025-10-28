@@ -228,20 +228,20 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               {recordType === 'project' && record && (
                 <>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
-                    <p className="text-white mt-1">{record.address || record.location || 'N/A'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1 text-left">{record.address || record.location || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
-                    <p className="text-white mt-1">{record.description || 'N/A'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1 text-left">{record.description || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
-                    <p className="text-white mt-1">{getUserNames(record.assigned_to)}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
+                    <p className="text-white mt-1 text-left">{getUserNames(record.assigned_to)}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
-                    <p className="text-white mt-1">{record.created_by || 'Admin'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Assigned by</p>
+                    <p className="text-white mt-1 text-left">{record.created_by || 'Admin'}</p>
                   </div>
                 </>
               )}
