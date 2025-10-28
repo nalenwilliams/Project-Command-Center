@@ -152,7 +152,7 @@ class User(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     picture: Optional[str] = None  # Google profile picture
-    role: str = "employee"  # admin, manager, employee
+    role: str = "employee"  # admin, manager, employee, vendor
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
