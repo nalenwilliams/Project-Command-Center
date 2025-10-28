@@ -1218,29 +1218,44 @@ Focus on practical, business-relevant responses."""
 
 @api_router.post("/ai/proposal")
 async def ai_proposal(request: Request, current_user: dict = Depends(get_current_user)):
-    """Generate construction proposal using Gemini 2.5 Pro"""
+    """Generate construction proposal using Gemini 2.5 Flash"""
     try:
         body = await request.json()
         project = body.get('project', {})
         notes = body.get('notes', '')
         
-        # Initialize chat
+        # Custom system message for Williams Diversified proposals
+        system_message = """You are a construction proposal expert for Williams Diversified LLC.
+
+COMPANY INFO:
+- Company: Williams Diversified LLC
+- Location: 765 NW 1060th Ave, Wilburton, OK 74578
+- Owner: Nalen Williams
+- Authorized Officer: Nalen Williams, Owner
+
+Generate professional construction proposals in JSON format only.
+Focus on construction, renovation, and project management services.
+Be specific, detailed, and professional."""
+
+        # Initialize chat with Gemini 2.5 Flash (faster)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"proposal_{current_user['id']}",
-            system_message="You are a construction proposal expert for Williams Diversified LLC. Generate detailed proposals in JSON format."
-        ).with_model("gemini", "gemini-2.5-pro")
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.5-flash")  # Changed to Flash
         
-        prompt = f"""Generate a construction proposal for this project:
+        prompt = f"""Generate a construction proposal for:
 Project: {project}
 Notes: {notes}
 
-Return a JSON object with these fields:
-- scopeOfWork: Detailed description
-- inclusions: Array of trade items
-- itemizedPricing: Array of cost items
-- totalLumpSum: Total cost
-- notes: Additional terms"""
+Return ONLY valid JSON with:
+{{
+  "scopeOfWork": "Detailed work description",
+  "inclusions": [{{"trade": "Trade Name", "items": ["item1", "item2"]}}],
+  "itemizedPricing": [{{"description": "Item", "cost": 0.00}}],
+  "totalLumpSum": 0.00,
+  "notes": "Terms and conditions"
+}}"""
         
         user_message = UserMessage(text=prompt)
         response = await chat.send_message(user_message)
