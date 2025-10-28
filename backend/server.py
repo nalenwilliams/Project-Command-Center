@@ -506,6 +506,67 @@ class Expense(BaseModel):
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Report Models
+class ReportCreate(BaseModel):
+    title: str
+    report_type: str  # financial, operational, safety, etc.
+    period: Optional[str] = None
+    description: Optional[str] = None
+    generated_by: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class ReportUpdate(BaseModel):
+    title: Optional[str] = None
+    report_type: Optional[str] = None
+    period: Optional[str] = None
+    description: Optional[str] = None
+    generated_by: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Report(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    report_type: str
+    period: Optional[str] = None
+    description: Optional[str] = None
+    generated_by: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Compliance Models
+class ComplianceCreate(BaseModel):
+    title: str
+    compliance_type: str  # regulatory, safety, environmental, etc.
+    requirement: Optional[str] = None
+    status: str = "pending"  # pending, compliant, non_compliant
+    due_date: Optional[datetime] = None
+    description: Optional[str] = None
+    files: Optional[List[dict]] = []
+
+class ComplianceUpdate(BaseModel):
+    title: Optional[str] = None
+    compliance_type: Optional[str] = None
+    requirement: Optional[str] = None
+    status: Optional[str] = None
+    due_date: Optional[datetime] = None
+    description: Optional[str] = None
+    files: Optional[List[dict]] = None
+
+class Compliance(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    compliance_type: str
+    requirement: Optional[str] = None
+    status: str = "pending"
+    due_date: Optional[datetime] = None
+    description: Optional[str] = None
+    files: Optional[List[dict]] = []
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Contract Models
 class ContractCreate(BaseModel):
     title: str
