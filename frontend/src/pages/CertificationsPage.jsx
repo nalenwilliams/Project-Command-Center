@@ -18,6 +18,8 @@ const CertificationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedCert, setSelectedCert] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     employee_name: '',
