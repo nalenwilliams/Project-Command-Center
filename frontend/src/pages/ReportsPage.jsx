@@ -206,7 +206,7 @@ const ReportsPage = () => {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-2xl" style={{ borderColor: ELEGANT_GOLD }}>
+        <DialogContent className="bg-gray-900 border max-w-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
           <DialogHeader>
             <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingReport ? 'Edit Report' : 'New Report'}</DialogTitle>
           </DialogHeader>
