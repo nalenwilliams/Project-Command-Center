@@ -151,6 +151,17 @@ const HandbookPoliciesPage = () => {
     });
   };
 
+  const handleOpenDialog = () => {
+    // Pre-select category based on active tab
+    if (activeTab !== 'all') {
+      setFormData({
+        ...formData,
+        category: activeTab
+      });
+    }
+    setDialogOpen(true);
+  };
+
   const hasAcknowledged = (policy) => {
     return policy.acknowledgments?.some(ack => ack.user_id === user.id);
   };
