@@ -150,9 +150,22 @@ const AdminPanel = () => {
     return <Badge style={variant.style}>{variant.label}</Badge>;
   };
 
-  const copyInviteCode = (code) => {
-    navigator.clipboard.writeText(code);
-    toast.success('Invitation code copied!');
+  const copyInviteCode = async (code) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success('Invitation code copied!');
+    } catch (error) {
+      // Fallback method for clipboard copy
+      const tempInput = document.createElement('input');
+      tempInput.value = code;
+      tempInput.style.position = 'fixed';
+      tempInput.style.opacity = '0';
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      toast.success('Invitation code copied!');
+    }
   };
 
   if (loading) {
