@@ -28,6 +28,7 @@ import {
   ClipboardList,
   Banknote,
   Store,
+  FolderOpen,
 } from 'lucide-react';
 
 const Layout = () => {
