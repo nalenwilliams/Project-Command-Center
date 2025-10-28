@@ -462,15 +462,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "File Upload Endpoint"
-    - "File Serving Endpoint"
-    - "Project File Operations"
-    - "Task File Operations"
-    - "Client File Operations"
-    - "Invoice File Operations"
-    - "Expense File Operations"
-    - "Contract File Operations"
-    - "Equipment File Operations"
+    - "Work Orders Role-Based Filtering"
+    - "User Model Enhancement - First/Last Name"
+    - "User Registration with Names"
+    - "Registration Form - First/Last Name Fields"
+    - "FileGalleryFullScreen - Display Full Names"
+    - "AdminPanel - User Management with Names"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
