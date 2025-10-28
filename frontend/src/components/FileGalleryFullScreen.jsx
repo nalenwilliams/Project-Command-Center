@@ -367,6 +367,68 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
 
+              {recordType === 'contract' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Contract Number</p>
+                    <p className="text-white mt-1 text-left">{record.contract_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Value</p>
+                    <p className="text-white mt-1 text-left">${record.value ? record.value.toFixed(2) : '0.00'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Start Date</p>
+                    <p className="text-white mt-1 text-left">{record.start_date ? new Date(record.start_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>End Date</p>
+                    <p className="text-white mt-1 text-left">{record.end_date ? new Date(record.end_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Status</p>
+                    <p className="text-white mt-1 text-left">{record.status ? record.status.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
+              {recordType === 'equipment' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Equipment Type</p>
+                    <p className="text-white mt-1 text-left">{record.equipment_type || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Serial Number</p>
+                    <p className="text-white mt-1 text-left">{record.serial_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Location</p>
+                    <p className="text-white mt-1 text-left">{record.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Assigned To</p>
+                    <p className="text-white mt-1 text-left">{record.assigned_to || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Purchase Date</p>
+                    <p className="text-white mt-1 text-left">{record.purchase_date ? new Date(record.purchase_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Status</p>
+                    <p className="text-white mt-1 text-left">{record.status ? record.status.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
