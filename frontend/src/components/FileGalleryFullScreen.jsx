@@ -508,6 +508,64 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
 
+              {recordType === 'safety-report' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Severity</p>
+                    <p className="text-white mt-1 text-left">{record.severity ? record.severity.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Location</p>
+                    <p className="text-white mt-1 text-left">{record.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Incident Date</p>
+                    <p className="text-white mt-1 text-left">{record.incident_date ? new Date(record.incident_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Reported By</p>
+                    <p className="text-white mt-1 text-left">{record.reported_by || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Status</p>
+                    <p className="text-white mt-1 text-left">{record.status ? record.status.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1 text-left">{record.description || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
+              {recordType === 'certification' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Employee Name</p>
+                    <p className="text-white mt-1 text-left">{record.employee_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Certification Number</p>
+                    <p className="text-white mt-1 text-left">{record.certification_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Issue Date</p>
+                    <p className="text-white mt-1 text-left">{record.issue_date ? new Date(record.issue_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Expiry Date</p>
+                    <p className="text-white mt-1 text-left">{record.expiry_date ? new Date(record.expiry_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Issuing Authority</p>
+                    <p className="text-white mt-1 text-left">{record.issuing_authority || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
