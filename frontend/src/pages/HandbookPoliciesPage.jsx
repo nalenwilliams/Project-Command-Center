@@ -28,6 +28,7 @@ const HandbookPoliciesPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
