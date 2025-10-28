@@ -285,6 +285,42 @@ backend:
         - agent: "testing"
         - comment: "Equipment file operations working perfectly. Successfully tested creating equipment records with file attachments and updating equipment while preserving file associations. Files array properly maintained through CRUD operations."
 
+  - task: "Work Orders Role-Based Filtering"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Work orders filtering was already implemented in previous iteration (lines 1623-1638). Employees only see work orders assigned to them via assigned_to field."
+
+  - task: "User Model Enhancement - First/Last Name"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Updated User, UserResponse, UserUpdate, and UserCreate Pydantic models to include optional first_name and last_name fields. Updated register endpoint to accept and store these fields. Updated login and /auth/me endpoints to return first_name and last_name in user response."
+
+  - task: "User Registration with Names"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Updated registration endpoint (POST /auth/register) to accept first_name and last_name from UserCreate model and store them in User document."
+
 frontend:
   - task: "File Gallery UX Improvements"
     implemented: true
