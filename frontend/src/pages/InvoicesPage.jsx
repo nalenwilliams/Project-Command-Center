@@ -338,6 +338,17 @@ const InvoicesPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing invoice details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedInvoice}
+        recordType="invoice"
+        files={selectedInvoice?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
