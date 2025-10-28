@@ -24,51 +24,36 @@ const AuthPage = () => {
     invitation_code: '' 
   });
 
-  // Handle session_id from URL fragment (Emergent Auth callback)
+  // Check for Google OAuth success/error in URL params
   useEffect(() => {
-    const processSessionId = async () => {
-      const hash = window.location.hash;
-      if (hash && hash.includes('session_id=')) {
-        setProcessingSession(true);
-        const sessionId = hash.split('session_id=')[1].split('&')[0];
-        
-        // Clear URL fragment immediately
-        window.history.replaceState(null, '', window.location.pathname);
-        
-        try {
-          // Call backend to process session
-          const response = await api.post('/auth/session', null, {
-            headers: {
-              'X-Session-ID': sessionId
-            }
-          });
-          
-          if (response.data.success) {
-            const userData = response.data.user;
-            localStorage.setItem('user', JSON.stringify(userData));
-            
-            // Show personalized welcome message
-            const userName = userData.first_name 
-              ? `${userData.first_name} ${userData.last_name || ''}`.trim()
-              : userData.email.split('@')[0];
-            
+    const params = new URLSearchParams(location.search);
+    if (params.get('google_success') === 'true') {
+      setProcessingSession(true);
+      // Check if user session is valid
+      api.get('/auth/me')
+        .then(response => {
+          if (response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+            const userName = response.data.first_name 
+              ? `${response.data.first_name} ${response.data.last_name || ''}`.trim()
+              : response.data.email.split('@')[0];
             toast.success(`Welcome back, ${userName}!`);
-            
-            // Small delay for user to see the success message
             setTimeout(() => {
               navigate('/', { replace: true });
             }, 1000);
           }
-        } catch (error) {
-          console.error('Session processing error:', error);
+        })
+        .catch(error => {
+          console.error('Session check failed:', error);
           toast.error('Authentication failed. Please try again.');
           setProcessingSession(false);
-        }
-      }
-    };
-
-    processSessionId();
-  }, []); // Empty dependency array - run only once on mount
+          navigate('/auth', { replace: true });
+        });
+    } else if (params.get('google_error') === 'true') {
+      toast.error('Google authentication failed. Please try again.');
+      navigate('/auth', { replace: true });
+    }
+  }, [location, navigate]);
 
   const handleGoogleLogin = () => {
     // This function is now just for desktop fallback
