@@ -50,8 +50,13 @@ const Layout = () => {
     { path: '/work-orders', label: 'Work Orders', icon: ClipboardList },
     { path: '/employees', label: 'Employees', icon: TrendingUp },
     { path: '/handbook', label: 'Handbook/Policies', icon: BookOpen },
-    { path: '/fleet', label: 'Fleet Inspections', icon: Truck },
   ];
+
+  // Fleet Inspections - Hidden from vendors
+  const isVendor = user.role === 'vendor';
+  if (!isVendor) {
+    navItems.push({ path: '/fleet', label: 'Fleet Inspections', icon: Truck });
+  }
 
   // Financial Management - Admin/Manager only
   const isAdminOrManager = user.role === 'admin' || user.role === 'manager';
