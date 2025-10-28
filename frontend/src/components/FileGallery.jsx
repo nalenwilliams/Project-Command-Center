@@ -11,7 +11,7 @@ import FileGalleryFullScreen from './FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const FileGallery = ({ item, itemType, onUpdate, canDelete = false }) => {
+const FileGallery = ({ item, itemType, onUpdate, canDelete = false, users = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(item);
   const [previewFile, setPreviewFile] = useState(null);
