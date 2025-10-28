@@ -330,6 +330,67 @@ backend:
         - agent: "testing"
         - comment: "Successfully tested user registration with first_name and last_name fields. Created invitation and registered new user 'johndoe' with first_name: 'John' and last_name: 'Doe'. Registration endpoint (POST /auth/register) properly accepts first_name and last_name from UserCreate model (lines 906-907), stores them in User document, and returns them in response (lines 932-933). Registration process working correctly end-to-end."
 
+
+  - task: "Vendor Role Addition to User Model"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Added 'vendor' role to User model role field. Updated comment to include admin, manager, employee, vendor roles at line 155."
+
+  - task: "Payroll Module Proxy Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created FastAPI proxy endpoints for all payroll operations: GET /api/payroll/employees, POST /api/payroll/employees, GET /api/payroll/runs, POST /api/payroll/run, POST /api/payroll/calc, POST /api/payroll/approve, POST /api/payroll/export, POST /api/payroll/pay. All endpoints require Admin/Manager role and proxy requests to Node.js modules server on port 3001 with user context headers."
+
+  - task: "Vendor Portal Proxy Endpoints"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created FastAPI proxy endpoints for all vendor operations: GET /api/vendors (filtered by role), POST /api/vendors (admin only), GET /api/vendor/invoices (filtered by role), POST /api/vendor/invoices, GET /api/vendor/payments (filtered by role), POST /api/vendor/payments (admin only). Vendors see only their own data via vendor_id lookup."
+
+  - task: "Node.js Modules Server Setup"
+    implemented: true
+    working: true
+    file: "server/index.js, modules/*"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "Unified Node.js server running on port 3001 with all modules: ai_core, company_profile, command_router, payroll, vendor_pay. Configured supervisor to manage the modules service. Fixed uuid import issues. Server health check endpoint responding correctly."
+
+  - task: "PostgreSQL Database for Payroll"
+    implemented: true
+    working: true
+    file: "modules/shared/db.js, .env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "main"
+        - comment: "PostgreSQL connection pool configured using pg client. Database wdl_payroll_db with user wdl_payroll_user already set up. Connection string configured in .env. Database service file created at modules/shared/db.js with connection pooling and error handling."
+
 frontend:
   - task: "File Gallery UX Improvements"
     implemented: true
