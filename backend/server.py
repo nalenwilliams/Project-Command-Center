@@ -1022,12 +1022,69 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
     
     await db.invitations.insert_one(invitation_dict)
     
+    # Send invitation email
+    try:
+        # Get notification settings for email configuration
+        notification_settings = await db.notification_settings.find_one({}, {"_id": 0})
+        
+        if notification_settings and notification_settings.get('smtp_server'):
+            # Create registration link - using frontend URL
+            frontend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:3000').replace('/api', '')
+            registration_link = f"{frontend_url}/auth?invite={invitation_code}"
+            
+            # Email subject and body
+            subject = f"Invitation to Join Williams Diversified LLC - Project Command Center"
+            body = f"""
+Hello,
+
+You have been invited to join Williams Diversified LLC's Project Command Center.
+
+Your invitation details:
+- Role: {invitation_data.role.upper()}
+- Invitation Code: {invitation_code}
+- Expires: {datetime.fromisoformat(invitation_dict['expires_at']).strftime('%B %d, %Y at %I:%M %p')}
+
+To complete your registration, please click the link below:
+{registration_link}
+
+Or visit the registration page and enter the invitation code: {invitation_code}
+
+If you have any questions, please contact your administrator.
+
+Best regards,
+Williams Diversified LLC Team
+
+---
+This invitation will expire in 7 days.
+"""
+            
+            # Send email using email service
+            await email_service.send_email(
+                to_email=invitation_data.email,
+                subject=subject,
+                body=body,
+                smtp_config={
+                    'server': notification_settings.get('smtp_server'),
+                    'port': notification_settings.get('smtp_port', 587),
+                    'username': notification_settings.get('smtp_username'),
+                    'password': notification_settings.get('smtp_password'),
+                    'from_email': notification_settings.get('admin_email', notification_settings.get('smtp_username'))
+                }
+            )
+            email_sent = True
+        else:
+            email_sent = False
+    except Exception as e:
+        print(f"Failed to send invitation email: {str(e)}")
+        email_sent = False
+    
     return {
-        "message": "Invitation created successfully",
+        "message": "Invitation created successfully" + (" and email sent" if email_sent else " (email not configured)"),
         "invitation_code": invitation_code,
         "email": invitation_data.email,
         "role": invitation_data.role,
-        "expires_at": invitation_dict['expires_at']
+        "expires_at": invitation_dict['expires_at'],
+        "email_sent": email_sent
     }
 
 @api_router.get("/admin/invitations")
