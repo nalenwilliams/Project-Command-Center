@@ -4,12 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog'
-import { useAuth } from '../context/AuthContext'
 import api from '../lib/api'
 import { Plus, DollarSign, Users, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 
 const PayrollPage = () => {
-  const { user } = useAuth()
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
   const [employees, setEmployees] = useState([])
   const [payrollRuns, setPayrollRuns] = useState([])
   const [loading, setLoading] = useState(true)
