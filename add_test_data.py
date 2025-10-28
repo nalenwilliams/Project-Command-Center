@@ -157,6 +157,7 @@ except Exception as e:
 try:
     inventory_data = {
         "item_name": "2x4 Lumber - 8ft",
+        "category": "lumber",
         "quantity": 250,
         "unit": "pieces",
         "location": "Warehouse A - Section 12",
@@ -176,6 +177,7 @@ except Exception as e:
 try:
     safety_data = {
         "title": "Weekly Safety Inspection Report",
+        "incident_type": "inspection",
         "severity": "low",
         "location": "Construction Site - Main Building",
         "reported_by": "Safety Officer",
@@ -195,7 +197,8 @@ except Exception as e:
 # Add Certification
 try:
     cert_data = {
-        "name": "OSHA 30-Hour Construction Safety",
+        "certification_name": "OSHA 30-Hour Construction Safety",
+        "certification_type": "safety",
         "employee_name": "Mike Johnson",
         "issue_date": (datetime.now() - timedelta(days=90)).isoformat(),
         "expiry_date": (datetime.now() + timedelta(days=1005)).isoformat(),
