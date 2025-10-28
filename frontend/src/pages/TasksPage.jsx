@@ -390,6 +390,7 @@ const TasksPage = () => {
                           itemType="tasks" 
                           onUpdate={fetchData}
                           canDelete={canFullEdit}
+                          users={users}
                         />
                         {canFullEdit ? (
                           <>
