@@ -282,6 +282,46 @@ const Layout = () => {
                 })}
               </>
             )}
+
+            {/* Payroll Section - Admin/Manager only */}
+            {isAdminOrManager && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    Payroll
+                  </p>
+                </div>
+                <Link to="/payroll">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={location.pathname === '/payroll' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid="nav-payroll"
+                  >
+                    <Banknote className="mr-3 h-5 w-5" />
+                    Payroll Management
+                  </Button>
+                </Link>
+              </>
+            )}
+
+            {/* Vendor Portal Section - Visible to all */}
+            <div className="pt-4 pb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                Vendor Portal
+              </p>
+            </div>
+            <Link to="/vendors">
+              <Button
+                variant="ghost"
+                className="w-full justify-start hover:bg-gray-900"
+                style={location.pathname === '/vendors' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                data-testid="nav-vendors"
+              >
+                <Store className="mr-3 h-5 w-5" />
+                {user.role === 'vendor' ? 'My Vendor Portal' : 'Vendor Management'}
+              </Button>
+            </Link>
           </nav>
 
           <div className="p-4 border-t" style={{ borderColor: '#C9A961' }}>
