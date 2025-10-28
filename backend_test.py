@@ -1843,8 +1843,8 @@ class BackendTester:
             return False
     
     def run_all_tests(self):
-        """Run all backend tests including new first/last name and work orders filtering"""
-        print(f"🚀 Starting Backend API Tests")
+        """Run all backend tests including employee onboarding endpoints"""
+        print(f"🚀 Starting Backend API Tests - Employee Onboarding Focus")
         print(f"Backend URL: {self.base_url}")
         print("=" * 60)
         
@@ -1855,19 +1855,34 @@ class BackendTester:
             print("\n❌ Cannot proceed with other tests - admin login failed")
             return self.generate_summary()
         
-        # Test 2: Login Response with Names
+        # Test 2: Employee Login (for onboarding tests)
+        employee_token, employee_user = self.test_employee_login()
+        
+        # Test 3: AI Form Assist Endpoint (with employee token)
+        if employee_token:
+            self.test_ai_form_assist_endpoint(employee_token)
+        else:
+            self.log_result("AI Form Assist Endpoint", False, "No employee token available")
+        
+        # Test 4: Employee Onboarding Submission (with employee token)
+        if employee_token:
+            self.test_employee_onboarding_submission(employee_token)
+        else:
+            self.log_result("Employee Onboarding Submission", False, "No employee token available")
+        
+        # Test 5: Login Response with Names
         self.test_login_response_with_names()
         
-        # Test 3: Get Current User with Names
+        # Test 6: Get Current User with Names
         self.test_get_current_user_with_names()
         
-        # Test 4: User Registration with Names
+        # Test 7: User Registration with Names
         self.test_user_registration_with_names()
         
-        # Test 5: Work Orders Filtering
+        # Test 8: Work Orders Filtering
         self.test_work_orders_filtering()
         
-        # Test 6: User Update with Names
+        # Test 9: User Update with Names
         self.test_user_update_with_names()
         
         return self.generate_summary()
