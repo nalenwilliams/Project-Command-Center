@@ -1043,7 +1043,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 @api_router.get("/auth/google/login")
 async def google_login(request: Request):
     """Initiate Google OAuth login"""
-    backend_url = os.environ.get('FRONTEND_URL', 'https://taskflow-center.preview.emergentagent.com')
+    backend_url = os.environ.get('FRONTEND_URL', 'https://wdl-hub.preview.emergentagent.com')
     redirect_uri = f"{backend_url}/api/auth/google/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
@@ -1543,7 +1543,7 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
             # Create registration link
             # Frontend is on the same domain as backend (which includes /api)
             # Get backend URL from environment or use default
-            frontend_url = "https://taskflow-center.preview.emergentagent.com"
+            frontend_url = "https://wdl-hub.preview.emergentagent.com"
             
             # Registration link with invitation code as query parameter
             registration_link = f"{frontend_url}/auth?invite={invitation_code}"
