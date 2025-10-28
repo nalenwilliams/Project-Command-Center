@@ -277,6 +277,7 @@ const FileGallery = ({ item, itemType, onUpdate, canDelete = false, users = [] }
         record={currentItem}
         recordType={itemType}
         files={currentItem.files || []}
+        users={users}
         onDelete={handleDeleteFile}
         canDelete={canDelete}
         onUpdate={() => {
