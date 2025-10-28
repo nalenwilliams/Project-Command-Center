@@ -185,7 +185,15 @@ const ContractsPage = () => {
               </TableHeader>
               <TableBody>
                 {contracts.map((contract) => (
-                  <TableRow key={contract.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={contract.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedContract(contract);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{contract.title}</TableCell>
                     <TableCell className="text-gray-300">{contract.contract_number || 'N/A'}</TableCell>
                     <TableCell className="text-gray-300">
@@ -195,9 +203,8 @@ const ContractsPage = () => {
                       {contract.value ? `$${contract.value.toFixed(2)}` : 'N/A'}
                     </TableCell>
                     <TableCell>{getStatusBadge(contract.status)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={contract} itemType="contracts" onUpdate={fetchData} canDelete={true} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(contract)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
