@@ -253,6 +253,10 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                     <p className="text-white mt-1">{record.description || 'N/A'}</p>
                   </div>
                   <div>
+                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Priority</p>
+                    <p className="text-white mt-1">{record.priority ? record.priority.toUpperCase() : 'N/A'}</p>
+                  </div>
+                  <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Assigned to</p>
                     <p className="text-white mt-1">{getUserNames(record.assigned_to)}</p>
                   </div>
@@ -267,10 +271,6 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Status</p>
                     <p className="text-white mt-1">{record.status ? record.status.replace('_', ' ').toUpperCase() : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Priority</p>
-                    <p className="text-white mt-1">{record.priority ? record.priority.toUpperCase() : 'N/A'}</p>
                   </div>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Due Date</p>
