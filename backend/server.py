@@ -3449,6 +3449,86 @@ async def invite_vendor(
         logger.error(f"Error inviting vendor: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/vendors/create-direct")
+async def create_vendor_direct(
+    vendor_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create vendor account directly without invitation code (Admin only)"""
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Check if vendor email already exists
+        existing_user = await db.users.find_one({"email": vendor_data.get("email")})
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        
+        # Generate temporary password
+        temp_password = generate_invitation_code(12)
+        
+        # Create vendor user account
+        vendor_user_id = str(uuid.uuid4())
+        vendor_user = {
+            "id": vendor_user_id,
+            "username": vendor_data.get("email").split("@")[0],
+            "email": vendor_data.get("email"),
+            "password_hash": pwd_context.hash(temp_password),
+            "role": "vendor",
+            "first_name": vendor_data.get("contact_first_name", ""),
+            "last_name": vendor_data.get("contact_last_name", ""),
+            "onboarding_completed": True,  # Skip onboarding
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.users.insert_one(vendor_user)
+        
+        # Create vendor profile
+        vendor_profile_id = str(uuid.uuid4())
+        vendor_profile = {
+            "id": vendor_profile_id,
+            "user_id": vendor_user_id,
+            "company_name": vendor_data.get("company_name"),
+            "business_type": vendor_data.get("business_type", "LLC"),
+            "ein": vendor_data.get("ein", ""),
+            "phone": vendor_data.get("phone"),
+            "email": vendor_data.get("email"),
+            "website": vendor_data.get("website", ""),
+            "address": vendor_data.get("address", ""),
+            "city": vendor_data.get("city", ""),
+            "state": vendor_data.get("state", ""),
+            "zip": vendor_data.get("zip", ""),
+            "contact_first_name": vendor_data.get("contact_first_name", ""),
+            "contact_last_name": vendor_data.get("contact_last_name", ""),
+            "contact_title": vendor_data.get("contact_title", ""),
+            "contact_email": vendor_data.get("contact_email", vendor_data.get("email")),
+            "contact_phone": vendor_data.get("contact_phone", vendor_data.get("phone")),
+            "status": "active",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_by": current_user["id"]
+        }
+        
+        await db.vendors.insert_one(vendor_profile)
+        
+        # Update user with vendor_id
+        await db.users.update_one(
+            {"id": vendor_user_id},
+            {"$set": {"vendor_id": vendor_profile_id}}
+        )
+        
+        return {
+            "message": "Vendor created successfully",
+            "vendor_id": vendor_profile_id,
+            "email": vendor_data.get("email"),
+            "temp_password": temp_password,
+            "username": vendor_user["username"]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating vendor: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/vendor/documents")
 async def get_vendor_documents(current_user: dict = Depends(get_current_user)):
     """Get vendor's company documents"""
