@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the login functionality with admin credentials (username: admin, password: admin123). Also check if the task assignment notification is working by: 1. First, login as admin 2. Get the list of users 3. Create a test task and assign it to an employee 4. Verify the task was created successfully"
+user_problem_statement: "Implement role-based filtering for work orders (employees see only assigned work orders) and add first_name/last_name fields to User model for proper name display throughout the application"
 
 backend:
   - task: "Admin Login Authentication"
