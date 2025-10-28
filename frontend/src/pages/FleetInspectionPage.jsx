@@ -379,7 +379,7 @@ const FleetInspectionPage = () => {
         record={selectedItem}
         recordType="fleet-inspection"
         files={selectedItem?.files || []}
-        onUpdate={fetchData}
+        onUpdate={fetchInspections}
         canDelete={canDelete}
       />
     </div>
