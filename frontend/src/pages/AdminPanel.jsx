@@ -31,6 +31,8 @@ const AdminPanel = () => {
   const [editData, setEditData] = useState({
     username: '',
     email: '',
+    first_name: '',
+    last_name: '',
     role: '',
     is_active: true
   });
