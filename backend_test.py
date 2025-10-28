@@ -2371,6 +2371,177 @@ class BackendTester:
             )
             return False
     
+    def test_vendor_onboarding_with_k7kimg51(self):
+        """Test vendor onboarding submission with specific invitation code K7KIMG51"""
+        if not self.auth_token:
+            self.log_result("Vendor Onboarding K7KIMG51", False, "No auth token available")
+            return False
+            
+        try:
+            # Prepare complete vendor onboarding form data as multipart/form-data
+            form_data = {
+                'invitation_code': 'K7KIMG51',
+                'company_name': 'ACME Construction LLC',
+                'business_type': 'Construction',
+                'ein': '12-3456789',
+                'phone': '555-123-4567',
+                'email': 'contact@acmeconstruction.com',
+                'website': 'https://acmeconstruction.com',
+                'address': '123 Main Street',
+                'city': 'Anytown',
+                'state': 'CA',
+                'zip': '90210',
+                'contact_first_name': 'John',
+                'contact_last_name': 'Smith',
+                'contact_title': 'Project Manager',
+                'contact_email': 'john.smith@acmeconstruction.com',
+                'contact_phone': '555-123-4567',
+                'insurance_provider': 'State Farm Insurance',
+                'policy_number': 'SF-123456789',
+                'insurance_amount': '1000000',
+                'insurance_expiry': '2025-12-31',
+                'bank_name': 'First National Bank',
+                'account_type': 'Business Checking',
+                'routing_number': '123456789',
+                'account_number': '987654321',
+                'nda_accepted': 'true',
+                'terms_accepted': 'true',
+                'signature': 'John Smith'
+            }
+            
+            # Test vendor onboarding submission (no auth required for onboarding)
+            response = self.session.post(
+                f"{self.base_url}/vendor/complete-onboarding",
+                data=form_data
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "vendor_id" in data and "message" in data:
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        True, 
+                        f"Successfully completed vendor onboarding with K7KIMG51. Vendor ID: {data.get('vendor_id')}"
+                    )
+                    return data
+                else:
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        False, 
+                        "Onboarding response missing required fields",
+                        f"Response: {data}"
+                    )
+                    return False
+            elif response.status_code == 404:
+                self.log_result(
+                    "Vendor Onboarding K7KIMG51", 
+                    False, 
+                    "Invalid invitation code K7KIMG51 - code not found in database",
+                    f"Response: {response.text}"
+                )
+                return False
+            elif response.status_code == 400:
+                try:
+                    error_detail = response.json().get('detail', response.text)
+                except:
+                    error_detail = response.text
+                    
+                if "already used" in error_detail.lower():
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        False, 
+                        f"Invitation code K7KIMG51 has already been used: {error_detail}",
+                        f"Full response: {response.text}"
+                    )
+                elif "expired" in error_detail.lower():
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        False, 
+                        f"Invitation code K7KIMG51 has expired: {error_detail}",
+                        f"Full response: {response.text}"
+                    )
+                elif "invalid" in error_detail.lower():
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        False, 
+                        f"Invitation code K7KIMG51 is invalid: {error_detail}",
+                        f"Full response: {response.text}"
+                    )
+                else:
+                    self.log_result(
+                        "Vendor Onboarding K7KIMG51", 
+                        False, 
+                        f"Vendor onboarding failed with validation error: {error_detail}",
+                        f"Full response: {response.text}"
+                    )
+                return False
+            else:
+                self.log_result(
+                    "Vendor Onboarding K7KIMG51", 
+                    False, 
+                    f"Vendor onboarding failed with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Vendor Onboarding K7KIMG51", 
+                False, 
+                f"Vendor onboarding request failed: {str(e)}"
+            )
+            return False
+
+    def test_check_backend_logs_for_errors(self):
+        """Check backend logs for any errors related to vendor onboarding"""
+        try:
+            # Check supervisor logs for backend errors
+            import subprocess
+            result = subprocess.run(
+                ["tail", "-n", "50", "/var/log/supervisor/backend.err.log"],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                log_content = result.stdout
+                if log_content.strip():
+                    # Look for recent errors
+                    error_lines = [line for line in log_content.split('\n') if 'error' in line.lower() or 'exception' in line.lower()]
+                    if error_lines:
+                        self.log_result(
+                            "Backend Error Logs Check", 
+                            False, 
+                            f"Found {len(error_lines)} error entries in backend logs",
+                            f"Recent errors: {error_lines[-3:]}"  # Show last 3 errors
+                        )
+                    else:
+                        self.log_result(
+                            "Backend Error Logs Check", 
+                            True, 
+                            "No recent errors found in backend logs"
+                        )
+                else:
+                    self.log_result(
+                        "Backend Error Logs Check", 
+                        True, 
+                        "Backend error log is empty - no errors"
+                    )
+            else:
+                self.log_result(
+                    "Backend Error Logs Check", 
+                    False, 
+                    f"Could not read backend error logs: {result.stderr}"
+                )
+                
+        except Exception as e:
+            self.log_result(
+                "Backend Error Logs Check", 
+                False, 
+                f"Error checking backend logs: {str(e)}"
+            )
+            return False
+
     def run_all_tests(self):
         """Run all backend tests including employee onboarding endpoints"""
         print(f"🚀 Starting Backend API Tests - Employee Onboarding Focus")
