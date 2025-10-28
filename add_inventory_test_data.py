@@ -27,12 +27,6 @@ if not projects:
 project = projects[0]
 print(f"Adding inventory to project: {project['name']}\n")
 
-# Delete existing inventory  
-existing = requests.get(f"{BACKEND_URL}/api/inventory", headers=headers).json()
-for item in existing:
-    requests.delete(f"{BACKEND_URL}/api/inventory/{item['id']}", headers=headers)
-print("🗑️ Cleared existing inventory\n")
-
 # Add inventory items
 inventory_items = [
     {
