@@ -81,16 +81,9 @@ const SchedulesPage = () => {
 
   const handleSelectEvent = useCallback((event) => {
     const schedule = event.resource;
-    setEditingSchedule(schedule);
-    setFormData({
-      title: schedule.title || '',
-      employee_name: schedule.employee_name || '',
-      start_time: moment(schedule.start_time).format('YYYY-MM-DDTHH:mm'),
-      end_time: moment(schedule.end_time).format('YYYY-MM-DDTHH:mm'),
-      location: schedule.location || '',
-      description: schedule.description || ''
-    });
-    setDialogOpen(true);
+    // Open FileGalleryFullScreen instead of edit dialog
+    setSelectedSchedule(schedule);
+    setGalleryOpen(true);
   }, []);
 
   const handleSubmit = async (e) => {
