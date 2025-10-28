@@ -16,6 +16,20 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
 
   if (!isOpen) return null;
 
+  const getUserNames = (userIds) => {
+    if (!Array.isArray(users) || !userIds) return 'N/A';
+    
+    const userIdArray = Array.isArray(userIds) ? userIds : [userIds];
+    if (userIdArray.length === 0) return 'N/A';
+    
+    const userNames = userIdArray.map(userId => {
+      const user = users.find(u => u.id === userId);
+      return user ? user.username : 'Unknown';
+    });
+    
+    return userNames.join(', ');
+  };
+
   const handleFileUpload = async (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (selectedFiles.length === 0) return;
