@@ -114,7 +114,8 @@ const EmployeeOnboardingPage = () => {
       alert('Onboarding completed successfully! Welcome to Williams Diversified LLC.')
       
       // Use window.location.href for a full page reload to ensure all components re-render
-      window.location.href = '/dashboard'
+      // Dashboard is at root path "/"
+      window.location.href = '/'
     } catch (error) {
       console.error('Onboarding error:', error)
       alert('Error completing onboarding. Please try again.')
