@@ -78,6 +78,7 @@ function App() {
             <Route path="payroll" element={<PayrollPage />} />
             <Route path="vendors" element={<VendorPortalPage />} />
             <Route path="company-documents" element={<CompanyDocumentsPage />} />
+            <Route path="my-payroll-documents" element={<MyPayrollDocumentsPage />} />
             <Route path="admin" element={<AdminPanel />} />
           </Route>
         </Routes>
