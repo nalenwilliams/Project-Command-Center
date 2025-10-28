@@ -6,7 +6,7 @@ import FilePreviewModal from './FilePreviewModal';
 
 const ELEGANT_GOLD = '#C9A961';
 
-const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = [], onDelete, canDelete = false, onUpdate }) => {
+const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = [], onDelete, canDelete = false, onUpdate, users = [] }) => {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
