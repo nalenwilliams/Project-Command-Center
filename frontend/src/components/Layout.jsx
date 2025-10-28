@@ -289,6 +289,28 @@ const Layout = () => {
               );
             })}
 
+            {/* Company Documents Section - Vendors only */}
+            {isVendor && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider px-3" style={{ color: '#C9A961', opacity: 0.6 }}>
+                    Company Documents
+                  </p>
+                </div>
+                <Link to="/company-documents">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start hover:bg-gray-900"
+                    style={location.pathname === '/company-documents' ? { backgroundColor: '#C9A961', color: '#000000' } : { color: '#C9A961' }}
+                    data-testid="nav-company-documents"
+                  >
+                    <FolderOpen className="mr-3 h-5 w-5" />
+                    My Documents
+                  </Button>
+                </Link>
+              </>
+            )}
+
             {/* Payroll Section - Admin/Manager only */}
             {isAdminOrManager && (
               <>
