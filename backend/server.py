@@ -3965,6 +3965,72 @@ async def trigger_assignment_notification(user_id: str, item_type: str, item_id:
         item = await db[collection].find_one({"id": item_id}, {"_id": 0})
         if not item:
             return
+        
+        assigned_by_user = await db.users.find_one({"id": item.get("created_by", "")}, {"_id": 0})
+        assigned_by_name = "System"
+        if assigned_by_user:
+            assigned_by_name = f"{assigned_by_user.get('first_name', '')} {assigned_by_user.get('last_name', '')}".strip() or assigned_by_user.get("username", "Manager")
+        
+        from email_templates import employee_assignment_notification
+        email_service = get_email_service()
+        email_content = employee_assignment_notification(
+            employee_name=f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user.get("username", "Employee"),
+            item_type=item_type.title(),
+            item_title=item.get("title", item.get("name", "Untitled")),
+            assigned_by=assigned_by_name,
+            due_date=item.get("due_date", item.get("deadline", "Not specified")),
+            portal_url=f"https://wdl-hub.preview.emergentagent.com/{collection}"
+        )
+        
+        email_service.send_email(
+            to_email=user.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "type": f"{item_type}_assigned",
+            "title": email_content["subject"],
+            "message": f"You have been assigned to {item_type}: {item.get('title', item.get('name', 'Untitled'))}",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending assignment notification: {str(e)}")
+
+# Endpoint to get user notifications
+@api_router.get("/notifications")
+async def get_notifications(current_user: dict = Depends(get_current_user)):
+    """Get user's notifications"""
+    try:
+        notifications = await db.notifications.find(
+            {"user_id": current_user["id"]},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(50).to_list(length=None)
+        return notifications
+    except Exception as e:
+        logger.error(f"Error fetching notifications: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark notification as read"""
+    try:
+        await db.notifications.update_one(
+            {"id": notification_id, "user_id": current_user["id"]},
+            {"$set": {"read": True}}
+        )
+        return {"message": "Notification marked as read"}
+    except Exception as e:
+        logger.error(f"Error marking notification as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================
