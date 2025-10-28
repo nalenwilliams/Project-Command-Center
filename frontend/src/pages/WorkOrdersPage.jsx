@@ -320,6 +320,18 @@ const WorkOrdersPage = () => {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="address" style={{ color: ELEGANT_GOLD }}>Address</Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      data-testid="work-order-address-input"
+                      className="bg-black border text-white"
+                      style={{ borderColor: ELEGANT_GOLD }}
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="assigned_to" style={{ color: ELEGANT_GOLD }}>Assigned To</Label>
