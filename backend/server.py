@@ -1037,11 +1037,106 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     }
 
 # ============================================
-# EMERGENT AUTH - GOOGLE OAUTH SSO
+# NATIVE GOOGLE OAUTH SSO
 # ============================================
 
-@api_router.post("/auth/session")
-async def create_session_from_emergent(response: Response):
+@api_router.get("/auth/google/login")
+async def google_login(request: Request):
+    """Initiate Google OAuth login"""
+    redirect_uri = f"{os.environ.get('FRONTEND_URL')}/auth/google"
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@api_router.get("/auth/google/callback")
+async def google_callback(request: Request, response: Response):
+    """Handle Google OAuth callback"""
+    try:
+        # Get access token from Google
+        token = await oauth.google.authorize_access_token(request)
+        
+        # Get user info from Google
+        user_info = token.get('userinfo')
+        if not user_info:
+            raise HTTPException(status_code=400, detail="Failed to get user info from Google")
+        
+        user_email = user_info.get('email')
+        user_name = user_info.get('name', '')
+        user_picture = user_info.get('picture')
+        given_name = user_info.get('given_name', '')
+        family_name = user_info.get('family_name', '')
+        
+        if not user_email:
+            raise HTTPException(status_code=400, detail="Email not provided by Google")
+        
+        # Check if user exists
+        existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
+        
+        if existing_user:
+            # User exists, update picture if changed
+            if user_picture and existing_user.get('picture') != user_picture:
+                await db.users.update_one(
+                    {"email": user_email},
+                    {"$set": {"picture": user_picture}}
+                )
+            user = existing_user
+        else:
+            # Create new user from Google data
+            new_user = User(
+                username=user_email.split("@")[0],  # Use email prefix as username
+                email=user_email,
+                first_name=given_name,
+                last_name=family_name,
+                picture=user_picture,
+                role="employee",  # Default role, admin can change later
+                is_active=True
+            )
+            
+            user_dict = new_user.model_dump()
+            user_dict['created_at'] = user_dict['created_at'].isoformat()
+            # No password_hash for OAuth users
+            
+            await db.users.insert_one(user_dict)
+            user = user_dict
+        
+        # Create session in database
+        session_token = str(uuid.uuid4())
+        session_expires = datetime.now(timezone.utc) + timedelta(days=7)
+        user_session = UserSession(
+            user_id=user['id'],
+            session_token=session_token,
+            expires_at=session_expires
+        )
+        
+        session_dict = user_session.model_dump()
+        session_dict['created_at'] = session_dict['created_at'].isoformat()
+        session_dict['expires_at'] = session_dict['expires_at'].isoformat()
+        
+        # Delete old sessions for this user
+        await db.user_sessions.delete_many({"user_id": user['id']})
+        
+        # Insert new session
+        await db.user_sessions.insert_one(session_dict)
+        
+        # Set httpOnly cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            secure=True,
+            samesite="lax",  # Changed from "none" to "lax" for better mobile support
+            max_age=7 * 24 * 60 * 60,  # 7 days
+            path="/"
+        )
+        
+        # Redirect to frontend with success indicator
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+        return RedirectResponse(url=f"{frontend_url}/auth?google_success=true")
+        
+    except Exception as e:
+        logging.error(f"Error in Google OAuth callback: {str(e)}")
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+        return RedirectResponse(url=f"{frontend_url}/auth?google_error=true")
+
+# ============================================
     """
     Create session from Emergent Auth session_id
     Frontend calls this with X-Session-ID header after Google OAuth
