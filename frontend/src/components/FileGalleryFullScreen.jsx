@@ -246,7 +246,7 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
               
-              {recordType === 'task' && record && (
+              {(recordType === 'task' || recordType === 'tasks') && record && (
                 <>
                   <div>
                     <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Description</p>
