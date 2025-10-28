@@ -1014,9 +1014,154 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         "email": current_user['email'],
         "first_name": current_user.get('first_name'),
         "last_name": current_user.get('last_name'),
+        "picture": current_user.get('picture'),
         "role": current_user.get('role', 'employee'),
         "is_active": current_user.get('is_active', True)
     }
+
+# ============================================
+# EMERGENT AUTH - GOOGLE OAUTH SSO
+# ============================================
+
+@api_router.post("/auth/session")
+async def create_session_from_emergent(response: Response):
+    """
+    Create session from Emergent Auth session_id
+    Frontend calls this with X-Session-ID header after Google OAuth
+    """
+    import requests
+    from fastapi import Header
+    
+    async def process_session(session_id: str = Header(None, alias="X-Session-ID")):
+        if not session_id:
+            raise HTTPException(status_code=400, detail="Missing X-Session-ID header")
+        
+        try:
+            # Call Emergent Auth API to get session data
+            emergent_response = requests.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id},
+                timeout=10
+            )
+            
+            if emergent_response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid session ID")
+            
+            session_data = emergent_response.json()
+            
+            # Extract user data
+            user_email = session_data.get("email")
+            user_name = session_data.get("name", "")
+            user_picture = session_data.get("picture")
+            emergent_session_token = session_data.get("session_token")
+            
+            if not user_email:
+                raise HTTPException(status_code=400, detail="Email not provided by Google")
+            
+            # Check if user exists
+            existing_user = await db.users.find_one({"email": user_email}, {"_id": 0})
+            
+            if existing_user:
+                # User exists, update picture if changed
+                if user_picture and existing_user.get('picture') != user_picture:
+                    await db.users.update_one(
+                        {"email": user_email},
+                        {"$set": {"picture": user_picture}}
+                    )
+                user = existing_user
+            else:
+                # Create new user from Google data
+                name_parts = user_name.split(" ", 1)
+                first_name = name_parts[0] if name_parts else ""
+                last_name = name_parts[1] if len(name_parts) > 1 else ""
+                
+                new_user = User(
+                    username=user_email.split("@")[0],  # Use email prefix as username
+                    email=user_email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    picture=user_picture,
+                    role="employee",  # Default role, admin can change later
+                    is_active=True
+                )
+                
+                user_dict = new_user.model_dump()
+                user_dict['created_at'] = user_dict['created_at'].isoformat()
+                # No password_hash for OAuth users
+                
+                await db.users.insert_one(user_dict)
+                user = user_dict
+            
+            # Create session in database
+            session_expires = datetime.now(timezone.utc) + timedelta(days=7)
+            user_session = UserSession(
+                user_id=user['id'],
+                session_token=emergent_session_token,
+                expires_at=session_expires
+            )
+            
+            session_dict = user_session.model_dump()
+            session_dict['created_at'] = session_dict['created_at'].isoformat()
+            session_dict['expires_at'] = session_dict['expires_at'].isoformat()
+            
+            # Delete old sessions for this user
+            await db.user_sessions.delete_many({"user_id": user['id']})
+            
+            # Insert new session
+            await db.user_sessions.insert_one(session_dict)
+            
+            # Set httpOnly cookie
+            response.set_cookie(
+                key="session_token",
+                value=emergent_session_token,
+                httponly=True,
+                secure=True,
+                samesite="none",
+                max_age=7 * 24 * 60 * 60,  # 7 days
+                path="/"
+            )
+            
+            return {
+                "success": True,
+                "user": {
+                    "id": user['id'],
+                    "email": user['email'],
+                    "username": user['username'],
+                    "first_name": user.get('first_name'),
+                    "last_name": user.get('last_name'),
+                    "picture": user.get('picture'),
+                    "role": user['role']
+                }
+            }
+            
+        except requests.RequestException as e:
+            logging.error(f"Error calling Emergent Auth API: {str(e)}")
+            raise HTTPException(status_code=500, detail="Authentication service error")
+        except Exception as e:
+            logging.error(f"Error creating session: {str(e)}")
+            raise HTTPException(status_code=500, detail="Session creation failed")
+    
+    return await process_session()
+
+@api_router.post("/auth/logout")
+async def logout(response: Response, current_user: dict = Depends(get_current_user)):
+    """Logout user by deleting session and clearing cookie"""
+    try:
+        # Delete all sessions for this user
+        await db.user_sessions.delete_many({"user_id": current_user['id']})
+        
+        # Clear cookie
+        response.delete_cookie(
+            key="session_token",
+            path="/",
+            samesite="none",
+            secure=True
+        )
+        
+        return {"success": True, "message": "Logged out successfully"}
+    except Exception as e:
+        logging.error(f"Error during logout: {str(e)}")
+        raise HTTPException(status_code=500, detail="Logout failed")
 
 # ============================================
 # API ROUTES - ADMIN - USER MANAGEMENT
