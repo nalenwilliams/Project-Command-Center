@@ -74,8 +74,25 @@ const AuthPage = () => {
       const response = await api.post('/auth/login', loginData);
       localStorage.setItem('token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
-      toast.success('Login successful!');
-      navigate('/');
+      
+      const user = response.data.user;
+      
+      // Check if user needs onboarding
+      if (user.onboarding_completed === false) {
+        if (user.role === 'employee' || user.role === 'manager' || user.role === 'admin') {
+          toast.success('Welcome! Please complete your onboarding.');
+          navigate('/employee-onboarding');
+        } else if (user.role === 'vendor') {
+          toast.success('Welcome! Please complete your vendor setup.');
+          navigate('/vendor-onboarding');
+        } else {
+          toast.success('Login successful!');
+          navigate('/');
+        }
+      } else {
+        toast.success('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
     } finally {
