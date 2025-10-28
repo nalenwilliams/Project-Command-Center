@@ -28,7 +28,10 @@ import '@/App.css';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  if (!token) {
+  const user = localStorage.getItem('user');
+  
+  // Allow access if either token exists OR user data exists (from OAuth session)
+  if (!token && !user) {
     return <Navigate to="/auth" replace />;
   }
   return children;
