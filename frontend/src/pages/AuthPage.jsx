@@ -56,17 +56,13 @@ const AuthPage = () => {
   }, [location, navigate]);
 
   const handleGoogleLogin = () => {
-    // This function is now just for desktop fallback
-    // Mobile uses direct link (see button below)
-    const redirectUrl = `${window.location.origin}/auth`;
-    const emergentAuthUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-    window.location.href = emergentAuthUrl;
+    // Redirect to backend Google OAuth endpoint
+    window.location.href = '/api/auth/google';
   };
 
   // Generate Google OAuth URL for direct link (mobile-friendly)
   const getGoogleOAuthUrl = () => {
-    const redirectUrl = `${window.location.origin}/auth`;
-    return `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    return '/api/auth/google';
   };
 
   const handleLogin = async (e) => {
