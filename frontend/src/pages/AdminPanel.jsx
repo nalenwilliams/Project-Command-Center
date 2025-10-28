@@ -62,11 +62,25 @@ const AdminPanel = () => {
     e.preventDefault();
     try {
       const response = await api.post('/admin/invitations', inviteData);
-      toast.success(`Invitation sent! Code: ${response.data.invitation_code}`);
+      const inviteCode = response.data.invitation_code;
+      toast.success(`Invitation sent! Code: ${inviteCode}`);
       
-      // Copy invitation code to clipboard
-      navigator.clipboard.writeText(response.data.invitation_code);
-      toast.info('Invitation code copied to clipboard!');
+      // Try to copy invitation code to clipboard with fallback
+      try {
+        await navigator.clipboard.writeText(inviteCode);
+        toast.info('Invitation code copied to clipboard!');
+      } catch (clipboardError) {
+        // Fallback: Create a temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = inviteCode;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        toast.info('Invitation code copied to clipboard!');
+      }
       
       fetchData();
       setInviteDialogOpen(false);
