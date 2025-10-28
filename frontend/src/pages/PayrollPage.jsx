@@ -168,7 +168,7 @@ const PayrollPage = () => {
             <p className="text-center text-gray-400 py-8">Loading employees...</p>
           ) : employees.length === 0 ? (
             <p className="text-center text-gray-400 py-8">
-              No payroll employees yet. Click "Add Employee" to get started.
+              No payroll employees yet. Employees will appear here after completing self-onboarding.
             </p>
           ) : (
             <div className="overflow-x-auto">
