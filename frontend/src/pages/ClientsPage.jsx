@@ -10,6 +10,7 @@ import { Plus, Pencil, Trash2, Mail, Phone, Building } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
@@ -17,6 +18,8 @@ const ClientsPage = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [editingClient, setEditingClient] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -243,7 +246,7 @@ const ClientsPage = () => {
                         {client.notes || '-'}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
                         <FileGallery 
                           item={client} 

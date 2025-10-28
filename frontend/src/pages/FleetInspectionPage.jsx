@@ -12,6 +12,7 @@ import { Plus, Truck, Calendar, AlertCircle, CheckCircle, Wrench, Pencil, Trash2
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
@@ -19,6 +20,8 @@ const FleetInspectionPage = () => {
   const [inspections, setInspections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [editingInspection, setEditingInspection] = useState(null);
   const [formData, setFormData] = useState({
     vehicle_name: '',
@@ -188,7 +191,7 @@ const FleetInspectionPage = () => {
               </TableHeader>
               <TableBody>
                 {inspections.map((inspection) => (
-                  <TableRow key={inspection.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow key={inspection.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: \'#374151\' }} onClick={() => { setSelectedItem(inspection.id); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">
                       <div className="flex items-center gap-2">
                         <Truck className="h-4 w-4" style={{ color: ELEGANT_GOLD }} />
@@ -210,7 +213,7 @@ const FleetInspectionPage = () => {
                     <TableCell className="text-gray-300">{inspection.mileage || '-'}</TableCell>
                     <TableCell>{getStatusBadge(inspection.status)}</TableCell>
                     <TableCell className="text-gray-300">{inspection.location || '-'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
                         <FileGallery 
                           item={inspection} 
@@ -249,7 +252,7 @@ const FleetInspectionPage = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-2xl" style={{ borderColor: ELEGANT_GOLD }}>
+        <DialogContent className="bg-gray-900 border max-w-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
           <DialogHeader>
             <DialogTitle style={{ color: ELEGANT_GOLD }}>
               {editingInspection ? 'Edit Inspection' : 'New Fleet Inspection Report'}
@@ -368,6 +371,17 @@ const FleetInspectionPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedItem}
+        recordType="fleet-inspection"
+        files={selectedItem?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };

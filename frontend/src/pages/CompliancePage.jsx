@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, ClipboardCheck, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
@@ -18,6 +19,8 @@ const CompliancePage = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [editingDoc, setEditingDoc] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -183,7 +186,7 @@ const CompliancePage = () => {
               </TableHeader>
               <TableBody>
                 {documents.map((doc) => (
-                  <TableRow key={doc.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow key={doc.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: \'#374151\' }} onClick={() => { setSelectedItem(doc.id); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">{doc.title}</TableCell>
                     <TableCell className="text-gray-300">{doc.compliance_type}</TableCell>
                     <TableCell>{getStatusBadge(doc.status)}</TableCell>
@@ -191,9 +194,8 @@ const CompliancePage = () => {
                       {doc.due_date ? new Date(doc.due_date).toLocaleDateString() : 'N/A'}
                     </TableCell>
                     <TableCell className="text-gray-300">{doc.responsible_party || 'N/A'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={doc} itemType="compliance" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(doc)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -213,7 +215,7 @@ const CompliancePage = () => {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-2xl" style={{ borderColor: ELEGANT_GOLD }}>
+        <DialogContent className="bg-gray-900 border max-w-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
           <DialogHeader>
             <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingDoc ? 'Edit Compliance Document' : 'New Compliance Document'}</DialogTitle>
           </DialogHeader>
@@ -284,6 +286,17 @@ const CompliancePage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedItem}
+        recordType="compliance"
+        files={selectedItem?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };

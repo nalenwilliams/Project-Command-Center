@@ -18,6 +18,8 @@ const EmployeesPage = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [handbookFiles, setHandbookFiles] = useState([]);
   const [policyFiles, setPolicyFiles] = useState([]);
@@ -322,14 +324,14 @@ const EmployeesPage = () => {
               </TableHeader>
               <TableBody>
                 {employees.map((employee) => (
-                  <TableRow key={employee.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow key={employee.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: \'#374151\' }} onClick={() => { setSelectedItem(employee.id); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">{employee.name}</TableCell>
                     <TableCell className="text-gray-300">{employee.employee_id}</TableCell>
                     <TableCell className="text-gray-300">{employee.email}</TableCell>
                     <TableCell className="text-gray-300">{employee.phone || '-'}</TableCell>
                     <TableCell className="text-gray-300">{employee.position || '-'}</TableCell>
                     <TableCell>{getStatusBadge(employee.status)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
                         {canEdit ? (
                           <>
