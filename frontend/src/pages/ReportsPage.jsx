@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, FileBarChart, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
@@ -18,6 +19,8 @@ const ReportsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingReport, setEditingReport] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     report_type: 'financial',
