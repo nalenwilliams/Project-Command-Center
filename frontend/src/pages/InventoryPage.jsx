@@ -174,14 +174,21 @@ const InventoryPage = () => {
               </TableHeader>
               <TableBody>
                 {inventory.map((item) => (
-                  <TableRow key={item.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={item.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedItem(item);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{item.item_name}</TableCell>
                     <TableCell className="text-gray-300">{item.category || 'N/A'}</TableCell>
                     <TableCell className="text-gray-300">{item.quantity} {item.unit}</TableCell>
                     <TableCell className="text-gray-300">{item.location || 'N/A'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={item} itemType="inventory" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(item)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
