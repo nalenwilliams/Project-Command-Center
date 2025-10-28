@@ -3405,20 +3405,39 @@ async def invite_vendor(
         await db.vendor_invitations.insert_one(invitation)
         
         # Send invitation email
-        email_service = get_email_service()
-        portal_url = f"{os.environ.get('FRONTEND_URL', 'https://crm-command-1.preview.emergentagent.com')}/auth?code={invitation_code}&type=vendor"
-        email_content = vendor_invitation_email(
-            vendor_name=vendor_data.get("name"),
-            invitation_code=invitation_code,
-            portal_url=portal_url
-        )
-        
-        email_service.send_email(
-            to_email=vendor_data.get("email"),
-            subject=email_content["subject"],
-            body=email_content["html"],
-            html=True
-        )
+        try:
+            # Get notification settings for email configuration
+            notification_settings = await db.notification_settings.find_one({}, {"_id": 0})
+            
+            if notification_settings and notification_settings.get('smtp_server'):
+                portal_url = f"{os.environ.get('FRONTEND_URL', 'https://crm-command-1.preview.emergentagent.com')}/auth?code={invitation_code}&type=vendor"
+                email_content = vendor_invitation_email(
+                    vendor_name=vendor_data.get("name"),
+                    invitation_code=invitation_code,
+                    portal_url=portal_url
+                )
+                
+                # Create email service with notification settings
+                email_service = get_email_service(
+                    smtp_server=notification_settings.get('smtp_server'),
+                    smtp_port=notification_settings.get('smtp_port'),
+                    username=notification_settings.get('smtp_username'),
+                    password=notification_settings.get('smtp_password'),
+                    from_email=notification_settings.get('admin_email', notification_settings.get('smtp_username'))
+                )
+                
+                email_service.send_email(
+                    to_email=vendor_data.get("email"),
+                    subject=email_content["subject"],
+                    body=email_content["html"],
+                    html=True
+                )
+                email_sent = True
+            else:
+                email_sent = False
+        except Exception as e:
+            logger.error(f"Failed to send vendor invitation email: {str(e)}")
+            email_sent = False
         
         return {
             "message": "Vendor invitation sent successfully",
