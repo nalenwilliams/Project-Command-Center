@@ -14,8 +14,8 @@ const AIFloatingChat = ({ currentPage = "Dashboard" }) => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   
-  // Connect to new AI server on port 3001
-  const aiServerUrl = 'http://localhost:3001';
+  // Use backend as proxy to AI server
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
