@@ -32,7 +32,7 @@ async def create_test_users():
         "id": str(uuid.uuid4()),
         "username": "john.smith",
         "email": employee_email,
-        "password": pwd_context.hash(employee_password),
+        "password_hash": pwd_context.hash(employee_password),
         "role": "employee",
         "first_name": "",  # Empty - will be filled during onboarding
         "last_name": "",
