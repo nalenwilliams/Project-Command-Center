@@ -19,7 +19,7 @@ const InventoryPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [formData, setFormData] = useState({
