@@ -366,18 +366,18 @@ const PolicyCard = ({ policy, canEdit, hasAcknowledged, onEdit, onDelete, onAckn
   return (
     <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
       <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <FileText className="h-6 w-6" style={{ color: ELEGANT_GOLD }} />
-              <h3 className="text-xl font-semibold" style={{ color: ELEGANT_GOLD }}>
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <FileText className="h-6 w-6 flex-shrink-0" style={{ color: ELEGANT_GOLD }} />
+              <h3 className="text-xl font-semibold break-words" style={{ color: ELEGANT_GOLD }}>
                 {policy.title}
               </h3>
-              <Badge variant="outline" className="border" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
+              <Badge variant="outline" className="border flex-shrink-0" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                 {getCategoryLabel(policy.category)}
               </Badge>
               {hasAcknowledged && (
-                <Badge className="bg-green-600">
+                <Badge className="bg-green-600 flex-shrink-0">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Acknowledged
                 </Badge>
@@ -385,17 +385,17 @@ const PolicyCard = ({ policy, canEdit, hasAcknowledged, onEdit, onDelete, onAckn
             </div>
 
             {policy.description && (
-              <p className="text-gray-300 mb-3">{policy.description}</p>
+              <p className="text-gray-300 mb-3 break-words whitespace-pre-wrap">{policy.description}</p>
             )}
 
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-              <span>Version: {policy.version}</span>
+            <div className="flex flex-wrap gap-4 text-sm text-gray-400 break-words">
+              <span className="break-all">Version: {policy.version}</span>
               {policy.effective_date && (
-                <span>Effective: {new Date(policy.effective_date).toLocaleDateString()}</span>
+                <span className="whitespace-nowrap">Effective: {new Date(policy.effective_date).toLocaleDateString()}</span>
               )}
-              <span>Created by: {policy.created_by}</span>
+              <span className="break-all">Created by: {policy.created_by}</span>
               {policy.requires_acknowledgment && (
-                <span className="flex items-center gap-1" style={{ color: ELEGANT_GOLD }}>
+                <span className="flex items-center gap-1 whitespace-nowrap" style={{ color: ELEGANT_GOLD }}>
                   <Clock className="h-3 w-3" />
                   Acknowledgment required
                 </span>
