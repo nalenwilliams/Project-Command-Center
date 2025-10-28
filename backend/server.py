@@ -105,6 +105,7 @@ class User(BaseModel):
     email: EmailStr
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    picture: Optional[str] = None  # Google profile picture
     role: str = "employee"  # admin, manager, employee
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -115,6 +116,7 @@ class UserResponse(BaseModel):
     email: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    picture: Optional[str] = None
     role: str
     is_active: bool
 
@@ -123,8 +125,16 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    picture: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
+
+class UserSession(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    user_id: str
+    session_token: str
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # Invitation Models
 class InvitationCreate(BaseModel):
