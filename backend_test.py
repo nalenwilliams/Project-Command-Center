@@ -2371,6 +2371,257 @@ class BackendTester:
             )
             return False
     
+    def test_vendor_invitation_r2newyy9_database_check(self):
+        """Check if R2NEWYY9 invitation code exists in database"""
+        if not self.auth_token:
+            self.log_result("R2NEWYY9 Database Check", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # We need to check the database directly, but since we can't access MongoDB directly,
+            # we'll try to use the vendor onboarding endpoint to see what error we get
+            
+            # First, let's try a minimal test to see if the endpoint is accessible
+            test_data = {
+                "invitation_code": "R2NEWYY9",
+                "company_name": "Test Company",
+                "business_type": "LLC", 
+                "ein": "12-3456789",
+                "phone": "(555) 555-5555",
+                "email": "test@example.com",
+                "address": "123 Test St",
+                "city": "Test City",
+                "state": "OK",
+                "zip": "74000",
+                "contact_first_name": "John",
+                "contact_last_name": "Doe",
+                "contact_title": "Manager",
+                "contact_email": "john@test.com",
+                "contact_phone": "(555) 555-5556",
+                "insurance_provider": "Test Insurance",
+                "policy_number": "POL123",
+                "insurance_amount": "1000000",
+                "insurance_expiry": "2026-12-31",
+                "bank_name": "Test Bank",
+                "account_type": "checking",
+                "routing_number": "123456789",
+                "account_number": "987654321",
+                "nda_accepted": "true",
+                "terms_accepted": "true",
+                "signature": "John Doe"
+            }
+            
+            # Convert to FormData format
+            response = self.session.post(
+                f"{self.base_url}/vendor/complete-onboarding",
+                data=test_data,
+                headers={"Authorization": f"Bearer {self.auth_token}"}
+            )
+            
+            # Analyze the response to understand the exact error
+            if response.status_code == 404:
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get("detail", "Unknown error")
+                    if "Invalid invitation code" in error_detail:
+                        self.log_result(
+                            "R2NEWYY9 Database Check", 
+                            False, 
+                            f"R2NEWYY9 invitation code does NOT exist in database - got 404 with message: '{error_detail}'"
+                        )
+                        return False
+                    else:
+                        self.log_result(
+                            "R2NEWYY9 Database Check", 
+                            False, 
+                            f"Unexpected 404 error: '{error_detail}'"
+                        )
+                        return False
+                except:
+                    self.log_result(
+                        "R2NEWYY9 Database Check", 
+                        False, 
+                        f"Got 404 but couldn't parse error response: {response.text}"
+                    )
+                    return False
+            elif response.status_code == 400:
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get("detail", "Unknown error")
+                    if "Invitation already used" in error_detail:
+                        self.log_result(
+                            "R2NEWYY9 Database Check", 
+                            True, 
+                            f"R2NEWYY9 invitation code EXISTS in database but is already used - got 400 with message: '{error_detail}'"
+                        )
+                        return "already_used"
+                    else:
+                        self.log_result(
+                            "R2NEWYY9 Database Check", 
+                            False, 
+                            f"R2NEWYY9 exists but got unexpected 400 error: '{error_detail}'"
+                        )
+                        return False
+                except:
+                    self.log_result(
+                        "R2NEWYY9 Database Check", 
+                        False, 
+                        f"Got 400 but couldn't parse error response: {response.text}"
+                    )
+                    return False
+            elif response.status_code == 200:
+                self.log_result(
+                    "R2NEWYY9 Database Check", 
+                    True, 
+                    "R2NEWYY9 invitation code EXISTS and is valid - onboarding would succeed"
+                )
+                return "valid"
+            else:
+                self.log_result(
+                    "R2NEWYY9 Database Check", 
+                    False, 
+                    f"Unexpected response status {response.status_code}: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "R2NEWYY9 Database Check", 
+                False, 
+                f"Database check request failed: {str(e)}"
+            )
+            return False
+
+    def test_vendor_onboarding_r2newyy9_direct(self):
+        """Test vendor onboarding with R2NEWYY9 code directly"""
+        try:
+            # Use the exact test data provided in the review request
+            test_data = {
+                "invitation_code": "R2NEWYY9",
+                "company_name": "Test Vendor LLC",
+                "business_type": "LLC",
+                "ein": "12-3456789",
+                "phone": "(555) 555-5555",
+                "email": "testvendor@example.com",
+                "website": "http://test.com",
+                "address": "123 Test St",
+                "city": "Test City",
+                "state": "OK",
+                "zip": "74000",
+                "contact_first_name": "John",
+                "contact_last_name": "Doe",
+                "contact_title": "Manager",
+                "contact_email": "john@test.com",
+                "contact_phone": "(555) 555-5556",
+                "insurance_provider": "Test Insurance",
+                "policy_number": "POL123",
+                "insurance_amount": "1000000",
+                "insurance_expiry": "2026-12-31",
+                "bank_name": "Test Bank",
+                "account_type": "checking",
+                "routing_number": "123456789",
+                "account_number": "987654321",
+                "nda_accepted": "true",
+                "terms_accepted": "true",
+                "signature": "John Doe"
+            }
+            
+            # Test without authentication first (to see if endpoint is accessible)
+            response = self.session.post(
+                f"{self.base_url}/vendor/complete-onboarding",
+                data=test_data
+            )
+            
+            self.log_result(
+                "R2NEWYY9 Direct Test", 
+                True, 
+                f"Vendor onboarding endpoint accessible - Status: {response.status_code}, Response: {response.text[:200]}..."
+            )
+            
+            # Parse the response to get exact error details
+            if response.status_code == 404:
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get("detail", "Unknown error")
+                    return {"status": "not_found", "error": error_detail}
+                except:
+                    return {"status": "not_found", "error": response.text}
+            elif response.status_code == 400:
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get("detail", "Unknown error")
+                    return {"status": "bad_request", "error": error_detail}
+                except:
+                    return {"status": "bad_request", "error": response.text}
+            elif response.status_code == 200:
+                try:
+                    success_data = response.json()
+                    return {"status": "success", "data": success_data}
+                except:
+                    return {"status": "success", "data": response.text}
+            else:
+                return {"status": f"status_{response.status_code}", "error": response.text}
+                
+        except Exception as e:
+            self.log_result(
+                "R2NEWYY9 Direct Test", 
+                False, 
+                f"Direct test request failed: {str(e)}"
+            )
+            return {"status": "error", "error": str(e)}
+
+    def test_vendor_invitation_validation_logic(self):
+        """Test the vendor invitation validation logic step by step"""
+        if not self.auth_token:
+            self.log_result("Vendor Invitation Validation Logic", False, "No auth token available")
+            return False
+            
+        try:
+            # Step 1: Test endpoint accessibility
+            response = self.session.get(f"{self.base_url}/vendor/complete-onboarding")
+            
+            if response.status_code == 405:  # Method Not Allowed is expected for GET
+                self.log_result(
+                    "Vendor Invitation Validation Logic", 
+                    True, 
+                    "Vendor onboarding endpoint exists and responds (405 Method Not Allowed for GET is expected)"
+                )
+            else:
+                self.log_result(
+                    "Vendor Invitation Validation Logic", 
+                    False, 
+                    f"Unexpected response to GET request: {response.status_code} - {response.text}"
+                )
+                return False
+            
+            # Step 2: Test with minimal invalid data to see validation
+            minimal_data = {"invitation_code": "INVALID_CODE"}
+            
+            response = self.session.post(
+                f"{self.base_url}/vendor/complete-onboarding",
+                data=minimal_data
+            )
+            
+            self.log_result(
+                "Vendor Invitation Validation Logic", 
+                True, 
+                f"Validation test with invalid code - Status: {response.status_code}, Response: {response.text[:200]}..."
+            )
+            
+            return True
+                
+        except Exception as e:
+            self.log_result(
+                "Vendor Invitation Validation Logic", 
+                False, 
+                f"Validation logic test failed: {str(e)}"
+            )
+            return False
     def test_vendor_onboarding_with_k7kimg51(self):
         """Test vendor onboarding submission with specific invitation code K7KIMG51"""
         if not self.auth_token:
