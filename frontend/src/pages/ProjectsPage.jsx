@@ -63,14 +63,16 @@ const ProjectsPage = () => {
 
   const fetchData = async () => {
     try {
-      const [projectsRes, clientsRes, usersRes] = await Promise.all([
+      const [projectsRes, clientsRes, usersRes, inventoryRes] = await Promise.all([
         api.get('/projects'),
         api.get('/clients'),
         api.get('/users'),
+        api.get('/inventory'),
       ]);
       setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
       setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
       setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
+      setInventory(Array.isArray(inventoryRes.data) ? inventoryRes.data : []);
     } catch (error) {
       console.error('Failed to load data:', error);
       // Set default empty arrays on error
