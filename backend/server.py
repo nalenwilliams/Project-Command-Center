@@ -760,9 +760,11 @@ class InventoryCreate(BaseModel):
     category: str  # materials, supplies, parts, consumables
     quantity: float
     unit: str  # pieces, boxes, gallons, etc
+    project_id: str  # Required: Items belong to one project
     location: Optional[str] = None
     minimum_stock: Optional[float] = None
     supplier: Optional[str] = None
+    unit_cost: Optional[float] = None
     notes: Optional[str] = None
     files: Optional[List[dict]] = []
 
@@ -771,9 +773,11 @@ class InventoryUpdate(BaseModel):
     category: Optional[str] = None
     quantity: Optional[float] = None
     unit: Optional[str] = None
+    project_id: Optional[str] = None
     location: Optional[str] = None
     minimum_stock: Optional[float] = None
     supplier: Optional[str] = None
+    unit_cost: Optional[float] = None
     notes: Optional[str] = None
     files: Optional[List[dict]] = None
 
@@ -784,9 +788,11 @@ class Inventory(BaseModel):
     category: str
     quantity: float
     unit: str
+    project_id: str
     location: Optional[str] = None
     minimum_stock: Optional[float] = None
     supplier: Optional[str] = None
+    unit_cost: Optional[float] = None
     notes: Optional[str] = None
     files: Optional[List[dict]] = []
     created_by: str
