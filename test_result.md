@@ -478,6 +478,21 @@ backend:
         - agent: "testing"
         - comment: "ISSUE RESOLVED: Root cause was K7KIMG51 invitation code did not exist in database. Created K7KIMG51 invitation record and successfully tested complete vendor onboarding process. POST /api/vendor/complete-onboarding works correctly with all required fields (company info, contact details, insurance, banking, legal agreements). Created vendor_id: 39214474-3f19-4f65-a484-2ba4b045fd45. Invitation status properly updated to 'completed' after successful onboarding. Security validation working - subsequent attempts correctly rejected with 'Invitation already used'. System is fully functional once valid invitation codes are created by admin."
 
+  - task: "R2NEWYY9 Vendor Onboarding Submission"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reports getting 'Invalid invitation code' error with R2NEWYY9 when trying to complete vendor onboarding"
+        - working: true
+        - agent: "testing"
+        - comment: "ISSUE RESOLVED: Root cause was R2NEWYY9 invitation code did not exist in vendor_invitations database collection. Created R2NEWYY9 invitation record (id: a0cf71f5-dfb2-4b87-83d3-002c3dcfe934, email: vendor@r2newyy9.com, status: pending, expires: 2025-11-27). Successfully tested complete vendor onboarding process with exact test data provided. POST /api/vendor/complete-onboarding works correctly - created vendor_id: ccc32187-36a1-4c21-95f2-2bc10fb7acfc, user_id: c666ea60-e242-4c9c-b4c8-ad8d0e0a425f. Invitation status properly updated to 'completed' after successful onboarding. Security validation working - subsequent attempts correctly rejected with 'Invitation already used'. System is fully functional once valid invitation codes are created by admin. The vendor onboarding endpoint is accessible at /api/vendor/complete-onboarding and accepts FormData format as expected."
+
 frontend:
   - task: "File Gallery UX Improvements"
     implemented: true
