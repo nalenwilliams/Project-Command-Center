@@ -464,6 +464,67 @@ frontend:
         - agent: "testing"
         - comment: "Equipment section visible with Equipment/Assets link. Page loads correctly and is accessible to all users as intended."
 
+  - task: "Payroll Management Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/PayrollPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created comprehensive Payroll Management page with: 1) Role-based access control (Admin/Manager only) 2) Employee management with forms for adding payroll employees 3) Davis-Bacon certification tracking 4) Direct deposit information collection 5) Payroll run creation 6) Stats dashboard showing total employees, active runs, Davis-Bacon certified count 7) Employee table with classification, rates, direct deposit status. Page uses localStorage for user auth. Integrated with FastAPI proxy endpoints."
+
+  - task: "Vendor Portal Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/VendorPortalPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created comprehensive Vendor Portal page with: 1) Dual interface - vendor-specific view for vendors, full management view for admin/managers 2) Vendor management (add vendors with EIN, W-9 tracking, insurance expiration) 3) Invoice submission with status tracking 4) Payment history display 5) Stats dashboard showing total vendors, invoices, pending/paid counts 6) Status badges for pending/approved/paid/rejected 7) Role-based data filtering. Page uses localStorage for user auth. Integrated with FastAPI proxy endpoints."
+
+  - task: "App.js Route Configuration"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added routes for Payroll (/payroll) and Vendor Portal (/vendors) pages. Imported PayrollPage and VendorPortalPage components."
+
+  - task: "Layout Navigation - Payroll Section"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Layout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added Payroll section to sidebar navigation with Banknote icon. Section visible only to Admin/Manager roles. Link to /payroll route with 'Payroll Management' label. Added Banknote icon import from lucide-react."
+
+  - task: "Layout Navigation - Vendor Portal Section"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Layout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added Vendor Portal section to sidebar navigation with Store icon. Section visible to all users. Link to /vendors route with dynamic label: 'My Vendor Portal' for vendors, 'Vendor Management' for others. Added Store icon import from lucide-react."
+
+
   - task: "Admin Navigation Sidebar - Operations"
     implemented: true
     working: true
