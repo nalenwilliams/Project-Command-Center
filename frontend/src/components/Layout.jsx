@@ -61,7 +61,6 @@ const Layout = () => {
 
   // Financial Management - Admin/Manager only
   const isAdminOrManager = user.role === 'admin' || user.role === 'manager';
-  const isVendor = user.role === 'vendor';
   const financialItems = [
     { path: '/invoices', label: 'Invoices', icon: DollarSign, adminOnly: true },
     { path: '/expenses', label: 'Expenses', icon: FileText, adminOnly: true },
