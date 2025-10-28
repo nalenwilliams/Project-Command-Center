@@ -2119,6 +2119,16 @@ class BackendTester:
         # Test 9: User Update with Names
         self.test_user_update_with_names()
         
+        # Test 10-13: Vendor Invitation System (NEW TESTS)
+        print("\n" + "=" * 50)
+        print("🏪 VENDOR INVITATION SYSTEM TESTS")
+        print("=" * 50)
+        
+        self.test_vendor_invitation_creation()
+        self.test_vendor_invitations_database()
+        self.test_email_service_configuration()
+        self.test_vendor_invitation_error_handling()
+        
         return self.generate_summary()
     
     def generate_summary(self):
