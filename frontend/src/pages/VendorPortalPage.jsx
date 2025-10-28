@@ -62,21 +62,19 @@ const VendorPortalPage = () => {
   const handleCreateVendor = async (e) => {
     e.preventDefault()
     try {
-      await api.post('/vendors', vendorForm)
+      // API will generate invitation code and send email
+      const response = await api.post('/vendors/invite', vendorForm)
       setShowVendorDialog(false)
       setVendorForm({
         name: '',
         email: '',
-        ein: '',
-        phone: '',
-        address: '',
-        w9_on_file: false,
-        insurance_expires: ''
+        phone: ''
       })
+      alert(`Invitation sent successfully to ${vendorForm.email}! Invitation code: ${response.data.invitation_code}`)
       fetchData()
     } catch (error) {
-      console.error('Error creating vendor:', error)
-      alert('Error creating vendor. Please try again.')
+      console.error('Error inviting vendor:', error)
+      alert('Error sending vendor invitation. Please try again.')
     }
   }
 
