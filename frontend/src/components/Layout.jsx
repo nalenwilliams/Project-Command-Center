@@ -75,12 +75,16 @@ const Layout = () => {
     { path: '/equipment', label: 'Equipment/Assets', icon: Wrench },
   ];
 
-  // Operations - Visible to all
+  // Operations - Timesheets hidden from vendors
   const operationsItems = [
-    { path: '/timesheets', label: 'Timesheets', icon: Clock },
     { path: '/inventory', label: 'Inventory', icon: Package },
     { path: '/schedules', label: 'Schedules', icon: Calendar },
   ];
+  
+  // Add Timesheets only for non-vendors
+  if (!isVendor) {
+    operationsItems.unshift({ path: '/timesheets', label: 'Timesheets', icon: Clock });
+  }
 
   // Safety & Compliance - Admin/Manager only
   const safetyComplianceItems = [
