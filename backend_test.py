@@ -2590,6 +2590,12 @@ class BackendTester:
         print("🎯 VENDOR INVITATION CODE VALIDATION TESTS")
         print("=" * 50)
         
+        # CRITICAL: Test the specific reported issue with R2NEWYY9
+        print("\n🚨 CRITICAL: Testing R2NEWYY9 Vendor Onboarding Issue")
+        self.test_vendor_invitation_r2newyy9_database_check()
+        self.test_vendor_onboarding_r2newyy9_direct()
+        self.test_vendor_invitation_validation_logic()
+        
         # PRIORITY: Test the specific reported issue with K7KIMG51
         print("\n🚨 PRIORITY: Testing K7KIMG51 Vendor Onboarding Issue")
         self.test_vendor_onboarding_with_k7kimg51()
