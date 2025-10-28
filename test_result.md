@@ -418,6 +418,42 @@ frontend:
         - agent: "testing"
         - comment: "Safety & Compliance section visible for admin users with all four links: Safety Reports ('Track and manage safety incidents and reports'), Certifications, Reports ('Generate and view business reports and analytics'), and Compliance. All pages load correctly."
 
+  - task: "Registration Form - First/Last Name Fields"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/AuthPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added first_name and last_name input fields to registration form. Fields are displayed in a two-column grid layout. Updated registerData state to include these fields."
+
+  - task: "FileGalleryFullScreen - Display Full Names"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FileGalleryFullScreen.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Updated getUserNames function to prioritize first_name and last_name when displaying user information. Falls back to email formatting or username if names not available."
+
+  - task: "AdminPanel - User Management with Names"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/AdminPanel.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added 'Name' column to users table showing formatted full names. Updated edit user dialog to include first_name and last_name fields in a two-column grid. Updated editData state to handle these fields."
+
 metadata:
   created_by: "testing_agent"
   version: "1.2"
