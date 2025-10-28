@@ -156,7 +156,17 @@ const VendorOnboardingPage = () => {
       navigate('/vendors')
     } catch (error) {
       console.error('Onboarding error:', error)
-      alert('Error completing onboarding. Please try again.')
+      const errorMessage = error.response?.data?.detail || error.message
+      
+      if (errorMessage.includes('Invalid invitation code')) {
+        alert('Invalid invitation code. Please contact administration for a valid invitation code.')
+      } else if (errorMessage.includes('already used')) {
+        alert('This invitation code has already been used. Please contact administration for a new invitation code.')
+      } else if (errorMessage.includes('expired')) {
+        alert('This invitation code has expired. Please contact administration for a new invitation code.')
+      } else {
+        alert(`Error completing onboarding: ${errorMessage}`)
+      }
     } finally {
       setLoading(false)
     }
