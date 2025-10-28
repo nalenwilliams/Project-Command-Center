@@ -1631,8 +1631,8 @@ class BackendTester:
             return False
     
     def run_all_tests(self):
-        """Run all file management tests"""
-        print(f"🚀 Starting File Management Tests")
+        """Run all backend tests including new first/last name and work orders filtering"""
+        print(f"🚀 Starting Backend API Tests")
         print(f"Backend URL: {self.base_url}")
         print("=" * 60)
         
@@ -1643,24 +1643,20 @@ class BackendTester:
             print("\n❌ Cannot proceed with other tests - admin login failed")
             return self.generate_summary()
         
-        # Test 2: File Upload Endpoint
-        uploaded_file = self.test_file_upload_endpoint()
+        # Test 2: Login Response with Names
+        self.test_login_response_with_names()
         
-        if not uploaded_file:
-            print("\n❌ Cannot proceed with file operations tests - file upload failed")
-            return self.generate_summary()
+        # Test 3: Get Current User with Names
+        self.test_get_current_user_with_names()
         
-        # Test 3: File Serving Endpoint
-        self.test_file_serving_endpoint(uploaded_file)
+        # Test 4: User Registration with Names
+        self.test_user_registration_with_names()
         
-        # Test 4-11: File Operations for All Record Types
-        self.test_project_file_operations(uploaded_file)
-        self.test_task_file_operations(uploaded_file)
-        self.test_client_file_operations(uploaded_file)
-        self.test_invoice_file_operations(uploaded_file)
-        self.test_expense_file_operations(uploaded_file)
-        self.test_contract_file_operations(uploaded_file)
-        self.test_equipment_file_operations(uploaded_file)
+        # Test 5: Work Orders Filtering
+        self.test_work_orders_filtering()
+        
+        # Test 6: User Update with Names
+        self.test_user_update_with_names()
         
         return self.generate_summary()
     
