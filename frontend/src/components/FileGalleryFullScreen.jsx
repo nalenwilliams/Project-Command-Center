@@ -299,16 +299,16 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
               {recordType === 'client' && record && (
                 <>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Address</p>
-                    <p className="text-white mt-1">{record.address || 'N/A'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Address</p>
+                    <p className="text-white mt-1 text-left">{record.address || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Email</p>
-                    <p className="text-white mt-1">{record.email || 'N/A'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Email</p>
+                    <p className="text-white mt-1 text-left">{record.email || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: ELEGANT_GOLD }}>Phone</p>
-                    <p className="text-white mt-1">{record.phone || 'N/A'}</p>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Phone</p>
+                    <p className="text-white mt-1 text-left">{record.phone || 'N/A'}</p>
                   </div>
                 </>
               )}
