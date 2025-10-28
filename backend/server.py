@@ -1169,18 +1169,41 @@ EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
 @api_router.post("/ai/chat")
 async def ai_chat(request: Request, current_user: dict = Depends(get_current_user)):
-    """AI chat assistant using Gemini 2.5 Pro"""
+    """AI chat assistant using Gemini 2.5 Flash (Fast version)"""
     try:
         body = await request.json()
         message = body.get('message', '')
         context = body.get('context', {})
         
-        # Initialize chat with Gemini 2.5 Pro
+        # Custom system message for Williams Diversified
+        system_message = f"""You are the Williams Diversified LLC AI Assistant. 
+
+COMPANY INFO:
+- Company: Williams Diversified LLC
+- Location: 765 NW 1060th Ave, Wilburton, OK 74578
+- Owner: Nalen Williams
+- Business: Construction, project management, and diversified services
+- Timezone: America/Chicago
+
+YOUR ROLE:
+- Help employees manage projects, tasks, and work orders
+- Provide construction and project management advice
+- Answer questions about app features and workflows
+- Generate proposals and assist with data entry
+- ONLY discuss Williams Diversified business topics
+- Keep responses concise and actionable
+
+CURRENT USER: {current_user.get('first_name', '')} {current_user.get('last_name', '')} ({current_user.get('role', 'employee')})
+CURRENT PAGE: {context.get('current_page', 'Unknown')}
+
+Focus on practical, business-relevant responses."""
+
+        # Initialize chat with Gemini 2.5 Flash (much faster!)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"user_{current_user['id']}",
-            system_message=f"You are the Williams Diversified LLC assistant. Timezone: {os.environ.get('TIMEZONE', 'America/Chicago')}. User context: {context}"
-        ).with_model("gemini", "gemini-2.5-pro")
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.5-flash")  # Changed to Flash for speed
         
         # Create user message
         user_message = UserMessage(text=message)
