@@ -956,7 +956,14 @@ async def login(credentials: UserLogin):
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {"id": user['id'], "username": user['username'], "email": user['email'], "role": user.get('role', 'employee')}
+        "user": {
+            "id": user['id'], 
+            "username": user['username'], 
+            "email": user['email'],
+            "first_name": user.get('first_name'),
+            "last_name": user.get('last_name'),
+            "role": user.get('role', 'employee')
+        }
     }
 
 @api_router.get("/auth/me")
