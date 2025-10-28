@@ -210,7 +210,15 @@ const ExpensesPage = () => {
               </TableHeader>
               <TableBody>
                 {expenses.map((expense) => (
-                  <TableRow key={expense.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={expense.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedExpense(expense);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{expense.description}</TableCell>
                     <TableCell className="text-gray-300">
                       <Badge className="bg-blue-600">{expense.category?.toUpperCase()}</Badge>
@@ -222,9 +230,8 @@ const ExpensesPage = () => {
                     <TableCell className="text-gray-300">
                       {projects.find(p => p.id === expense.project_id)?.name || 'N/A'}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={expense} itemType="expense" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(expense)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
