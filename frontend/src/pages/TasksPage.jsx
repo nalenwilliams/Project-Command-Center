@@ -261,6 +261,10 @@ const TasksPage = () => {
                     onSelectionChange={(selectedUserIds) => setFormData({ ...formData, assigned_to: selectedUserIds })}
                     placeholder="Select users..."
                   />
+                  {/* Debug info */}
+                  <div className="text-xs text-gray-500 mt-1">
+                    Debug: {users?.length || 0} users loaded
+                  </div>
                 </div>
               </div>
 
