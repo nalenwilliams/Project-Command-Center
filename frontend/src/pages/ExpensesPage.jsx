@@ -21,6 +21,8 @@ const ExpensesPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
