@@ -57,13 +57,13 @@ const AuthPage = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth endpoint
-    const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
     window.location.href = `${backendUrl}/api/auth/google/login`;
   };
 
   // Generate Google OAuth URL for direct link (mobile-friendly)
   const getGoogleOAuthUrl = () => {
-    const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
     return `${backendUrl}/api/auth/google/login`;
   };
 
