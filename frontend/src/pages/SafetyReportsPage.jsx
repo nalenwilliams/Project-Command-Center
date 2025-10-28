@@ -20,6 +20,8 @@ const SafetyReportsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingReport, setEditingReport] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
