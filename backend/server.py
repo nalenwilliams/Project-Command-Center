@@ -1441,7 +1441,10 @@ async def get_work_orders(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/work-orders", response_model=WorkOrder)
 async def create_work_order(work_order_data: WorkOrderCreate, current_user: dict = Depends(get_current_user)):
-    work_order = WorkOrder(**work_order_data.model_dump(), created_by=current_user['id'])
+    work_order_dict = work_order_data.model_dump()
+    work_order_dict['created_by'] = current_user['id']  # Override with current user
+    work_order = WorkOrder(**work_order_dict)
+    
     work_order_dict = work_order.model_dump()
     work_order_dict['created_at'] = work_order_dict['created_at'].isoformat()
     if work_order_dict.get('due_date'):
