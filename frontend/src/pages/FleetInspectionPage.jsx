@@ -191,7 +191,7 @@ const FleetInspectionPage = () => {
               </TableHeader>
               <TableBody>
                 {inspections.map((inspection) => (
-                  <TableRow key={inspection.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: '#374151' }} onClick={() => { setSelectedItem(inspection.id); setGalleryOpen(true); }}>
+                  <TableRow key={inspection.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: '#374151' }} onClick={() => { setSelectedItem(inspection); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">
                       <div className="flex items-center gap-2">
                         <Truck className="h-4 w-4" style={{ color: ELEGANT_GOLD }} />
