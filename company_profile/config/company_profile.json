@@ -1,0 +1,71 @@
+{
+  "company_name": "Williams Diversified LLC",
+  "description": "Williams Diversified LLC is a nationwide and worldwide rapid-deployment, base-operations, and infrastructure services company. The company delivers turnkey emergency response, environmental, power, housing, and logistics solutions through an AI-integrated Command Center that manages field operations, workforce, payroll, and compliance in real time.",
+  "scope": {
+    "reach": [
+      "Nationwide (all 50 states)",
+      "Worldwide (allied bases and overseas missions)"
+    ],
+    "mobilization_time": "48 hours or less for U.S. deployments"
+  },
+  "divisions": {
+    "RapidDeployment": "Disaster response, debris removal, site cleanup, and logistics support for FEMA and USACE.",
+    "TemporaryHousing": "Full turnkey modular housing, base camps, RVs, utilities, and crew accommodations.",
+    "EmergencyPower": "Generator deployment, fueling logistics, temporary grid setups, and AI power monitoring.",
+    "EnvironmentalServices": "Erosion control, hazardous waste management, stormwater and soil remediation with EPA/USACE compliance reporting.",
+    "Security": "Physical and digital site security, patrol coordination, fencing, lighting, and access control with AI camera integration.",
+    "BaseOperations": "BOS and O&M services for military and federal bases (LOGCAP V, AFCAP V, NAVFAC BOS, USACE O&M)."
+  },
+  "ai_command_center": {
+    "modules": [
+      "AI Chat Assist",
+      "Auto-Proposal Generator (4-part layout)",
+      "Form-Fill Automation",
+      "Certified Payroll System (WH-347)",
+      "Employee Self-Onboarding",
+      "Plaid Banking Integration",
+      "Environmental & Compliance Module",
+      "Security Command Link",
+      "Vendor Portal Automation"
+    ],
+    "architecture": {
+      "backend": "Node.js / Express",
+      "database": "PostgreSQL",
+      "frontend": "React dashboard",
+      "auth": "Google OAuth",
+      "integrations": [
+        "Plaid",
+        "Dwolla",
+        "Stripe"
+      ]
+    }
+  },
+  "federal_partners": [
+    "FEMA",
+    "USACE",
+    "DoD",
+    "GSA",
+    "AshBritt",
+    "Ceres Environmental",
+    "Phillips & Jordan",
+    "CrowderGulf",
+    "Amentum",
+    "Fluor",
+    "KBR",
+    "V2X (Vectrus)",
+    "AECOM",
+    "Jacobs",
+    "WSP USA"
+  ],
+  "goals": {
+    "revenue_target": "$10-15 million annual within 24-30 months",
+    "objectives": [
+      "Prime and subcontractor capability under FEMA, USACE, and DoD programs",
+      "Global operations expansion",
+      "AI-automated workflows across all departments",
+      "Full audit and compliance integration"
+    ]
+  },
+  "mission": "Deliver high-performance, technology-driven solutions that sustain operations and restore infrastructure anywhere in the world.",
+  "vision": "To be the most efficient, AI-powered contractor serving FEMA, USACE, and global defense programs."
+}
