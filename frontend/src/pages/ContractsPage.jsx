@@ -22,6 +22,8 @@ const ContractsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingContract, setEditingContract] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedContract, setSelectedContract] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     client_id: '',
