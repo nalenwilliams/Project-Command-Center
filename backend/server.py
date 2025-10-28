@@ -4511,6 +4511,9 @@ async def serve_vendor_document(
     
     return FileResponse(file_path)
 
+# Include the router in the main app (after all endpoints are defined)
+app.include_router(api_router)
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
