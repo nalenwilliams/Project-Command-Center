@@ -3285,7 +3285,7 @@ async def process_payroll_payment(
 # VENDOR PORTAL PROXY ENDPOINTS
 # ============================================
 
-@app.get("/api/vendors")
+@api_router.get("/vendors")
 async def get_vendors(current_user: dict = Depends(get_current_user)):
     """Get all vendors (Admin/Manager) or self (Vendor)"""
     if current_user["role"] == "vendor":
@@ -3299,7 +3299,7 @@ async def get_vendors(current_user: dict = Depends(get_current_user)):
     else:
         raise HTTPException(status_code=403, detail="Access denied")
 
-@app.post("/api/vendors")
+@api_router.post("/vendors")
 async def create_vendor(
     vendor_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3309,7 +3309,7 @@ async def create_vendor(
         raise HTTPException(status_code=403, detail="Admin/Manager access required")
     return await proxy_request("POST", "/vendors", current_user, vendor_data)
 
-@app.get("/api/vendor/invoices")
+@api_router.get("/vendor/invoices")
 async def get_vendor_invoices(current_user: dict = Depends(get_current_user)):
     """Get vendor invoices (filtered by role)"""
     if current_user["role"] == "vendor":
@@ -3322,7 +3322,7 @@ async def get_vendor_invoices(current_user: dict = Depends(get_current_user)):
     else:
         raise HTTPException(status_code=403, detail="Access denied")
 
-@app.post("/api/vendor/invoices")
+@api_router.post("/vendor/invoices")
 async def submit_vendor_invoice(
     invoice_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3336,7 +3336,7 @@ async def submit_vendor_invoice(
         invoice_data["vendor_id"] = vendor_id
     return await proxy_request("POST", "/vendors/invoices", current_user, invoice_data)
 
-@app.get("/api/vendor/payments")
+@api_router.get("/vendor/payments")
 async def get_vendor_payments(current_user: dict = Depends(get_current_user)):
     """Get vendor payment history (filtered by role)"""
     if current_user["role"] == "vendor":
@@ -3349,7 +3349,7 @@ async def get_vendor_payments(current_user: dict = Depends(get_current_user)):
     else:
         raise HTTPException(status_code=403, detail="Access denied")
 
-@app.post("/api/vendor/payments")
+@api_router.post("/vendor/payments")
 async def process_vendor_payment(
     payment_data: dict,
     current_user: dict = Depends(get_current_user)
