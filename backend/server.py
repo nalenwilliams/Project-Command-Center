@@ -1507,7 +1507,14 @@ async def get_uploaded_file(filename: str):
 
 @api_router.get("/tasks", response_model=List[Task])
 async def get_tasks(current_user: dict = Depends(get_current_user)):
-    tasks = await db.tasks.find({}, {"_id": 0}).to_list(1000)
+    # Employees only see tasks assigned to them
+    if current_user.get('role') == 'employee':
+        query = {"assigned_to": {"$in": [current_user['id']]}}
+    else:
+        # Admins and managers see all tasks
+        query = {}
+    
+    tasks = await db.tasks.find(query, {"_id": 0}).to_list(1000)
     for task in tasks:
         if isinstance(task['created_at'], str):
             task['created_at'] = datetime.fromisoformat(task['created_at'])
