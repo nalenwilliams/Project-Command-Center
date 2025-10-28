@@ -59,6 +59,7 @@ const ProjectsPage = () => {
       setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
       setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
       setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
+      console.log('ProjectsPage - Fetched users:', usersRes.data);
     } catch (error) {
       console.error('Failed to load data:', error);
       // Set default empty arrays on error
