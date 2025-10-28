@@ -154,41 +154,114 @@ const VendorPortalPage = () => {
                   <DialogTitle className="text-white">Add New Vendor</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreateVendor} className="space-y-4">
-                  <div>
-                    <Label className="text-gray-300">Vendor Name *</Label>
-                    <Input
-                      required
-                      value={vendorForm.name}
-                      onChange={(e) => setVendorForm({...vendorForm, name: e.target.value})}
-                      className="bg-gray-900 border-gray-700 text-white"
-                      placeholder="Company Name"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <Label className="text-gray-300">Company Name *</Label>
+                      <Input
+                        required
+                        value={vendorForm.company_name}
+                        onChange={(e) => setVendorForm({...vendorForm, company_name: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="ABC Construction LLC"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Contact First Name *</Label>
+                      <Input
+                        required
+                        value={vendorForm.contact_first_name}
+                        onChange={(e) => setVendorForm({...vendorForm, contact_first_name: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Contact Last Name *</Label>
+                      <Input
+                        required
+                        value={vendorForm.contact_last_name}
+                        onChange={(e) => setVendorForm({...vendorForm, contact_last_name: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gray-300">Email *</Label>
+                      <Input
+                        type="email"
+                        required
+                        value={vendorForm.email}
+                        onChange={(e) => setVendorForm({...vendorForm, email: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="contact@company.com"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Phone *</Label>
+                      <Input
+                        required
+                        value={vendorForm.phone}
+                        onChange={(e) => setVendorForm({...vendorForm, phone: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <Label className="text-gray-300">Email *</Label>
-                    <Input
-                      type="email"
-                      required
-                      value={vendorForm.email}
-                      onChange={(e) => setVendorForm({...vendorForm, email: e.target.value})}
-                      className="bg-gray-900 border-gray-700 text-white"
-                      placeholder="vendor@company.com"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Invitation code will be sent to this email</p>
+                    <Label className="text-gray-300">Business Type</Label>
+                    <select
+                      value={vendorForm.business_type}
+                      onChange={(e) => setVendorForm({...vendorForm, business_type: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 text-white rounded-md"
+                    >
+                      <option value="LLC">LLC</option>
+                      <option value="Corporation">Corporation</option>
+                      <option value="Partnership">Partnership</option>
+                      <option value="Sole Proprietor">Sole Proprietor</option>
+                    </select>
                   </div>
                   <div>
-                    <Label className="text-gray-300">Phone Number</Label>
+                    <Label className="text-gray-300">Address</Label>
                     <Input
-                      value={vendorForm.phone}
-                      onChange={(e) => setVendorForm({...vendorForm, phone: e.target.value})}
+                      value={vendorForm.address}
+                      onChange={(e) => setVendorForm({...vendorForm, address: e.target.value})}
                       className="bg-gray-900 border-gray-700 text-white"
-                      placeholder="(555) 123-4567"
+                      placeholder="123 Main Street"
                     />
                   </div>
-                  <div className="bg-blue-900/20 border border-blue-500/30 rounded p-4">
-                    <p className="text-sm text-blue-300">
-                      <strong>Note:</strong> The vendor will receive an email invitation to complete their profile. 
-                      They will provide additional information like EIN, W-9, insurance, and other documents during onboarding.
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-gray-300">City</Label>
+                      <Input
+                        value={vendorForm.city}
+                        onChange={(e) => setVendorForm({...vendorForm, city: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">State</Label>
+                      <Input
+                        value={vendorForm.state}
+                        onChange={(e) => setVendorForm({...vendorForm, state: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        maxLength="2"
+                        placeholder="OK"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">ZIP</Label>
+                      <Input
+                        value={vendorForm.zip}
+                        onChange={(e) => setVendorForm({...vendorForm, zip: e.target.value})}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        maxLength="5"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-green-900/20 border border-green-500/30 rounded p-4">
+                    <p className="text-sm text-green-300">
+                      <strong>Direct Creation:</strong> Vendor account will be created immediately with a temporary password. 
+                      No invitation code needed! Provide the login credentials to the vendor.
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">
@@ -196,7 +269,7 @@ const VendorPortalPage = () => {
                       Cancel
                     </Button>
                     <Button type="submit" className="bg-yellow-600 hover:bg-yellow-700">
-                      Send Invitation
+                      Create Vendor Account
                     </Button>
                   </div>
                 </form>
