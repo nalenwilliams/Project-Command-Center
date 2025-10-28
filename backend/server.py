@@ -3355,6 +3355,317 @@ async def process_vendor_payment(
         raise HTTPException(status_code=403, detail="Admin/Manager access required")
     return await proxy_request("POST", "/vendors/payments", current_user, payment_data)
 
+
+# ============================================
+# VENDOR INVITATION & DOCUMENT ENDPOINTS
+# ============================================
+
+import secrets
+import string
+from email_templates import vendor_invitation_email, vendor_document_status_email
+
+def generate_invitation_code(length=8):
+    """Generate a random invitation code"""
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(characters) for _ in range(length))
+
+@api_router.post("/vendors/invite")
+async def invite_vendor(
+    vendor_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Send invitation to new vendor (Admin/Manager only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="Admin/Manager access required")
+    
+    try:
+        # Generate unique invitation code
+        invitation_code = generate_invitation_code()
+        
+        # Check if invitation code already exists
+        while await db.vendor_invitations.find_one({"invitation_code": invitation_code}):
+            invitation_code = generate_invitation_code()
+        
+        # Create invitation record
+        invitation = {
+            "id": str(uuid.uuid4()),
+            "invitation_code": invitation_code,
+            "vendor_name": vendor_data.get("name"),
+            "email": vendor_data.get("email"),
+            "phone": vendor_data.get("phone", ""),
+            "status": "pending",
+            "created_by": current_user["id"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+        }
+        
+        await db.vendor_invitations.insert_one(invitation)
+        
+        # Send invitation email
+        email_service = get_email_service()
+        portal_url = f"{os.environ.get('FRONTEND_URL', 'https://wdl-hub.preview.emergentagent.com')}/auth?code={invitation_code}&type=vendor"
+        email_content = vendor_invitation_email(
+            vendor_name=vendor_data.get("name"),
+            invitation_code=invitation_code,
+            portal_url=portal_url
+        )
+        
+        email_service.send_email(
+            to_email=vendor_data.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        return {
+            "message": "Vendor invitation sent successfully",
+            "invitation_code": invitation_code,
+            "email": vendor_data.get("email")
+        }
+    except Exception as e:
+        logger.error(f"Error inviting vendor: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/vendor/documents")
+async def get_vendor_documents(current_user: dict = Depends(get_current_user)):
+    """Get vendor's company documents"""
+    if current_user["role"] != "vendor":
+        raise HTTPException(status_code=403, detail="Vendor access only")
+    
+    vendor_id = current_user.get("vendor_id")
+    if not vendor_id:
+        raise HTTPException(status_code=404, detail="Vendor profile not found")
+    
+    try:
+        documents = await db.vendor_documents.find(
+            {"vendor_id": vendor_id},
+            {"_id": 0}
+        ).to_list(length=None)
+        return documents
+    except Exception as e:
+        logger.error(f"Error fetching vendor documents: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/vendor/documents")
+async def upload_vendor_document(
+    document_type: str = Form(...),
+    file: UploadFile = File(...),
+    expiration_date: Optional[str] = Form(None),
+    notes: Optional[str] = Form(None),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload vendor company document"""
+    if current_user["role"] != "vendor":
+        raise HTTPException(status_code=403, detail="Vendor access only")
+    
+    vendor_id = current_user.get("vendor_id")
+    if not vendor_id:
+        raise HTTPException(status_code=404, detail="Vendor profile not found")
+    
+    try:
+        # Save file
+        upload_dir = ROOT_DIR / "vendor_documents"
+        upload_dir.mkdir(exist_ok=True)
+        
+        file_extension = file.filename.split(".")[-1] if "." in file.filename else "pdf"
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = upload_dir / unique_filename
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Create document record
+        document = {
+            "id": str(uuid.uuid4()),
+            "vendor_id": vendor_id,
+            "document_type": document_type,
+            "file_name": file.filename,
+            "stored_filename": unique_filename,
+            "file_url": f"/api/vendor_documents/{unique_filename}",
+            "file_size": file.size,
+            "expiration_date": expiration_date,
+            "notes": notes,
+            "status": "pending",
+            "uploaded_at": datetime.now(timezone.utc).isoformat(),
+            "uploaded_by": current_user["id"]
+        }
+        
+        await db.vendor_documents.insert_one(document)
+        
+        # TODO: Notify admin of new document upload
+        
+        return {
+            "message": "Document uploaded successfully",
+            "document": document
+        }
+    except Exception as e:
+        logger.error(f"Error uploading vendor document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/vendor/documents/{document_id}")
+async def delete_vendor_document(
+    document_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete vendor document"""
+    if current_user["role"] != "vendor":
+        raise HTTPException(status_code=403, detail="Vendor access only")
+    
+    vendor_id = current_user.get("vendor_id")
+    if not vendor_id:
+        raise HTTPException(status_code=404, detail="Vendor profile not found")
+    
+    try:
+        # Find document
+        document = await db.vendor_documents.find_one(
+            {"id": document_id, "vendor_id": vendor_id},
+            {"_id": 0}
+        )
+        
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Delete file from filesystem
+        file_path = ROOT_DIR / "vendor_documents" / document["stored_filename"]
+        if file_path.exists():
+            file_path.unlink()
+        
+        # Delete from database
+        await db.vendor_documents.delete_one({"id": document_id})
+        
+        return {"message": "Document deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting vendor document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/vendor-documents/{vendor_id}")
+async def get_vendor_documents_admin(
+    vendor_id: str,
+    current_user: dict = Depends(get_admin_user)
+):
+    """Get vendor documents (Admin only)"""
+    try:
+        documents = await db.vendor_documents.find(
+            {"vendor_id": vendor_id},
+            {"_id": 0}
+        ).to_list(length=None)
+        return documents
+    except Exception as e:
+        logger.error(f"Error fetching vendor documents: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/vendor-documents/{document_id}/approve")
+async def approve_vendor_document(
+    document_id: str,
+    current_user: dict = Depends(get_admin_user)
+):
+    """Approve vendor document (Admin only)"""
+    try:
+        document = await db.vendor_documents.find_one({"id": document_id}, {"_id": 0})
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Update document status
+        await db.vendor_documents.update_one(
+            {"id": document_id},
+            {"$set": {
+                "status": "approved",
+                "approved_by": current_user["id"],
+                "approved_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Get vendor info
+        vendor = await db.vendors.find_one({"id": document["vendor_id"]}, {"_id": 0})
+        if vendor:
+            # Send approval notification
+            email_service = get_email_service()
+            email_content = vendor_document_status_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                document_type=document["document_type"],
+                status="approved"
+            )
+            email_service.send_email(
+                to_email=vendor.get("email"),
+                subject=email_content["subject"],
+                body=email_content["html"],
+                html=True
+            )
+        
+        return {"message": "Document approved successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/vendor-documents/{document_id}/reject")
+async def reject_vendor_document(
+    document_id: str,
+    rejection_data: dict,
+    current_user: dict = Depends(get_admin_user)
+):
+    """Reject vendor document (Admin only)"""
+    try:
+        document = await db.vendor_documents.find_one({"id": document_id}, {"_id": 0})
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        reason = rejection_data.get("reason", "Document does not meet requirements")
+        
+        # Update document status
+        await db.vendor_documents.update_one(
+            {"id": document_id},
+            {"$set": {
+                "status": "rejected",
+                "rejection_reason": reason,
+                "rejected_by": current_user["id"],
+                "rejected_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Get vendor info
+        vendor = await db.vendors.find_one({"id": document["vendor_id"]}, {"_id": 0})
+        if vendor:
+            # Send rejection notification
+            email_service = get_email_service()
+            email_content = vendor_document_status_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                document_type=document["document_type"],
+                status="rejected",
+                reason=reason
+            )
+            email_service.send_email(
+                to_email=vendor.get("email"),
+                subject=email_content["subject"],
+                body=email_content["html"],
+                html=True
+            )
+        
+        return {"message": "Document rejected successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Endpoint to serve vendor documents
+from fastapi.responses import FileResponse
+
+@api_router.get("/vendor_documents/{filename}")
+async def serve_vendor_document(
+    filename: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Serve vendor document file"""
+    file_path = ROOT_DIR / "vendor_documents" / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return FileResponse(file_path)
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
