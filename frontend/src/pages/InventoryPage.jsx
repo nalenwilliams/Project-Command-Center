@@ -19,6 +19,8 @@ const InventoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({
     item_name: '',
     category: '',
