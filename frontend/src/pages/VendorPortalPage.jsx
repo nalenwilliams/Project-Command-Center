@@ -17,9 +17,16 @@ const VendorPortalPage = () => {
   const [showVendorDialog, setShowVendorDialog] = useState(false)
   const [showInvoiceDialog, setShowInvoiceDialog] = useState(false)
   const [vendorForm, setVendorForm] = useState({
-    name: '',
+    company_name: '',
     email: '',
-    phone: ''
+    phone: '',
+    contact_first_name: '',
+    contact_last_name: '',
+    business_type: 'LLC',
+    address: '',
+    city: '',
+    state: 'OK',
+    zip: ''
   })
   const [invoiceForm, setInvoiceForm] = useState({
     invoice_number: '',
