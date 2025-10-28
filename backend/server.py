@@ -3143,8 +3143,7 @@ async def delete_inventory(inventory_id: str, admin_user: dict = Depends(get_adm
         raise HTTPException(status_code=404, detail="Inventory item not found")
     return {"message": "Inventory item deleted"}
 
-# Include the router in the main app
-app.include_router(api_router)
+# Router will be included at the end of the file after all endpoints are defined
 
 app.add_middleware(
     CORSMiddleware,
