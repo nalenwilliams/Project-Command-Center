@@ -411,7 +411,13 @@ const WorkOrdersPage = () => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-4">
-                    <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={handleCloseDialog}
+                      className="border text-white hover:bg-gray-800"
+                      style={{ borderColor: ELEGANT_GOLD }}
+                    >
                       Cancel
                     </Button>
                     <Button 
