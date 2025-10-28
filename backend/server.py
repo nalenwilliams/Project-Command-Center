@@ -154,6 +154,7 @@ class User(BaseModel):
     picture: Optional[str] = None  # Google profile picture
     role: str = "employee"  # admin, manager, employee, vendor
     is_active: bool = True
+    onboarding_completed: bool = False  # Track onboarding completion status
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserResponse(BaseModel):
