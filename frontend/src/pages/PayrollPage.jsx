@@ -12,20 +12,7 @@ const PayrollPage = () => {
   const [employees, setEmployees] = useState([])
   const [payrollRuns, setPayrollRuns] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showEmployeeDialog, setShowEmployeeDialog] = useState(false)
   const [showRunDialog, setShowRunDialog] = useState(false)
-  const [employeeForm, setEmployeeForm] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    classification: '',
-    base_rate: '',
-    fringe_rate: '',
-    davis_bacon: false,
-    ein: '',
-    routing_number: '',
-    account_number: ''
-  })
   const [runForm, setRunForm] = useState({
     week_ending: ''
   })
