@@ -433,6 +433,21 @@ backend:
         - agent: "testing"
         - comment: "Successfully tested employee login with credentials john.smith/Employee123!. Authentication working properly with JWT token generation. Employee role verification working correctly. Fixed password_hash field issue in test user creation script."
 
+  - task: "Vendor Invitation System"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reports vendor invitation system not working - 'won't send a code'"
+        - working: true
+        - agent: "testing"
+        - comment: "FIXED: Root cause was vendor invitation endpoint not using notification settings from database for email configuration. Updated POST /api/vendors/invite to retrieve notification settings and configure email service properly. Testing confirmed: 1) Vendor invitations created successfully with unique codes 2) Database records stored in vendor_invitations collection 3) Email service configured and sending emails successfully 4) Admin authentication working correctly. Backend logs show 'Email sent successfully to [vendor-email]'. Vendor invitation system fully operational."
+
 frontend:
   - task: "File Gallery UX Improvements"
     implemented: true
