@@ -22,6 +22,8 @@ const InvoicesPage = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [formData, setFormData] = useState({
     invoice_number: '',
     client_id: '',
