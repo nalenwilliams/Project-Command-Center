@@ -206,7 +206,11 @@ const TasksPage = () => {
                 <Plus className="mr-2 h-4 w-4" /> Add Task
               </Button>
             </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }} data-testid="task-dialog">
+          <DialogContent 
+            className="max-w-2xl bg-gray-900 border max-h-[90vh] overflow-y-auto" 
+            style={{ borderColor: ELEGANT_GOLD }} 
+            data-testid="task-dialog"
+          >
             <DialogHeader>
               <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingTask ? 'Edit Task' : 'Add New Task'}</DialogTitle>
             </DialogHeader>
