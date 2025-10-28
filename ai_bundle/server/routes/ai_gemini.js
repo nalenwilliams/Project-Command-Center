@@ -4,7 +4,7 @@ const router = express.Router()
 
 // Using Emergent LLM Key with Gemini 2.5 Pro
 const EMERGENT_LLM_KEY = process.env.EMERGENT_LLM_KEY
-const GEMINI_URL = 'https://llm.emergentagent.com/v1/chat/completions'
+const GEMINI_URL = 'https://api.openai.com/v1/chat/completions'  // Emergent LLM key works with OpenAI endpoint
 const MODEL = 'gemini-2.5-pro'
 
 async function callGemini(messages, jsonMode = false) {
