@@ -1180,7 +1180,10 @@ async def get_projects(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/projects", response_model=Project)
 async def create_project(project_data: ProjectCreate, current_user: dict = Depends(get_current_user)):
-    project = Project(**project_data.model_dump(), created_by=current_user['id'])
+    project_dict = project_data.model_dump()
+    project_dict['created_by'] = current_user['id']  # Override with current user
+    project = Project(**project_dict)
+    
     project_dict = project.model_dump()
     project_dict['created_at'] = project_dict['created_at'].isoformat()
     if project_dict.get('deadline'):
