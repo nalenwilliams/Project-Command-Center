@@ -181,12 +181,30 @@ const WorkOrdersPage = () => {
   };
 
   const getUserNames = (userIds) => {
+    if (!Array.isArray(users)) return 'Unassigned';
+    
     if (!userIds || userIds.length === 0) return 'Unassigned';
-    const names = userIds.map(userId => {
+    
+    const userNames = userIds.map(userId => {
       const user = users.find(u => u.id === userId);
-      return user ? user.username : 'Unknown';
+      if (!user) return 'Unknown';
+      
+      // Format the display name - use email if it looks like a name, otherwise use username
+      if (user.email && user.email.includes('@')) {
+        const emailPart = user.email.split('@')[0];
+        // If email looks like a name (has dots), format it nicely
+        if (emailPart.includes('.')) {
+          return emailPart.split('.').map(part => 
+            part.charAt(0).toUpperCase() + part.slice(1)
+          ).join(' ');
+        }
+      }
+      
+      // Fallback to username with proper capitalization
+      return user.username.charAt(0).toUpperCase() + user.username.slice(1);
     });
-    return names.join(', ');
+    
+    return userNames.join(', ');
   };
 
   const getStatusBadge = (status) => {
