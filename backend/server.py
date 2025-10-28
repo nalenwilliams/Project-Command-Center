@@ -55,26 +55,55 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Could not validate credentials")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail="Could not validate credentials")
+async def get_current_user(
+    request: Request,
+    session_token: Optional[str] = Cookie(None),
+    authorization: Optional[str] = None
+):
+    """
+    Authenticate user from session_token cookie (priority) or Authorization header (fallback)
+    """
+    token = None
     
-    user = await db.users.find_one({"id": user_id}, {"_id": 0})
-    if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
-    if not user.get('is_active', True):
-        raise HTTPException(status_code=403, detail="User account is deactivated")
-    return user
+    # Priority 1: Check session_token from cookie (Emergent Auth)
+    if session_token:
+        session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+        if session:
+            # Check if session is expired
+            if datetime.fromisoformat(session['expires_at']) > datetime.now(timezone.utc):
+                user = await db.users.find_one({"id": session['user_id']}, {"_id": 0})
+                if user and user.get('is_active', True):
+                    return user
+    
+    # Priority 2: Check Authorization header (existing JWT system)
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+    elif request.headers.get("Authorization"):
+        auth_header = request.headers.get("Authorization")
+        if auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+    
+    if token:
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            user_id: str = payload.get("sub")
+            if user_id is None:
+                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token has expired")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Could not validate credentials")
+        except Exception as e:
+            raise HTTPException(status_code=401, detail="Could not validate credentials")
+        
+        user = await db.users.find_one({"id": user_id}, {"_id": 0})
+        if user is None:
+            raise HTTPException(status_code=401, detail="User not found")
+        if not user.get('is_active', True):
+            raise HTTPException(status_code=403, detail="User account is deactivated")
+        return user
+    
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 async def get_admin_user(current_user: dict = Depends(get_current_user)):
     if current_user.get('role') != 'admin':
