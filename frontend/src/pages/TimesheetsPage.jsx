@@ -224,6 +224,17 @@ const TimesheetsPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing timesheet details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedTimesheet}
+        recordType="timesheet"
+        files={selectedTimesheet?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
