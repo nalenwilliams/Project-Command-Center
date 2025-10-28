@@ -35,6 +35,7 @@ const WorkOrdersPage = () => {
     due_date: '',
     priority: 'medium',
     assigned_to: [],
+    address: '',
     created_by: '',
     files: [],
   });
