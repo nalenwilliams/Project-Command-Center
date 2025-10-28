@@ -364,46 +364,48 @@ const PolicyCard = ({ policy, canEdit, hasAcknowledged, onEdit, onDelete, onAckn
   };
 
   return (
-    <Card className="bg-gray-900 border" style={{ borderColor: ELEGANT_GOLD }}>
+    <Card className="bg-gray-900 border w-full" style={{ borderColor: ELEGANT_GOLD }}>
       <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-3 mb-2">
-              <FileText className="h-6 w-6 flex-shrink-0" style={{ color: ELEGANT_GOLD }} />
-              <h3 className="text-xl font-semibold break-words" style={{ color: ELEGANT_GOLD }}>
-                {policy.title}
-              </h3>
-              <Badge variant="outline" className="border flex-shrink-0" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
-                {getCategoryLabel(policy.category)}
+        <div className="w-full space-y-4">
+          {/* Title and Badges Row */}
+          <div className="flex flex-wrap items-center gap-3">
+            <FileText className="h-6 w-6 flex-shrink-0" style={{ color: ELEGANT_GOLD }} />
+            <h3 className="text-xl font-semibold break-words max-w-full" style={{ color: ELEGANT_GOLD }}>
+              {policy.title}
+            </h3>
+            <Badge variant="outline" className="border flex-shrink-0" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
+              {getCategoryLabel(policy.category)}
+            </Badge>
+            {hasAcknowledged && (
+              <Badge className="bg-green-600 flex-shrink-0">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Acknowledged
               </Badge>
-              {hasAcknowledged && (
-                <Badge className="bg-green-600 flex-shrink-0">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Acknowledged
-                </Badge>
-              )}
-            </div>
-
-            {policy.description && (
-              <p className="text-gray-300 mb-3 break-words whitespace-pre-wrap">{policy.description}</p>
             )}
-
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400 break-words">
-              <span className="break-all">Version: {policy.version}</span>
-              {policy.effective_date && (
-                <span className="whitespace-nowrap">Effective: {new Date(policy.effective_date).toLocaleDateString()}</span>
-              )}
-              <span className="break-all">Created by: {policy.created_by}</span>
-              {policy.requires_acknowledgment && (
-                <span className="flex items-center gap-1 whitespace-nowrap" style={{ color: ELEGANT_GOLD }}>
-                  <Clock className="h-3 w-3" />
-                  Acknowledgment required
-                </span>
-              )}
-            </div>
           </div>
 
-          <div className="flex gap-2">
+          {/* Description */}
+          {policy.description && (
+            <p className="text-gray-300 break-words overflow-wrap-anywhere w-full">{policy.description}</p>
+          )}
+
+          {/* Metadata */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400 w-full">
+            <span className="break-words">Version: {policy.version}</span>
+            {policy.effective_date && (
+              <span className="break-words">Effective: {new Date(policy.effective_date).toLocaleDateString()}</span>
+            )}
+            <span className="break-words">Created by: {policy.created_by}</span>
+            {policy.requires_acknowledgment && (
+              <span className="flex items-center gap-1" style={{ color: ELEGANT_GOLD }}>
+                <Clock className="h-3 w-3 flex-shrink-0" />
+                <span className="whitespace-nowrap">Acknowledgment required</span>
+              </span>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-2 pt-2">
             {policy.file_url && (
               <Button
                 size="sm"
