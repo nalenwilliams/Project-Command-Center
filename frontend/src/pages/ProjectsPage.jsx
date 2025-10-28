@@ -515,7 +515,10 @@ const ProjectsPage = () => {
 
       {/* File Gallery Dialog */}
       <Dialog open={filesDialogOpen} onOpenChange={setFilesDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-4xl" style={{ borderColor: ELEGANT_GOLD }}>
+        <DialogContent 
+          className="bg-gray-900 border max-w-4xl max-h-[90vh] overflow-y-auto" 
+          style={{ borderColor: ELEGANT_GOLD }}
+        >
           <DialogHeader>
             <DialogTitle style={{ color: ELEGANT_GOLD }}>
               Project Files - {currentProject?.name}
