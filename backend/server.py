@@ -4316,13 +4316,18 @@ async def ai_form_assist(
 ):
     """AI-assisted form filling"""
     try:
-        from emergentintegrations import LLM
-        
-        llm = LLM(api_key=os.environ.get("EMERGENT_LLM_KEY"))
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
         
         section = assist_request.get("section")
         current_data = assist_request.get("current_data", {})
         form_type = assist_request.get("form_type")
+        
+        # Initialize chat with Gemini 2.5 Flash
+        chat = LlmChat(
+            api_key=os.environ.get("EMERGENT_LLM_KEY"),
+            session_id=f"form_assist_{current_user['id']}",
+            system_message="You are an AI assistant helping users fill out forms with intelligent suggestions."
+        ).with_model("gemini", "gemini-2.5-flash")
         
         prompt = f"""You are helping fill out a {form_type} form.
 Section: {section}
@@ -4334,14 +4339,16 @@ Return suggestions as a JSON object with field names as keys.
 Only suggest for fields that are empty or obviously incorrect.
 """
         
-        response = llm.text_generation(
-            model="gemini-2.5-flash",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
         
-        # Parse AI response
-        # For now, return empty suggestions (AI integration can be enhanced)
-        return {"suggestions": {}}
+        # Try to parse as JSON, fallback to empty suggestions
+        import json
+        try:
+            suggestions = json.loads(response)
+            return {"suggestions": suggestions}
+        except:
+            return {"suggestions": {}}
     except Exception as e:
         logger.error(f"Error with AI form assist: {str(e)}")
         return {"suggestions": {}}
