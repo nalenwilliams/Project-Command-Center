@@ -55,6 +55,9 @@ const AuthPage = () => {
         setProcessingSession(true);
         const sessionId = hash.split('session_id=')[1].split('&')[0];
         
+        // Clear URL fragment immediately
+        window.history.replaceState(null, '', window.location.pathname);
+        
         try {
           // Call backend to process session
           const response = await api.post('/auth/session', null, {
@@ -67,19 +70,13 @@ const AuthPage = () => {
             localStorage.setItem('user', JSON.stringify(response.data.user));
             toast.success('Welcome! Logged in with Google');
             
-            // Clear URL fragment
-            window.history.replaceState(null, '', window.location.pathname);
-            
             // Navigate to dashboard
-            navigate('/');
+            navigate('/', { replace: true });
           }
         } catch (error) {
           console.error('Session processing error:', error);
           toast.error('Authentication failed. Please try again.');
           setProcessingSession(false);
-          
-          // Clear URL fragment
-          window.history.replaceState(null, '', window.location.pathname);
         }
       }
     };
