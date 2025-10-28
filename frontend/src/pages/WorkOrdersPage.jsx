@@ -73,7 +73,7 @@ const WorkOrdersPage = () => {
       if (data.due_date) {
         data.due_date = new Date(data.due_date).toISOString();
       }
-      if (!data.project_id) data.project_id = null;
+      if (!data.project_id || data.project_id === 'none') data.project_id = null;
 
       // Add current user as created_by for new work orders
       if (!editingWorkOrder) {
