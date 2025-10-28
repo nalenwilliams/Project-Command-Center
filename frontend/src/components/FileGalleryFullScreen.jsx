@@ -680,6 +680,81 @@ const FileGalleryFullScreen = ({
                 </>
               )}
 
+              {recordType === 'inventory-project' && record && (
+                <div className="space-y-4 w-full">
+                  {/* Project Summary */}
+                  <div className="flex gap-6 text-sm bg-gray-800 p-4 rounded">
+                    <div className="flex items-center gap-2">
+                      <svg className="h-5 w-5" style={{ color: ELEGANT_GOLD }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                      <span className="text-gray-400">Total Items:</span>
+                      <span className="text-white font-semibold">{record.total_items || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg className="h-5 w-5" style={{ color: ELEGANT_GOLD }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span className="text-gray-400">Total Value:</span>
+                      <span className="text-white font-semibold">${(record.total_value || 0).toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Inventory Items Table */}
+                  <div className="w-full overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b" style={{ borderColor: ELEGANT_GOLD }}>
+                          <th className="text-left py-2 px-3" style={{ color: ELEGANT_GOLD }}>Item</th>
+                          <th className="text-left py-2 px-3" style={{ color: ELEGANT_GOLD }}>Category</th>
+                          <th className="text-left py-2 px-3" style={{ color: ELEGANT_GOLD }}>Quantity</th>
+                          <th className="text-left py-2 px-3" style={{ color: ELEGANT_GOLD }}>Location</th>
+                          <th className="text-left py-2 px-3" style={{ color: ELEGANT_GOLD }}>Value</th>
+                          <th className="text-right py-2 px-3" style={{ color: ELEGANT_GOLD }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventoryItems && inventoryItems.length > 0 ? inventoryItems.map((item) => (
+                          <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-800">
+                            <td className="py-2 px-3 text-white font-medium">{item.item_name}</td>
+                            <td className="py-2 px-3 text-gray-300">{item.category}</td>
+                            <td className="py-2 px-3 text-gray-300">{item.quantity} {item.unit}</td>
+                            <td className="py-2 px-3 text-gray-300">{item.location || 'N/A'}</td>
+                            <td className="py-2 px-3 text-gray-300">${((item.unit_cost || 0) * item.quantity).toFixed(2)}</td>
+                            <td className="py-2 px-3 text-right">
+                              <div className="flex gap-2 justify-end">
+                                <button onClick={() => onEditItem && onEditItem(item)} className="px-2 py-1 text-xs border rounded hover:bg-gray-700" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
+                                  Edit
+                                </button>
+                                {canDelete && (
+                                  <button onClick={() => onDeleteItem && onDeleteItem(item.id)} className="px-2 py-1 text-xs border border-red-500 text-red-500 rounded hover:bg-red-950">
+                                    Delete
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )) : (
+                          <tr>
+                            <td colSpan="6" className="py-4 text-center text-gray-400">No inventory items for this project</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Add Item Button */}
+                  {onAddItem && (
+                    <div className="flex justify-start pt-2">
+                      <button 
+                        onClick={onAddItem}
+                        className="px-4 py-2 rounded font-medium text-black hover:opacity-90"
+                        style={{ backgroundColor: ELEGANT_GOLD }}
+                      >
+                        <svg className="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        Add Item to Project
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
