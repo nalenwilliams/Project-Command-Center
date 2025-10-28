@@ -668,6 +668,7 @@ const ProjectsPage = () => {
         record={currentProject}
         recordType="project"
         files={currentProject?.files || []}
+        users={users}
         onDelete={async (fileId) => {
           if (!currentProject) return;
           const updatedFiles = currentProject.files.filter(f => f.id !== fileId);
