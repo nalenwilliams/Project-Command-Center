@@ -20,10 +20,12 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filesDialogOpen, setFilesDialogOpen] = useState(false);
   const [filesFullScreenOpen, setFilesFullScreenOpen] = useState(false);
+  const [inventoryDialogOpen, setInventoryDialogOpen] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [editingProject, setEditingProject] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -38,6 +40,16 @@ const ProjectsPage = () => {
     address: '',
     created_by: '',
     files: [],
+  });
+  const [inventoryFormData, setInventoryFormData] = useState({
+    item_name: '',
+    category: 'materials',
+    quantity: '',
+    unit: 'pieces',
+    location: '',
+    unit_cost: '',
+    supplier: '',
+    notes: ''
   });
 
   // Get current user role
