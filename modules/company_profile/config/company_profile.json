@@ -1,0 +1,41 @@
+{
+  "company_name": "Williams Diversified LLC",
+  "description": "Williams Diversified LLC is a nationwide and worldwide rapid-deployment, base-operations, and infrastructure services company. The company delivers turnkey emergency response, environmental, power, housing, and logistics solutions through an AI-integrated Command Center that manages field operations, workforce, payroll, and compliance in real time.",
+  "scope": {
+    "reach": [
+      "Nationwide",
+      "Worldwide"
+    ],
+    "mobilization_time": "48 hours or less (U.S.)"
+  },
+  "divisions": {
+    "RapidDeployment": "Disaster response, debris removal, site cleanup, logistics (FEMA/USACE).",
+    "TemporaryHousing": "Modular housing, base camps, RV setups, utility connections.",
+    "EmergencyPower": "Generator deployment, fueling, temporary grid setups, monitoring.",
+    "EnvironmentalServices": "Erosion control, hazardous waste, stormwater, remediation with EPA/USACE compliance.",
+    "Security": "Access control, fencing, cameras, patrol coordination, AI monitoring.",
+    "BaseOperations": "BOS & O&M for military/federal bases (LOGCAP, AFCAP, NAVFAC, USACE)."
+  },
+  "federal_partners": [
+    "FEMA",
+    "USACE",
+    "DoD",
+    "GSA",
+    "AshBritt",
+    "Ceres Environmental",
+    "Phillips & Jordan",
+    "CrowderGulf",
+    "Amentum",
+    "Fluor",
+    "KBR",
+    "V2X (Vectrus)",
+    "AECOM",
+    "Jacobs",
+    "WSP USA"
+  ],
+  "goals": {
+    "revenue_target": "$10\u201315M in 24\u201330 months"
+  },
+  "mission": "Deliver high-performance, technology-driven solutions that sustain operations and restore infrastructure anywhere in the world.",
+  "vision": "Be the most efficient, AI-powered contractor serving FEMA, USACE, and global defense programs."
+}
