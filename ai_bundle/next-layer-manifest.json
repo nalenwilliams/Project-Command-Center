@@ -1,0 +1,33 @@
+{
+  "connect_to": {
+    "WDL_Payroll_Starter_Premium": {
+      "base_url": "http://localhost:3001",
+      "routes": [
+        "/ai/chat",
+        "/ai/form-fill"
+      ]
+    },
+    "WDL_Onboarding_System": {
+      "base_url": "http://localhost:3001",
+      "routes": [
+        "/ai/form-fill"
+      ]
+    },
+    "WDL_Plaid_Banking": {
+      "base_url": "http://localhost:3001",
+      "routes": [
+        "/ai/chat"
+      ]
+    },
+    "WDL_CommandCenter_UI": {
+      "base_url": "http://localhost:3001",
+      "routes": [
+        "/ai/*",
+        "/compose/*",
+        "/print/*",
+        "/comms/*"
+      ]
+    }
+  },
+  "notes": "Auto-link modules to AI Core."
+}

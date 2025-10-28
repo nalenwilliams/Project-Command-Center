@@ -1,0 +1,25 @@
+{
+  "name": "wdl-ai-integration",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "googleapis": "^132.0.0",
+    "handlebars": "^4.7.8",
+    "markdown-it": "^14.1.0",
+    "mime-types": "^2.1.35",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^22.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

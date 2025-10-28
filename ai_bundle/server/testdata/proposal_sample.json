@@ -1,0 +1,32 @@
+{
+  "project": {
+    "name": "Jared Jewelers - Lewisville TX",
+    "location": "2415 S Stemmons Fwy, Lewisville, TX",
+    "client": "Signet / Jared Jewelers"
+  },
+  "layout": {
+    "scopeOfWork": "Demo and repour approx. 1,300 sf sidewalk.",
+    "inclusionsByTrade": {
+      "Concrete": [
+        "Demo sidewalk",
+        "Pour 4\u201d concrete",
+        "Broom finish"
+      ],
+      "Cleanup": [
+        "Haul-off",
+        "Final clean"
+      ]
+    },
+    "itemizedPricing": [
+      {
+        "item": "Demo 1,300 SF @ $4.50/SF",
+        "subtotal": 5850
+      },
+      {
+        "item": "Pour 1,300 SF @ $8.50/SF",
+        "subtotal": 11050
+      }
+    ],
+    "totalLumpSum": 16850.0
+  }
+}

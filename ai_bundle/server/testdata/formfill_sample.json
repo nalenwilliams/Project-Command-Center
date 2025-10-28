@@ -1,0 +1,8 @@
+{
+  "schema": "proposal",
+  "notes": "Replace sidewalk at Jared Jewelers Lewisville.",
+  "defaults": {
+    "clientName": "Signet Jewelers",
+    "projectAddress": "2415 S Stemmons Fwy, Lewisville, TX"
+  }
+}
