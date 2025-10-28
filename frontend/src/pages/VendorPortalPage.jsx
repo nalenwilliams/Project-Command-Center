@@ -9,7 +9,7 @@ import api from '../lib/api'
 import { Plus, Upload, DollarSign, FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 
 const VendorPortalPage = () => {
-  const { user } = useAuth()
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
   const [vendors, setVendors] = useState([])
   const [invoices, setInvoices] = useState([])
   const [payments, setPayments] = useState([])
