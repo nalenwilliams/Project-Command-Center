@@ -1030,13 +1030,22 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
         notification_settings = await db.notification_settings.find_one({}, {"_id": 0})
         
         if notification_settings and notification_settings.get('smtp_server'):
-            # Create registration link - fix the URL construction
-            frontend_url = os.environ.get('REACT_APP_BACKEND_URL', '').replace('/api', '')
-            if not frontend_url:
-                # Fallback to request host
-                frontend_url = "https://" + os.environ.get('HOST', 'localhost:3000')
+            # Create registration link - construct proper frontend URL
+            # The frontend and backend are on the same domain, backend is at /api
+            backend_url = notification_settings.get('admin_email_domain') or "https://project-command-5.preview.emergentagent.com"
             
+            # If we have BACKEND_URL in environment, use that base
+            env_backend = os.environ.get('BACKEND_URL', '')
+            if env_backend:
+                frontend_url = env_backend
+            else:
+                # Use the domain from notification settings or default
+                frontend_url = backend_url
+            
+            # Registration link with invitation code as query parameter
             registration_link = f"{frontend_url}/auth?invite={invitation_code}"
+            
+            print(f"Generated registration link: {registration_link}")  # Debug log
             
             # Email subject
             subject = f"Invitation to Join Williams Diversified LLC - Project Command Center"
