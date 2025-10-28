@@ -1896,7 +1896,73 @@ async def delete_expense(expense_id: str, admin_user: dict = Depends(get_admin_u
     result = await db.expenses.delete_one({"id": expense_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Expense not found")
-    return {"message": "Expense deleted successfully"}
+    return {"message": "Expense deleted"}
+
+# Reports Endpoints
+@api_router.get("/reports", response_model=List[Report])
+async def get_reports(current_user: dict = Depends(get_current_user)):
+    reports = await db.reports.find({}, {"_id": 0}).to_list(length=None)
+    return [Report(**report) for report in reports]
+
+@api_router.post("/reports", response_model=Report)
+async def create_report(report: ReportCreate, current_user: dict = Depends(get_current_user)):
+    report_dict = report.model_dump()
+    report_dict["id"] = str(uuid.uuid4())
+    report_dict["created_by"] = current_user.get("username", "unknown")
+    report_dict["created_at"] = datetime.now(timezone.utc)
+    await db.reports.insert_one(report_dict)
+    return Report(**report_dict)
+
+@api_router.put("/reports/{report_id}", response_model=Report)
+async def update_report(report_id: str, report: ReportUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = {k: v for k, v in report.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.reports.update_one({"id": report_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return await db.reports.find_one({"id": report_id}, {"_id": 0})
+
+@api_router.delete("/reports/{report_id}")
+async def delete_report(report_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.reports.delete_one({"id": report_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return {"message": "Report deleted"}
+
+# Compliance Endpoints
+@api_router.get("/compliance", response_model=List[Compliance])
+async def get_compliance(current_user: dict = Depends(get_current_user)):
+    documents = await db.compliance.find({}, {"_id": 0}).to_list(length=None)
+    return [Compliance(**doc) for doc in documents]
+
+@api_router.post("/compliance", response_model=Compliance)
+async def create_compliance(compliance: ComplianceCreate, current_user: dict = Depends(get_current_user)):
+    compliance_dict = compliance.model_dump()
+    compliance_dict["id"] = str(uuid.uuid4())
+    compliance_dict["created_by"] = current_user.get("username", "unknown")
+    compliance_dict["created_at"] = datetime.now(timezone.utc)
+    await db.compliance.insert_one(compliance_dict)
+    return Compliance(**compliance_dict)
+
+@api_router.put("/compliance/{compliance_id}", response_model=Compliance)
+async def update_compliance(compliance_id: str, compliance: ComplianceUpdate, current_user: dict = Depends(get_current_user)):
+    update_data = {k: v for k, v in compliance.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    result = await db.compliance.update_one({"id": compliance_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Compliance document not found")
+    return await db.compliance.find_one({"id": compliance_id}, {"_id": 0})
+
+@api_router.delete("/compliance/{compliance_id}")
+async def delete_compliance(compliance_id: str, admin_user: dict = Depends(get_admin_user)):
+    result = await db.compliance.delete_one({"id": compliance_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Compliance document not found")
+    return {"message": "Compliance document deleted"}
 
 # CONTRACTS (Admin/Manager only)
 @api_router.get("/contracts", response_model=List[Contract])
