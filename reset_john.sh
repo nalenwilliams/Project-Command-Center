@@ -11,7 +11,7 @@ load_dotenv('/app/backend/.env')
 
 async def reset_john():
     client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
-    db = client.crm_db
+    db = client['test_database']
     
     john = await db.users.find_one({"email": "john.smith@williamsdiverse.com"})
     
