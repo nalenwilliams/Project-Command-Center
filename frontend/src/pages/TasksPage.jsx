@@ -55,6 +55,7 @@ const TasksPage = () => {
       setTasks(tasksRes.data);
       setProjects(projectsRes.data);
       setUsers(usersRes.data);
+      console.log('TasksPage - Fetched users:', usersRes.data);
     } catch (error) {
       toast.error('Failed to load data');
     } finally {
