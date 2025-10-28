@@ -23,6 +23,7 @@ import ReportsPage from './pages/ReportsPage';
 import CompliancePage from './pages/CompliancePage';
 import PayrollPage from './pages/PayrollPage';
 import VendorPortalPage from './pages/VendorPortalPage';
+import CompanyDocumentsPage from './pages/CompanyDocumentsPage';
 import AdminPanel from './pages/AdminPanel';
 import ColorPicker from './pages/ColorPicker';
 import Layout from './components/Layout';
