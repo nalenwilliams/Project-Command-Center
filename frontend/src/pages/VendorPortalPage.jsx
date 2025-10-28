@@ -19,11 +19,7 @@ const VendorPortalPage = () => {
   const [vendorForm, setVendorForm] = useState({
     name: '',
     email: '',
-    ein: '',
-    phone: '',
-    address: '',
-    w9_on_file: false,
-    insurance_expires: ''
+    phone: ''
   })
   const [invoiceForm, setInvoiceForm] = useState({
     invoice_number: '',
