@@ -2590,6 +2590,12 @@ class BackendTester:
         print("🎯 VENDOR INVITATION CODE VALIDATION TESTS")
         print("=" * 50)
         
+        # PRIORITY: Test the specific reported issue with K7KIMG51
+        print("\n🚨 PRIORITY: Testing K7KIMG51 Vendor Onboarding Issue")
+        self.test_vendor_onboarding_with_k7kimg51()
+        self.test_check_backend_logs_for_errors()
+        
+        # Other vendor invitation tests
         self.test_vendor_invitation_database_check()
         self.test_vendor_invitation_code_validation()
         self.test_specific_vendor_code("VENDOR2025")
