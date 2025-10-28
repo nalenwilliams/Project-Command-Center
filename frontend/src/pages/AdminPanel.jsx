@@ -63,7 +63,15 @@ const AdminPanel = () => {
     try {
       const response = await api.post('/admin/invitations', inviteData);
       const inviteCode = response.data.invitation_code;
-      toast.success(`Invitation sent! Code: ${inviteCode}`);
+      const emailSent = response.data.email_sent;
+      
+      if (emailSent) {
+        toast.success(`Invitation sent via email to ${inviteData.email}!`);
+        toast.info(`Backup code: ${inviteCode}`);
+      } else {
+        toast.warning('Email not configured. Share this invitation code manually.');
+        toast.success(`Invitation Code: ${inviteCode}`);
+      }
       
       // Try to copy invitation code to clipboard with fallback
       try {
