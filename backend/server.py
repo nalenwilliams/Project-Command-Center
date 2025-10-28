@@ -100,6 +100,8 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
     email: EmailStr
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: str = "employee"  # admin, manager, employee
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -108,12 +110,16 @@ class UserResponse(BaseModel):
     id: str
     username: str
     email: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: str
     is_active: bool
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
 
