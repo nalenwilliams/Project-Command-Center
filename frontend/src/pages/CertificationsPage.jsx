@@ -293,6 +293,17 @@ const CertificationsPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing certification details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedCert}
+        recordType="certification"
+        files={selectedCert?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
