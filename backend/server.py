@@ -3207,14 +3207,14 @@ async def proxy_request(
 # PAYROLL MODULE PROXY ENDPOINTS
 # ============================================
 
-@app.get("/api/payroll/employees")
+@api_router.get("/payroll/employees")
 async def get_payroll_employees(current_user: dict = Depends(get_current_user)):
     """Get all payroll employees (HR/Admin only)"""
     if current_user["role"] not in ["admin", "manager"]:
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("GET", "/employees", current_user)
 
-@app.post("/api/payroll/employees")
+@api_router.post("/payroll/employees")
 async def create_payroll_employee(
     employee_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3224,14 +3224,14 @@ async def create_payroll_employee(
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("POST", "/employees", current_user, employee_data)
 
-@app.get("/api/payroll/runs")
+@api_router.get("/payroll/runs")
 async def get_payroll_runs(current_user: dict = Depends(get_current_user)):
     """Get payroll runs (HR/Admin only)"""
     if current_user["role"] not in ["admin", "manager"]:
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("GET", "/payroll/runs", current_user)
 
-@app.post("/api/payroll/run")
+@api_router.post("/payroll/run")
 async def create_payroll_run(
     run_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3241,7 +3241,7 @@ async def create_payroll_run(
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("POST", "/payroll/run", current_user, run_data)
 
-@app.post("/api/payroll/calc")
+@api_router.post("/payroll/calc")
 async def calculate_payroll(
     calc_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3251,7 +3251,7 @@ async def calculate_payroll(
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("POST", "/payroll/calc", current_user, calc_data)
 
-@app.post("/api/payroll/approve")
+@api_router.post("/payroll/approve")
 async def approve_payroll(
     approval_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3261,7 +3261,7 @@ async def approve_payroll(
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("POST", "/payroll/approve", current_user, approval_data)
 
-@app.post("/api/payroll/export")
+@api_router.post("/payroll/export")
 async def export_payroll(
     export_data: dict,
     current_user: dict = Depends(get_current_user)
@@ -3271,7 +3271,7 @@ async def export_payroll(
         raise HTTPException(status_code=403, detail="HR/Admin access required")
     return await proxy_request("POST", "/payroll/export", current_user, export_data)
 
-@app.post("/api/payroll/pay")
+@api_router.post("/payroll/pay")
 async def process_payroll_payment(
     payment_data: dict,
     current_user: dict = Depends(get_current_user)
