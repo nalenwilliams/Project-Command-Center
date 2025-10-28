@@ -760,7 +760,7 @@ class InventoryCreate(BaseModel):
     category: str  # materials, supplies, parts, consumables
     quantity: float
     unit: str  # pieces, boxes, gallons, etc
-    project_id: str  # Required: Items belong to one project
+    project_id: Optional[str] = None  # Optional for backward compatibility, but recommended
     location: Optional[str] = None
     minimum_stock: Optional[float] = None
     supplier: Optional[str] = None
