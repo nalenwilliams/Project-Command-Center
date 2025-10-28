@@ -158,6 +158,34 @@ const AuthPage = () => {
                   />
                   <p className="text-xs text-gray-500">Contact admin to receive an invitation code</p>
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-first-name" style={{ color: '#C9A961' }}>First Name</Label>
+                    <Input
+                      id="register-first-name"
+                      type="text"
+                      placeholder="First name"
+                      value={registerData.first_name}
+                      onChange={(e) => setRegisterData({ ...registerData, first_name: e.target.value })}
+                      data-testid="register-first-name-input"
+                      className="bg-gray-900 text-white placeholder:text-gray-500"
+                      style={{ borderColor: '#C9A961' }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="register-last-name" style={{ color: '#C9A961' }}>Last Name</Label>
+                    <Input
+                      id="register-last-name"
+                      type="text"
+                      placeholder="Last name"
+                      value={registerData.last_name}
+                      onChange={(e) => setRegisterData({ ...registerData, last_name: e.target.value })}
+                      data-testid="register-last-name-input"
+                      className="bg-gray-900 text-white placeholder:text-gray-500"
+                      style={{ borderColor: '#C9A961' }}
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="register-username" style={{ color: '#C9A961' }}>Username</Label>
                   <Input
