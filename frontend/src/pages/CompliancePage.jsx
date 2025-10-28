@@ -186,7 +186,7 @@ const CompliancePage = () => {
               </TableHeader>
               <TableBody>
                 {documents.map((doc) => (
-                  <TableRow key={doc.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: \'#374151\' }} onClick={() => { setSelectedItem(doc.id); setGalleryOpen(true); }}>
+                  <TableRow key={doc.id} className="border-b hover:bg-gray-800 cursor-pointer" style={{ borderColor: '#374151' }} onClick={() => { setSelectedItem(doc.id); setGalleryOpen(true); }}>
                     <TableCell className="font-medium text-white">{doc.title}</TableCell>
                     <TableCell className="text-gray-300">{doc.compliance_type}</TableCell>
                     <TableCell>{getStatusBadge(doc.status)}</TableCell>
