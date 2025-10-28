@@ -203,7 +203,15 @@ const SafetyReportsPage = () => {
               </TableHeader>
               <TableBody>
                 {reports.map((report) => (
-                  <TableRow key={report.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={report.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedReport(report);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{report.title}</TableCell>
                     <TableCell>{getSeverityBadge(report.severity)}</TableCell>
                     <TableCell className="text-gray-300">{report.location || 'N/A'}</TableCell>
@@ -211,9 +219,8 @@ const SafetyReportsPage = () => {
                       {report.incident_date ? new Date(report.incident_date).toLocaleDateString() : 'N/A'}
                     </TableCell>
                     <TableCell className="text-gray-300">{report.status}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={report} itemType="safety-report" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(report)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
