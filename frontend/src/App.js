@@ -34,12 +34,32 @@ import '@/App.css';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
+  const userStr = localStorage.getItem('user');
   
   // Allow access if either token exists OR user data exists (from OAuth session)
-  if (!token && !user) {
+  if (!token && !userStr) {
     return <Navigate to="/auth" replace />;
   }
+  
+  // Check if user needs onboarding
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    const currentPath = window.location.pathname;
+    
+    // If onboarding not completed and not already on onboarding page
+    if (user.onboarding_completed === false) {
+      if (user.role === 'employee' || user.role === 'manager' || user.role === 'admin') {
+        if (currentPath !== '/employee-onboarding') {
+          return <Navigate to="/employee-onboarding" replace />;
+        }
+      } else if (user.role === 'vendor') {
+        if (currentPath !== '/vendor-onboarding') {
+          return <Navigate to="/vendor-onboarding" replace />;
+        }
+      }
+    }
+  }
+  
   return children;
 };
 
