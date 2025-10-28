@@ -142,7 +142,7 @@ const InventoryPage = () => {
 
   const handleViewProjectDetails = (projectData) => {
     setSelectedProject(projectData);
-    setDetailDialogOpen(true);
+    setGalleryOpen(true);
   };
 
   if (loading) return <div className="text-white p-8">Loading...</div>;
