@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement role-based filtering for work orders (employees see only assigned work orders) and add first_name/last_name fields to User model for proper name display throughout the application"
+user_problem_statement: "Full integration of Payroll and Vendor Portal systems with role-based access control, including: 1) Node.js modules server with PostgreSQL for payroll/vendor operations, 2) FastAPI proxy endpoints for secure communication, 3) React frontend pages for Payroll Management and Vendor Portal, 4) Support for Davis-Bacon certified payroll (WH-347 forms), paystub generation, and vendor invoice management, 5) Plaid integration for direct deposit (sandbox mode), 6) Company branding on all generated forms, and 7) AI-assisted onboarding for employees and vendors."
 
 backend:
   - task: "Admin Login Authentication"
