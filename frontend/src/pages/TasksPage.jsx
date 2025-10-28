@@ -33,6 +33,7 @@ const TasksPage = () => {
     status: 'todo',
     due_date: '',
     priority: 'medium',
+    address: '',
     created_by: '',
   });
 
