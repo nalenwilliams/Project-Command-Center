@@ -2119,7 +2119,16 @@ class BackendTester:
         # Test 9: User Update with Names
         self.test_user_update_with_names()
         
-        # Test 10-13: Vendor Invitation System (NEW TESTS)
+        # Test 10-16: Vendor Invitation Code Validation (PRIORITY TESTS)
+        print("\n" + "=" * 50)
+        print("🎯 VENDOR INVITATION CODE VALIDATION TESTS")
+        print("=" * 50)
+        
+        self.test_vendor_invitation_database_check()
+        self.test_vendor_invitation_code_validation()
+        self.test_specific_vendor_code("VENDOR2025")
+        
+        # Test 17-20: Vendor Invitation System (EXISTING TESTS)
         print("\n" + "=" * 50)
         print("🏪 VENDOR INVITATION SYSTEM TESTS")
         print("=" * 50)
