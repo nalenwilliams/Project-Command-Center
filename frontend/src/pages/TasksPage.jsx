@@ -255,6 +255,18 @@ const TasksPage = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="address" style={{ color: ELEGANT_GOLD }}>Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  data-testid="task-address-input"
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="project" style={{ color: ELEGANT_GOLD }}>Project</Label>
