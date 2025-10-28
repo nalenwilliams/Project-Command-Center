@@ -151,7 +151,15 @@ const TimesheetsPage = () => {
               </TableHeader>
               <TableBody>
                 {timesheets.map((timesheet) => (
-                  <TableRow key={timesheet.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={timesheet.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedTimesheet(timesheet);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="text-gray-300">
                       {timesheet.date ? new Date(timesheet.date).toLocaleDateString() : 'N/A'}
                     </TableCell>
@@ -161,9 +169,8 @@ const TimesheetsPage = () => {
                       {projects.find(p => p.id === timesheet.project_id)?.name || 'N/A'}
                     </TableCell>
                     <TableCell className="text-gray-300">{timesheet.task_description || 'N/A'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={timesheet} itemType="timesheets" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(timesheet)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
