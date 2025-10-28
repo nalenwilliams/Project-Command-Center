@@ -323,6 +323,17 @@ const ExpensesPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing expense details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedExpense}
+        recordType="expense"
+        files={selectedExpense?.files || []}
+        onUpdate={fetchData}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
