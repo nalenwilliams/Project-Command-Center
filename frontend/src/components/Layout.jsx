@@ -322,6 +322,7 @@ const Layout = () => {
         
         {/* AI Floating Chat Widget */}
         <AIFloatingChat currentPage={location.pathname} />
+        <CommandBar />
       </main>
     </div>
   );
