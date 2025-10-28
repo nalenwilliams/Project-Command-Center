@@ -25,6 +25,8 @@ import PayrollPage from './pages/PayrollPage';
 import VendorPortalPage from './pages/VendorPortalPage';
 import CompanyDocumentsPage from './pages/CompanyDocumentsPage';
 import MyPayrollDocumentsPage from './pages/MyPayrollDocumentsPage';
+import EmployeeOnboardingPage from './pages/EmployeeOnboardingPage';
+import VendorOnboardingPage from './pages/VendorOnboardingPage';
 import AdminPanel from './pages/AdminPanel';
 import ColorPicker from './pages/ColorPicker';
 import Layout from './components/Layout';
