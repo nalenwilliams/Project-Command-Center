@@ -448,6 +448,21 @@ backend:
         - agent: "testing"
         - comment: "FIXED: Root cause was vendor invitation endpoint not using notification settings from database for email configuration. Updated POST /api/vendors/invite to retrieve notification settings and configure email service properly. Testing confirmed: 1) Vendor invitations created successfully with unique codes 2) Database records stored in vendor_invitations collection 3) Email service configured and sending emails successfully 4) Admin authentication working correctly. Backend logs show 'Email sent successfully to [vendor-email]'. Vendor invitation system fully operational."
 
+  - task: "Vendor Invitation Code Validation"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "user"
+        - comment: "User reports vendor invitation code VENDOR2025 shows as 'invalid or expired' when trying to use it"
+        - working: true
+        - agent: "testing"
+        - comment: "ISSUE DIAGNOSED: VENDOR2025 code exists in database but has status 'completed' (already used for onboarding on 2025-10-28T21:49:01). Code is NOT expired (expires 2025-11-27). Validation logic correctly rejects with 'Invitation already used' message. Root cause: VENDOR2025 was successfully used to complete vendor onboarding for vendor_id 2c019569-c101-4fd0-8ad2-f16869103d9d. This is correct behavior - invitation codes are single-use for security. User needs a fresh invitation code. Minor bug found: vendor onboarding validation missing expiration check (unlike regular user registration)."
+
 frontend:
   - task: "File Gallery UX Improvements"
     implemented: true
