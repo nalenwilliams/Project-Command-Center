@@ -38,30 +38,6 @@ const PayrollPage = () => {
     }
   }
 
-  const handleCreateEmployee = async (e) => {
-    e.preventDefault()
-    try {
-      await api.post('/payroll/employees', employeeForm)
-      setShowEmployeeDialog(false)
-      setEmployeeForm({
-        first_name: '',
-        last_name: '',
-        email: '',
-        classification: '',
-        base_rate: '',
-        fringe_rate: '',
-        davis_bacon: false,
-        ein: '',
-        routing_number: '',
-        account_number: ''
-      })
-      fetchEmployees()
-    } catch (error) {
-      console.error('Error creating employee:', error)
-      alert('Error creating employee. Please try again.')
-    }
-  }
-
   const handleCreatePayrollRun = async (e) => {
     e.preventDefault()
     try {
