@@ -221,7 +221,15 @@ const InvoicesPage = () => {
               </TableHeader>
               <TableBody>
                 {invoices.map((invoice) => (
-                  <TableRow key={invoice.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={invoice.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedInvoice(invoice);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{invoice.invoice_number}</TableCell>
                     <TableCell className="text-gray-300">
                       {clients.find(c => c.id === invoice.client_id)?.name || 'N/A'}
@@ -231,9 +239,8 @@ const InvoicesPage = () => {
                       {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'N/A'}
                     </TableCell>
                     <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={invoice} itemType="invoice" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(invoice)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
