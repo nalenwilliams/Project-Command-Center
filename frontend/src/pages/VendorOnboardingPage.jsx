@@ -568,6 +568,11 @@ const VendorOnboardingPage = () => {
                     onChange={(e) => handleFileChange('w9_file', e.target.files[0])}
                     className="bg-gray-900 border-gray-700 text-white"
                   />
+                  {formData.w9_file && (
+                    <p className="text-xs text-green-400 mt-1">
+                      ✓ File attached: {formData.w9_file.name}
+                    </p>
+                  )}
                   <p className="text-xs text-gray-500 mt-1">
                     <a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
                       Download blank W-9 form
@@ -582,6 +587,11 @@ const VendorOnboardingPage = () => {
                     onChange={(e) => handleFileChange('coi_file', e.target.files[0])}
                     className="bg-gray-900 border-gray-700 text-white"
                   />
+                  {formData.coi_file && (
+                    <p className="text-xs text-green-400 mt-1">
+                      ✓ File attached: {formData.coi_file.name}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label className="text-gray-300">Business License (if applicable)</Label>
@@ -591,6 +601,11 @@ const VendorOnboardingPage = () => {
                     onChange={(e) => handleFileChange('license_file', e.target.files[0])}
                     className="bg-gray-900 border-gray-700 text-white"
                   />
+                  {formData.license_file && (
+                    <p className="text-xs text-green-400 mt-1">
+                      ✓ File attached: {formData.license_file.name}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
