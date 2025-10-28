@@ -62,8 +62,11 @@ const AuthPage = () => {
   }, []); // Empty dependency array - run only once on mount
 
   const handleGoogleLogin = () => {
-    const redirectUrl = `${window.location.origin}/`;
+    // For mobile-friendly experience, use the current window instead of popup
+    const redirectUrl = `${window.location.origin}/auth`;
     const emergentAuthUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    
+    // Open in same window (no popup/iframe issues on mobile)
     window.location.href = emergentAuthUrl;
   };
 
