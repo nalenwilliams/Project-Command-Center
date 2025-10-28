@@ -1043,7 +1043,8 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 @api_router.get("/auth/google/login")
 async def google_login(request: Request):
     """Initiate Google OAuth login"""
-    redirect_uri = f"{os.environ.get('FRONTEND_URL')}/auth/google"
+    backend_url = os.environ.get('FRONTEND_URL', 'https://taskflow-center.preview.emergentagent.com')
+    redirect_uri = f"{backend_url}/api/auth/google/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @api_router.get("/auth/google/callback")
