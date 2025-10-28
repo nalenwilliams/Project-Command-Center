@@ -189,7 +189,7 @@ const HandbookPoliciesPage = () => {
         </div>
         {canEdit && (
           <Button
-            onClick={() => setDialogOpen(true)}
+            onClick={handleOpenDialog}
             className="text-black hover:opacity-90"
             style={{ backgroundColor: ELEGANT_GOLD }}
           >
@@ -199,7 +199,7 @@ const HandbookPoliciesPage = () => {
         )}
       </div>
 
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="bg-black border" style={{ borderColor: ELEGANT_GOLD }}>
           <TabsTrigger value="all" style={{ color: ELEGANT_GOLD }}>All Policies</TabsTrigger>
           {CATEGORIES.map(cat => (
