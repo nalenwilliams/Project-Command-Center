@@ -208,7 +208,6 @@ class Project(BaseModel):
             return []
         return []
 
-# Task Models
 class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
@@ -217,6 +216,7 @@ class TaskCreate(BaseModel):
     status: str = "todo"  # todo, in_progress, completed
     due_date: Optional[datetime] = None
     priority: str = "medium"  # low, medium, high
+    address: Optional[str] = None
     files: Optional[List[dict]] = []
     created_by: Optional[str] = None
 
@@ -228,6 +228,7 @@ class TaskUpdate(BaseModel):
     status: Optional[str] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    address: Optional[str] = None
     files: Optional[List[dict]] = None
 
 class Task(BaseModel):
@@ -240,6 +241,7 @@ class Task(BaseModel):
     status: str = "todo"
     due_date: Optional[datetime] = None
     priority: str = "medium"
+    address: Optional[str] = None
     files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
