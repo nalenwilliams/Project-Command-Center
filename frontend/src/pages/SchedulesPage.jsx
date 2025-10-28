@@ -24,6 +24,8 @@ const SchedulesPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     employee_name: '',
