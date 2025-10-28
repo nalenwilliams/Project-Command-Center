@@ -264,6 +264,17 @@ const EquipmentPage = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* FileGalleryFullScreen for viewing equipment details */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedEquipment}
+        recordType="equipment"
+        files={selectedEquipment?.files || []}
+        onUpdate={fetchEquipment}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
