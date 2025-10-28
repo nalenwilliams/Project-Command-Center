@@ -1842,6 +1842,301 @@ class BackendTester:
             )
             return False
     
+    def test_vendor_invitation_code_validation(self):
+        """Test vendor invitation code validation - specific to user issue"""
+        if not self.auth_token:
+            self.log_result("Vendor Invitation Code Validation", False, "No auth token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Step 1: Check if VENDOR2025 code exists in database
+            print("🔍 Checking for existing VENDOR2025 invitation code...")
+            
+            # We need to query the database directly since there's no API endpoint
+            # Let's first create a fresh invitation and test the validation
+            
+            # Step 2: Create a fresh vendor invitation
+            vendor_data = {
+                "name": "Test Vendor Company",
+                "email": "testvendor@example.com",
+                "phone": "(555) 999-8888"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/vendors/invite",
+                json=vendor_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                invitation_result = response.json()
+                invitation_code = invitation_result.get("invitation_code")
+                
+                if invitation_code:
+                    print(f"✅ Created fresh invitation with code: {invitation_code}")
+                    
+                    # Step 3: Test if this fresh code can be used for onboarding validation
+                    # Since there's no separate validation endpoint, we'll test the onboarding endpoint
+                    # with minimal data to see if it validates the code
+                    
+                    # Create test form data for onboarding
+                    onboarding_data = {
+                        "invitation_code": invitation_code,
+                        "company_name": "Test Vendor Company",
+                        "business_type": "LLC",
+                        "ein": "12-3456789",
+                        "phone": "(555) 999-8888",
+                        "email": "testvendor@example.com",
+                        "address": "123 Test St",
+                        "city": "Test City",
+                        "state": "TX",
+                        "zip": "12345",
+                        "contact_first_name": "John",
+                        "contact_last_name": "Doe",
+                        "contact_title": "Manager",
+                        "contact_email": "testvendor@example.com",
+                        "contact_phone": "(555) 999-8888",
+                        "insurance_provider": "Test Insurance",
+                        "policy_number": "POL123456",
+                        "insurance_amount": "1000000",
+                        "insurance_expiry": "2025-12-31",
+                        "bank_name": "Test Bank",
+                        "account_type": "checking",
+                        "routing_number": "123456789",
+                        "account_number": "987654321",
+                        "nda_accepted": True,
+                        "terms_accepted": True,
+                        "signature": "John Doe"
+                    }
+                    
+                    # Test the onboarding endpoint to validate the code
+                    onboarding_response = self.session.post(
+                        f"{self.base_url}/vendor/complete-onboarding",
+                        data=onboarding_data,
+                        headers={"Authorization": f"Bearer {self.auth_token}"}
+                    )
+                    
+                    if onboarding_response.status_code == 200:
+                        self.log_result(
+                            "Vendor Invitation Code Validation", 
+                            True, 
+                            f"Fresh invitation code {invitation_code} is valid and can be used for onboarding"
+                        )
+                        
+                        # Now test with VENDOR2025 if it exists
+                        return self.test_specific_vendor_code("VENDOR2025")
+                    else:
+                        # Check if it's a validation error or other issue
+                        error_text = onboarding_response.text
+                        if "Invalid invitation code" in error_text:
+                            self.log_result(
+                                "Vendor Invitation Code Validation", 
+                                False, 
+                                f"Fresh invitation code {invitation_code} shows as invalid - this indicates a validation bug",
+                                f"Response: {error_text}"
+                            )
+                        elif "Invitation already used" in error_text:
+                            self.log_result(
+                                "Vendor Invitation Code Validation", 
+                                False, 
+                                f"Fresh invitation code {invitation_code} shows as already used - this indicates a status bug",
+                                f"Response: {error_text}"
+                            )
+                        else:
+                            self.log_result(
+                                "Vendor Invitation Code Validation", 
+                                False, 
+                                f"Onboarding failed with status {onboarding_response.status_code} - may be validation issue",
+                                f"Response: {error_text}"
+                            )
+                        return False
+                else:
+                    self.log_result(
+                        "Vendor Invitation Code Validation", 
+                        False, 
+                        "Invitation created but no invitation code returned"
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Vendor Invitation Code Validation", 
+                    False, 
+                    f"Failed to create vendor invitation with status {response.status_code}",
+                    f"Response: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Vendor Invitation Code Validation", 
+                False, 
+                f"Vendor invitation validation test failed: {str(e)}"
+            )
+            return False
+
+    def test_specific_vendor_code(self, code):
+        """Test a specific vendor invitation code"""
+        try:
+            print(f"🔍 Testing specific vendor code: {code}")
+            
+            # Test the specific code with onboarding endpoint
+            onboarding_data = {
+                "invitation_code": code,
+                "company_name": "Test Vendor for Code Check",
+                "business_type": "LLC",
+                "ein": "12-3456789",
+                "phone": "(555) 999-8888",
+                "email": f"test{code.lower()}@example.com",
+                "address": "123 Test St",
+                "city": "Test City",
+                "state": "TX",
+                "zip": "12345",
+                "contact_first_name": "Test",
+                "contact_last_name": "User",
+                "contact_title": "Manager",
+                "contact_email": f"test{code.lower()}@example.com",
+                "contact_phone": "(555) 999-8888",
+                "insurance_provider": "Test Insurance",
+                "policy_number": "POL123456",
+                "insurance_amount": "1000000",
+                "insurance_expiry": "2025-12-31",
+                "bank_name": "Test Bank",
+                "account_type": "checking",
+                "routing_number": "123456789",
+                "account_number": "987654321",
+                "nda_accepted": True,
+                "terms_accepted": True,
+                "signature": "Test User"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/vendor/complete-onboarding",
+                data=onboarding_data,
+                headers={"Authorization": f"Bearer {self.auth_token}"}
+            )
+            
+            if response.status_code == 200:
+                print(f"✅ Code {code} is valid and working")
+                self.log_result(
+                    f"Specific Code Test ({code})", 
+                    True, 
+                    f"Code {code} is valid and can be used for onboarding"
+                )
+                return True
+            else:
+                error_text = response.text
+                if "Invalid invitation code" in error_text:
+                    print(f"❌ Code {code} shows as 'Invalid invitation code'")
+                    self.log_result(
+                        f"Specific Code Test ({code})", 
+                        False, 
+                        f"Code {code} shows as invalid - either doesn't exist or validation logic has issues"
+                    )
+                elif "Invitation already used" in error_text:
+                    print(f"⚠️ Code {code} shows as 'already used'")
+                    self.log_result(
+                        f"Specific Code Test ({code})", 
+                        False, 
+                        f"Code {code} shows as already used - check if status is 'completed' instead of 'pending'"
+                    )
+                elif "expired" in error_text.lower():
+                    print(f"⏰ Code {code} shows as expired")
+                    self.log_result(
+                        f"Specific Code Test ({code})", 
+                        False, 
+                        f"Code {code} shows as expired - check expiration date logic"
+                    )
+                else:
+                    print(f"❓ Code {code} failed with: {error_text}")
+                    self.log_result(
+                        f"Specific Code Test ({code})", 
+                        False, 
+                        f"Code {code} failed with unexpected error: {error_text}"
+                    )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                f"Specific Code Test ({code})", 
+                False, 
+                f"Test failed with exception: {str(e)}"
+            )
+            return False
+
+    def test_vendor_invitation_database_check(self):
+        """Check vendor invitations in database directly"""
+        try:
+            print("🔍 Checking vendor invitations database...")
+            
+            # Since we can't query MongoDB directly from here, we'll use the admin endpoints
+            # to check if there are any vendor invitations
+            
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # Check if there's an endpoint to list vendor invitations
+            # This might not exist, but let's try
+            response = self.session.get(
+                f"{self.base_url}/admin/vendor-invitations",
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                invitations = response.json()
+                print(f"📋 Found {len(invitations)} vendor invitations in database")
+                
+                # Look for VENDOR2025 specifically
+                vendor2025 = None
+                for inv in invitations:
+                    if inv.get("invitation_code") == "VENDOR2025":
+                        vendor2025 = inv
+                        break
+                
+                if vendor2025:
+                    print(f"✅ Found VENDOR2025 invitation:")
+                    print(f"   Status: {vendor2025.get('status')}")
+                    print(f"   Created: {vendor2025.get('created_at')}")
+                    print(f"   Expires: {vendor2025.get('expires_at')}")
+                    print(f"   Email: {vendor2025.get('email')}")
+                    
+                    self.log_result(
+                        "Vendor Database Check", 
+                        True, 
+                        f"VENDOR2025 found with status '{vendor2025.get('status')}' and expires '{vendor2025.get('expires_at')}'"
+                    )
+                else:
+                    print("❌ VENDOR2025 invitation not found in database")
+                    self.log_result(
+                        "Vendor Database Check", 
+                        False, 
+                        "VENDOR2025 invitation code not found in database"
+                    )
+                
+                return invitations
+            else:
+                print(f"⚠️ Cannot access vendor invitations endpoint (status: {response.status_code})")
+                self.log_result(
+                    "Vendor Database Check", 
+                    False, 
+                    f"Cannot access vendor invitations endpoint - status {response.status_code}"
+                )
+                return None
+                
+        except Exception as e:
+            self.log_result(
+                "Vendor Database Check", 
+                False, 
+                f"Database check failed: {str(e)}"
+            )
+            return None
+
     def test_vendor_invitation_creation(self):
         """Test POST /api/vendors/invite endpoint"""
         if not self.auth_token:
