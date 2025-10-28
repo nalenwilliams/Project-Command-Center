@@ -26,6 +26,8 @@ import {
   FileBarChart,
   ClipboardCheck,
   ClipboardList,
+  Banknote,
+  Store,
 } from 'lucide-react';
 
 const Layout = () => {
