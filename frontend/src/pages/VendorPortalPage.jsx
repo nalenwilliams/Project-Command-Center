@@ -146,73 +146,42 @@ const VendorPortalPage = () => {
                       value={vendorForm.name}
                       onChange={(e) => setVendorForm({...vendorForm, name: e.target.value})}
                       className="bg-gray-900 border-gray-700 text-white"
+                      placeholder="Company Name"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-gray-300">Email *</Label>
-                      <Input
-                        type="email"
-                        required
-                        value={vendorForm.email}
-                        onChange={(e) => setVendorForm({...vendorForm, email: e.target.value})}
-                        className="bg-gray-900 border-gray-700 text-white"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-gray-300">Phone</Label>
-                      <Input
-                        value={vendorForm.phone}
-                        onChange={(e) => setVendorForm({...vendorForm, phone: e.target.value})}
-                        className="bg-gray-900 border-gray-700 text-white"
-                      />
-                    </div>
-                  </div>
                   <div>
-                    <Label className="text-gray-300">EIN *</Label>
+                    <Label className="text-gray-300">Email *</Label>
                     <Input
+                      type="email"
                       required
-                      placeholder="XX-XXXXXXX"
-                      value={vendorForm.ein}
-                      onChange={(e) => setVendorForm({...vendorForm, ein: e.target.value})}
+                      value={vendorForm.email}
+                      onChange={(e) => setVendorForm({...vendorForm, email: e.target.value})}
                       className="bg-gray-900 border-gray-700 text-white"
+                      placeholder="vendor@company.com"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Invitation code will be sent to this email</p>
                   </div>
                   <div>
-                    <Label className="text-gray-300">Address</Label>
-                    <Textarea
-                      value={vendorForm.address}
-                      onChange={(e) => setVendorForm({...vendorForm, address: e.target.value})}
-                      className="bg-gray-900 border-gray-700 text-white"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-gray-300">Insurance Expiration Date</Label>
+                    <Label className="text-gray-300">Phone Number</Label>
                     <Input
-                      type="date"
-                      value={vendorForm.insurance_expires}
-                      onChange={(e) => setVendorForm({...vendorForm, insurance_expires: e.target.value})}
+                      value={vendorForm.phone}
+                      onChange={(e) => setVendorForm({...vendorForm, phone: e.target.value})}
                       className="bg-gray-900 border-gray-700 text-white"
+                      placeholder="(555) 123-4567"
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="w9_on_file"
-                      checked={vendorForm.w9_on_file}
-                      onChange={(e) => setVendorForm({...vendorForm, w9_on_file: e.target.checked})}
-                      className="h-4 w-4"
-                    />
-                    <Label htmlFor="w9_on_file" className="text-gray-300">
-                      W-9 Form on File
-                    </Label>
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded p-4">
+                    <p className="text-sm text-blue-300">
+                      <strong>Note:</strong> The vendor will receive an email invitation to complete their profile. 
+                      They will provide additional information like EIN, W-9, insurance, and other documents during onboarding.
+                    </p>
                   </div>
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setShowVendorDialog(false)}>
                       Cancel
                     </Button>
                     <Button type="submit" className="bg-yellow-600 hover:bg-yellow-700">
-                      Add Vendor
+                      Send Invitation
                     </Button>
                   </div>
                 </form>
