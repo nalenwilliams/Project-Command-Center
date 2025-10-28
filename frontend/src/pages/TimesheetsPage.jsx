@@ -190,7 +190,7 @@ const TimesheetsPage = () => {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-2xl" style={{ borderColor: ELEGANT_GOLD }}>
+        <DialogContent className="bg-gray-900 border max-w-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
           <DialogHeader>
             <DialogTitle style={{ color: ELEGANT_GOLD }}>{editingTimesheet ? 'Edit Timesheet' : 'New Timesheet Entry'}</DialogTitle>
           </DialogHeader>
