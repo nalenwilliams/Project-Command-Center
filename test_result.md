@@ -474,7 +474,7 @@ frontend:
     status_history:
         - working: "NA"
         - agent: "main"
-        - comment: "Created comprehensive Payroll Management page with: 1) Role-based access control (Admin/Manager only) 2) Employee management with forms for adding payroll employees 3) Davis-Bacon certification tracking 4) Direct deposit information collection 5) Payroll run creation 6) Stats dashboard showing total employees, active runs, Davis-Bacon certified count 7) Employee table with classification, rates, direct deposit status. Page uses localStorage for user auth. Integrated with FastAPI proxy endpoints."
+        - comment: "Created comprehensive Payroll Management page with: 1) Role-based access control (Admin/Manager only) 2) Payroll run creation 3) Stats dashboard showing total employees, active runs, Davis-Bacon certified count 4) Employee table with classification, rates, direct deposit status 5) Page uses localStorage for user auth. Integrated with FastAPI proxy endpoints. IMPORTANT: Removed 'Add Employee' functionality per user request - employees will self-onboard through a separate flow to be implemented in Phase 2."
 
   - task: "Vendor Portal Page"
     implemented: true
