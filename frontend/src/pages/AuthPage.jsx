@@ -124,7 +124,15 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4" data-testid="auth-page">
-      <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
+      {processingSession ? (
+        <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 mb-4" style={{ borderColor: '#C9A961' }}></div>
+            <p className="text-lg" style={{ color: '#C9A961' }}>Processing Google Sign In...</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
         <CardHeader className="space-y-3 text-center">
           <img 
             src="/williams-logo.png" 
