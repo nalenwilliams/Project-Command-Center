@@ -108,6 +108,7 @@ const WorkOrdersPage = () => {
       status: workOrder.status || 'todo',
       due_date: workOrder.due_date ? new Date(workOrder.due_date).toISOString().split('T')[0] : '',
       priority: workOrder.priority || 'medium',
+      address: workOrder.address || '',
       created_by: workOrder.created_by || '',
       files: workOrder.files || [],
     });
