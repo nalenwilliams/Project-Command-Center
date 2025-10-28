@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Package, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import FileGallery from '@/components/FileGallery';
+import FileGalleryFullScreen from '@/components/FileGalleryFullScreen';
 
 const ELEGANT_GOLD = '#C9A961';
 
