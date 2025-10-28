@@ -141,12 +141,35 @@ const VendorOnboardingPage = () => {
     setLoading(true)
     try {
       const formDataToSend = new FormData()
+      
+      // Add all text fields
       Object.keys(formData).forEach(key => {
-        if (formData[key] !== null) {
+        // Skip file fields and null values
+        if (key.includes('_file') || formData[key] === null || formData[key] === '') {
+          return
+        }
+        
+        // Convert booleans to strings for FormData
+        if (typeof formData[key] === 'boolean') {
+          formDataToSend.append(key, formData[key] ? 'true' : 'false')
+        } else {
           formDataToSend.append(key, formData[key])
         }
       })
+      
+      // Add invitation code
       formDataToSend.append('invitation_code', invitationCode)
+      
+      // Add files if they exist
+      if (formData.w9_file) {
+        formDataToSend.append('w9_file', formData.w9_file)
+      }
+      if (formData.coi_file) {
+        formDataToSend.append('coi_file', formData.coi_file)
+      }
+      if (formData.license_file) {
+        formDataToSend.append('license_file', formData.license_file)
+      }
       
       const response = await api.post('/vendor/complete-onboarding', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -160,7 +183,20 @@ const VendorOnboardingPage = () => {
       window.location.href = '/auth'
     } catch (error) {
       console.error('Onboarding error:', error)
-      const errorMessage = error.response?.data?.detail || error.message
+      
+      // Better error message extraction
+      let errorMessage = 'Unknown error occurred'
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map(e => `${e.loc?.join('.')}: ${e.msg}`).join('\n')
+        } else {
+          errorMessage = JSON.stringify(error.response.data.detail)
+        }
+      } else if (error.message) {
+        errorMessage = error.message
+      }
       
       if (errorMessage.includes('Invalid invitation code')) {
         alert('Invalid invitation code. Please contact administration for a valid invitation code.')
@@ -169,7 +205,7 @@ const VendorOnboardingPage = () => {
       } else if (errorMessage.includes('expired')) {
         alert('This invitation code has expired. Please contact administration for a new invitation code.')
       } else {
-        alert(`Error completing onboarding: ${errorMessage}`)
+        alert(`Error completing onboarding:\n\n${errorMessage}`)
       }
     } finally {
       setLoading(false)
