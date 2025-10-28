@@ -61,20 +61,6 @@ const AIFloatingChat = ({ currentPage = "Dashboard" }) => {
     }
   };
 
-      const data = await response.json();
-      setChatHistory(prev => [...prev, { role: 'assistant', content: data.response }]);
-    } catch (error) {
-      console.error('AI chat error:', error);
-      toast.error('Failed to get AI response');
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Sorry, I\'m having trouble responding right now. Please try again.' 
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
