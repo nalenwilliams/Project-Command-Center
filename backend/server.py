@@ -1061,17 +1061,18 @@ This invitation will expire in 7 days.
 """
             
             # Send email using email service
-            await email_service.send_email(
+            email_svc = get_email_service(
+                smtp_server=notification_settings.get('smtp_server'),
+                smtp_port=notification_settings.get('smtp_port'),
+                username=notification_settings.get('smtp_username'),
+                password=notification_settings.get('smtp_password'),
+                from_email=notification_settings.get('admin_email', notification_settings.get('smtp_username'))
+            )
+            
+            await email_svc.send_email(
                 to_email=invitation_data.email,
                 subject=subject,
-                body=body,
-                smtp_config={
-                    'server': notification_settings.get('smtp_server'),
-                    'port': notification_settings.get('smtp_port', 587),
-                    'username': notification_settings.get('smtp_username'),
-                    'password': notification_settings.get('smtp_password'),
-                    'from_email': notification_settings.get('admin_email', notification_settings.get('smtp_username'))
-                }
+                body=body
             )
             email_sent = True
         else:
