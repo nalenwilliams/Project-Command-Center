@@ -113,6 +113,7 @@ const TasksPage = () => {
       status: task.status || 'todo',
       due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '',
       priority: task.priority || 'medium',
+      address: task.address || '',
       created_by: task.created_by || '',
     });
     setDialogOpen(true);
