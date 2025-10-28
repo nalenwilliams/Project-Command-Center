@@ -1347,7 +1347,14 @@ async def delete_client(client_id: str, current_user: dict = Depends(get_current
 
 @api_router.get("/projects", response_model=List[Project])
 async def get_projects(current_user: dict = Depends(get_current_user)):
-    projects = await db.projects.find({}, {"_id": 0}).to_list(1000)
+    # Employees only see projects assigned to them
+    if current_user.get('role') == 'employee':
+        query = {"assigned_to": {"$in": [current_user['id']]}}
+    else:
+        # Admins and managers see all projects
+        query = {}
+    
+    projects = await db.projects.find(query, {"_id": 0}).to_list(1000)
     for project in projects:
         if isinstance(project['created_at'], str):
             project['created_at'] = datetime.fromisoformat(project['created_at'])
