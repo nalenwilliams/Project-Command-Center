@@ -101,8 +101,20 @@ const EmployeeOnboardingPage = () => {
     setLoading(true)
     try {
       await api.post('/employee/complete-onboarding', formData)
+      
+      // Update user data in localStorage to mark onboarding as completed
+      const updatedUser = {
+        ...user,
+        onboarding_completed: true,
+        first_name: formData.first_name,
+        last_name: formData.last_name
+      }
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+      
       alert('Onboarding completed successfully! Welcome to Williams Diversified LLC.')
-      navigate('/dashboard')
+      
+      // Use window.location.href for a full page reload to ensure all components re-render
+      window.location.href = '/dashboard'
     } catch (error) {
       console.error('Onboarding error:', error)
       alert('Error completing onboarding. Please try again.')
