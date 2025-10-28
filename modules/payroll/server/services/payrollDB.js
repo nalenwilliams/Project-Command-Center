@@ -1,4 +1,4 @@
-import { randomUUID } from 'uuid'
+import { v4 as randomUUID } from 'uuid'
 const db = { employees: new Map(), time_sheets: [], payroll_runs: new Map(), payroll_run_items: [] }
 export function upsertEmployee(emp){ const id = emp.id || randomUUID(); const rec = { id, ...emp }; db.employees.set(id, rec); return rec }
 export function listEmployees(){ return Array.from(db.employees.values()) }
