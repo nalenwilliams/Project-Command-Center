@@ -3157,6 +3157,204 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+# ============================================
+# Payroll & Vendor Portal Proxy Endpoints
+# ============================================
+
+MODULES_BASE_URL = os.environ.get("MODULES_BASE_URL", "http://localhost:3001")
+
+import httpx
+
+async def proxy_request(
+    method: str,
+    path: str,
+    current_user: dict,
+    body: Optional[dict] = None,
+    params: Optional[dict] = None
+):
+    """Proxy requests to Node.js modules server with user context"""
+    url = f"{MODULES_BASE_URL}{path}"
+    headers = {
+        "X-User-ID": current_user["id"],
+        "X-User-Role": current_user["role"],
+        "X-User-Email": current_user["email"],
+        "Content-Type": "application/json"
+    }
+    
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        if method == "GET":
+            response = await client.get(url, headers=headers, params=params or {})
+        elif method == "POST":
+            response = await client.post(url, headers=headers, json=body or {})
+        elif method == "PUT":
+            response = await client.put(url, headers=headers, json=body or {})
+        elif method == "DELETE":
+            response = await client.delete(url, headers=headers)
+        else:
+            raise HTTPException(status_code=405, detail="Method not allowed")
+    
+    if response.status_code >= 400:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    
+    return response.json()
+
+# ============================================
+# PAYROLL MODULE PROXY ENDPOINTS
+# ============================================
+
+@app.get("/api/payroll/employees")
+async def get_payroll_employees(current_user: dict = Depends(get_current_user)):
+    """Get all payroll employees (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("GET", "/employees", current_user)
+
+@app.post("/api/payroll/employees")
+async def create_payroll_employee(
+    employee_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create/update payroll employee (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/employees", current_user, employee_data)
+
+@app.get("/api/payroll/runs")
+async def get_payroll_runs(current_user: dict = Depends(get_current_user)):
+    """Get payroll runs (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("GET", "/payroll/runs", current_user)
+
+@app.post("/api/payroll/run")
+async def create_payroll_run(
+    run_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new payroll run (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/payroll/run", current_user, run_data)
+
+@app.post("/api/payroll/calc")
+async def calculate_payroll(
+    calc_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Calculate payroll for a run (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/payroll/calc", current_user, calc_data)
+
+@app.post("/api/payroll/approve")
+async def approve_payroll(
+    approval_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Approve payroll run (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/payroll/approve", current_user, approval_data)
+
+@app.post("/api/payroll/export")
+async def export_payroll(
+    export_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Export payroll documents (WH-347, paystubs, NACHA) (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/payroll/export", current_user, export_data)
+
+@app.post("/api/payroll/pay")
+async def process_payroll_payment(
+    payment_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Process payroll payment (HR/Admin only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="HR/Admin access required")
+    return await proxy_request("POST", "/payroll/pay", current_user, payment_data)
+
+# ============================================
+# VENDOR PORTAL PROXY ENDPOINTS
+# ============================================
+
+@app.get("/api/vendors")
+async def get_vendors(current_user: dict = Depends(get_current_user)):
+    """Get all vendors (Admin/Manager) or self (Vendor)"""
+    if current_user["role"] == "vendor":
+        # Vendors see only themselves
+        vendor_id = current_user.get("vendor_id")
+        if not vendor_id:
+            raise HTTPException(status_code=404, detail="Vendor profile not found")
+        return await proxy_request("GET", f"/vendors/{vendor_id}", current_user)
+    elif current_user["role"] in ["admin", "manager"]:
+        return await proxy_request("GET", "/vendors", current_user)
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+@app.post("/api/vendors")
+async def create_vendor(
+    vendor_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create/update vendor (Admin/Manager only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="Admin/Manager access required")
+    return await proxy_request("POST", "/vendors", current_user, vendor_data)
+
+@app.get("/api/vendor/invoices")
+async def get_vendor_invoices(current_user: dict = Depends(get_current_user)):
+    """Get vendor invoices (filtered by role)"""
+    if current_user["role"] == "vendor":
+        vendor_id = current_user.get("vendor_id")
+        if not vendor_id:
+            raise HTTPException(status_code=404, detail="Vendor profile not found")
+        return await proxy_request("GET", "/vendors/invoices", current_user, params={"vendor_id": vendor_id})
+    elif current_user["role"] in ["admin", "manager"]:
+        return await proxy_request("GET", "/vendors/invoices", current_user)
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+@app.post("/api/vendor/invoices")
+async def submit_vendor_invoice(
+    invoice_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Submit vendor invoice"""
+    if current_user["role"] == "vendor":
+        # Auto-set vendor_id for vendor users
+        vendor_id = current_user.get("vendor_id")
+        if not vendor_id:
+            raise HTTPException(status_code=404, detail="Vendor profile not found")
+        invoice_data["vendor_id"] = vendor_id
+    return await proxy_request("POST", "/vendors/invoices", current_user, invoice_data)
+
+@app.get("/api/vendor/payments")
+async def get_vendor_payments(current_user: dict = Depends(get_current_user)):
+    """Get vendor payment history (filtered by role)"""
+    if current_user["role"] == "vendor":
+        vendor_id = current_user.get("vendor_id")
+        if not vendor_id:
+            raise HTTPException(status_code=404, detail="Vendor profile not found")
+        return await proxy_request("GET", "/vendors/payments", current_user, params={"vendor_id": vendor_id})
+    elif current_user["role"] in ["admin", "manager"]:
+        return await proxy_request("GET", "/vendors/payments", current_user)
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+@app.post("/api/vendor/payments")
+async def process_vendor_payment(
+    payment_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Process vendor payment (Admin/Manager only)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="Admin/Manager access required")
+    return await proxy_request("POST", "/vendors/payments", current_user, payment_data)
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
