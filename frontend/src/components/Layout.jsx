@@ -87,12 +87,12 @@ const Layout = () => {
     operationsItems.unshift({ path: '/timesheets', label: 'Timesheets', icon: Clock });
   }
 
-  // Safety & Compliance - Admin/Manager only
+  // Safety & Compliance - Admin/Manager AND Vendors
   const safetyComplianceItems = [
-    { path: '/safety-reports', label: 'Safety Reports', icon: AlertTriangle, adminOnly: true },
-    { path: '/certifications', label: 'Certifications', icon: Award, adminOnly: true },
+    { path: '/safety-reports', label: 'Safety Reports', icon: AlertTriangle },
+    { path: '/certifications', label: 'Certifications', icon: Award },
     { path: '/reports', label: 'Reports', icon: FileBarChart, adminOnly: true },
-    { path: '/compliance', label: 'Compliance', icon: ClipboardCheck, adminOnly: true },
+    { path: '/compliance', label: 'Compliance', icon: ClipboardCheck },
   ];
 
   // Add Admin link if user is admin
