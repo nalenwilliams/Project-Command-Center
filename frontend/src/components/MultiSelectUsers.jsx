@@ -9,6 +9,10 @@ const MultiSelectUsers = ({ users = [], selectedUsers = [], onSelectionChange, p
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Debug logging
+  console.log('MultiSelectUsers - users:', users);
+  console.log('MultiSelectUsers - users length:', users?.length);
+
   const filteredUsers = users.filter(user => 
     user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email?.toLowerCase().includes(searchTerm.toLowerCase())
