@@ -24,29 +24,6 @@ const AuthPage = () => {
     invitation_code: '' 
   });
 
-  // Check for existing session on mount - only if not processing a new session
-  useEffect(() => {
-    const checkExistingSession = async () => {
-      // Don't check if we're currently processing a session_id
-      const hash = window.location.hash;
-      if (hash && hash.includes('session_id=')) {
-        return; // Let the session processing handle this
-      }
-      
-      try {
-        const response = await api.get('/auth/me');
-        if (response.data && response.data.id) {
-          // User is already authenticated, redirect to dashboard
-          navigate('/', { replace: true });
-        }
-      } catch (error) {
-        // No existing session, stay on auth page
-      }
-    };
-
-    checkExistingSession();
-  }, []); // Empty dependency array - run only once on mount
-
   // Handle session_id from URL fragment (Emergent Auth callback)
   useEffect(() => {
     const processSessionId = async () => {
