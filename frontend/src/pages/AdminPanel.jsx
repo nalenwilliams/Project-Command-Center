@@ -216,6 +216,7 @@ const AdminPanel = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="border-b" style={{ borderColor: '#374151' }}>
+                    <TableHead style={{ color: ELEGANT_GOLD }}>Name</TableHead>
                     <TableHead style={{ color: ELEGANT_GOLD }}>Username</TableHead>
                     <TableHead style={{ color: ELEGANT_GOLD }}>Email</TableHead>
                     <TableHead style={{ color: ELEGANT_GOLD }}>Role</TableHead>
@@ -226,7 +227,13 @@ const AdminPanel = () => {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
-                      <TableCell className="font-medium text-white">{user.username}</TableCell>
+                      <TableCell className="font-medium text-white">
+                        {user.first_name || user.last_name 
+                          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                          : '-'
+                        }
+                      </TableCell>
+                      <TableCell className="text-gray-300">{user.username}</TableCell>
                       <TableCell className="text-gray-300">{user.email}</TableCell>
                       <TableCell>{getRoleBadge(user.role)}</TableCell>
                       <TableCell>
