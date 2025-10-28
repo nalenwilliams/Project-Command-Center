@@ -89,6 +89,8 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     invitation_code: str  # Required for registration
 
 class UserLogin(BaseModel):
