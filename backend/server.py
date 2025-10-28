@@ -3567,6 +3567,370 @@ async def approve_vendor_document(
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
         
+
+
+# ============================================
+# EMPLOYEE PAYROLL DOCUMENT ENDPOINTS
+# ============================================
+
+from email_templates import employee_paystub_available_email, employee_payment_processed_email
+
+@api_router.get("/employee/paystubs")
+async def get_employee_paystubs(
+    year: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get employee's paystubs"""
+    try:
+        query = {"employee_id": current_user["id"]}
+        if year:
+            query["year"] = year
+        
+        paystubs = await db.paystubs.find(query, {"_id": 0}).sort("pay_date", -1).to_list(length=None)
+        return paystubs
+    except Exception as e:
+        logger.error(f"Error fetching paystubs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/employee/tax-documents")
+async def get_employee_tax_documents(current_user: dict = Depends(get_current_user)):
+    """Get employee's tax documents (W-2, W-4, etc.)"""
+    try:
+        documents = await db.employee_tax_documents.find(
+            {"employee_id": current_user["id"]},
+            {"_id": 0}
+        ).sort("tax_year", -1).to_list(length=None)
+        return documents
+    except Exception as e:
+        logger.error(f"Error fetching tax documents: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/employee/ytd-summary")
+async def get_employee_ytd_summary(
+    year: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get employee's YTD earnings summary"""
+    try:
+        current_year = year or datetime.now(timezone.utc).year
+        
+        # Aggregate paystubs for YTD summary
+        pipeline = [
+            {"$match": {
+                "employee_id": current_user["id"],
+                "year": current_year
+            }},
+            {"$group": {
+                "_id": None,
+                "gross": {"$sum": "$gross_pay"},
+                "net": {"$sum": "$net_pay"},
+                "taxes": {"$sum": "$taxes"},
+                "deductions": {"$sum": "$deductions"}
+            }}
+        ]
+        
+        result = await db.paystubs.aggregate(pipeline).to_list(length=1)
+        
+        if result:
+            return {
+                "gross": result[0]["gross"],
+                "net": result[0]["net"],
+                "taxes": result[0]["taxes"],
+                "deductions": result[0]["deductions"]
+            }
+        
+        return {"gross": 0, "net": 0, "taxes": 0, "deductions": 0}
+    except Exception as e:
+        logger.error(f"Error fetching YTD summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# NOTIFICATION EVENT TRIGGERS
+# ============================================
+
+from email_templates import (
+    vendor_invoice_submitted_email,
+    vendor_invoice_approved_email,
+    vendor_invoice_rejected_email,
+    vendor_payment_approved_email,
+    vendor_remittance_advice_email,
+    employee_assignment_notification,
+    schedule_change_notification
+)
+
+async def trigger_invoice_submitted_notification(invoice_id: str):
+    """Send notification when vendor submits invoice"""
+    try:
+        invoice = await db.vendor_invoices.find_one({"id": invoice_id}, {"_id": 0})
+        if not invoice:
+            return
+        
+        vendor = await db.vendors.find_one({"id": invoice["vendor_id"]}, {"_id": 0})
+        if not vendor:
+            return
+        
+        email_service = get_email_service()
+        email_content = vendor_invoice_submitted_email(
+            vendor_name=vendor.get("name", "Vendor"),
+            invoice_number=invoice["invoice_number"],
+            amount=str(invoice["amount"]),
+            portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+        )
+        
+        email_service.send_email(
+            to_email=vendor.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": vendor.get("user_id"),
+            "type": "invoice_submitted",
+            "title": email_content["subject"],
+            "message": f"Invoice {invoice['invoice_number']} submitted successfully",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending invoice submitted notification: {str(e)}")
+
+async def trigger_invoice_status_change_notification(invoice_id: str, new_status: str, reason: str = ""):
+    """Send notification when invoice status changes"""
+    try:
+        invoice = await db.vendor_invoices.find_one({"id": invoice_id}, {"_id": 0})
+        if not invoice:
+            return
+        
+        vendor = await db.vendors.find_one({"id": invoice["vendor_id"]}, {"_id": 0})
+        if not vendor:
+            return
+        
+        email_service = get_email_service()
+        
+        if new_status == "approved":
+            email_content = vendor_invoice_approved_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                invoice_number=invoice["invoice_number"],
+                amount=str(invoice["amount"]),
+                payment_date=invoice.get("expected_payment_date", "To be determined"),
+                portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+            )
+        elif new_status == "rejected":
+            email_content = vendor_invoice_rejected_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                invoice_number=invoice["invoice_number"],
+                amount=str(invoice["amount"]),
+                reason=reason or "Please review and resubmit",
+                portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+            )
+        else:
+            return
+        
+        email_service.send_email(
+            to_email=vendor.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": vendor.get("user_id"),
+            "type": f"invoice_{new_status}",
+            "title": email_content["subject"],
+            "message": f"Invoice {invoice['invoice_number']} has been {new_status}",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending invoice status notification: {str(e)}")
+
+async def trigger_payment_notification(payment_id: str, notification_type: str = "processed"):
+    """Send payment notification (approved or processed)"""
+    try:
+        payment = await db.vendor_payments.find_one({"id": payment_id}, {"_id": 0})
+        if not payment:
+            return
+        
+        vendor = await db.vendors.find_one({"id": payment["vendor_id"]}, {"_id": 0})
+        if not vendor:
+            return
+        
+        email_service = get_email_service()
+        
+        # Get invoice numbers for this payment
+        invoice_numbers = payment.get("invoice_numbers", [])
+        
+        if notification_type == "approved":
+            email_content = vendor_payment_approved_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                invoice_numbers=invoice_numbers,
+                total_amount=str(payment["amount"]),
+                payment_method=payment.get("method", "ACH").upper(),
+                expected_date=payment.get("expected_date", "Soon")
+            )
+        else:  # processed
+            email_content = vendor_remittance_advice_email(
+                vendor_name=vendor.get("name", "Vendor"),
+                invoice_numbers=invoice_numbers,
+                total_amount=str(payment["amount"]),
+                payment_method=payment.get("method", "ACH").upper(),
+                payment_date=payment.get("payment_date", datetime.now(timezone.utc).strftime("%B %d, %Y")),
+                transaction_ref=payment.get("transaction_ref", payment["id"][:12])
+            )
+        
+        email_service.send_email(
+            to_email=vendor.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": vendor.get("user_id"),
+            "type": f"payment_{notification_type}",
+            "title": email_content["subject"],
+            "message": f"Payment of ${payment['amount']} {notification_type}",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending payment notification: {str(e)}")
+
+async def trigger_paystub_notification(paystub_id: str):
+    """Send notification when paystub is available"""
+    try:
+        paystub = await db.paystubs.find_one({"id": paystub_id}, {"_id": 0})
+        if not paystub:
+            return
+        
+        employee = await db.users.find_one({"id": paystub["employee_id"]}, {"_id": 0})
+        if not employee:
+            return
+        
+        email_service = get_email_service()
+        email_content = employee_paystub_available_email(
+            employee_name=f"{employee.get('first_name', '')} {employee.get('last_name', '')}".strip() or employee.get("username", "Employee"),
+            pay_period=paystub["pay_period"],
+            gross_amount=str(paystub["gross_pay"]),
+            net_amount=str(paystub["net_pay"]),
+            pay_date=paystub["pay_date"],
+            portal_url="https://wdl-hub.preview.emergentagent.com/my-payroll-documents"
+        )
+        
+        email_service.send_email(
+            to_email=employee.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": employee["id"],
+            "type": "paystub_available",
+            "title": email_content["subject"],
+            "message": f"Paystub for {paystub['pay_period']} is ready",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending paystub notification: {str(e)}")
+
+async def trigger_assignment_notification(user_id: str, item_type: str, item_id: str):
+    """Send notification when user is assigned to task/project/work order"""
+    try:
+        user = await db.users.find_one({"id": user_id}, {"_id": 0})
+        if not user:
+            return
+        
+        # Get item details based on type
+        collection_map = {
+            "task": "tasks",
+            "project": "projects",
+            "work_order": "work_orders"
+        }
+        
+        collection = collection_map.get(item_type.lower().replace(" ", "_"))
+        if not collection:
+            return
+        
+        item = await db[collection].find_one({"id": item_id}, {"_id": 0})
+        if not item:
+            return
+        
+        assigned_by_user = await db.users.find_one({"id": item.get("created_by", "")}, {"_id": 0})
+        assigned_by_name = "System"
+        if assigned_by_user:
+            assigned_by_name = f"{assigned_by_user.get('first_name', '')} {assigned_by_user.get('last_name', '')}".strip() or assigned_by_user.get("username", "Manager")
+        
+        email_service = get_email_service()
+        email_content = employee_assignment_notification(
+            employee_name=f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user.get("username", "Employee"),
+            item_type=item_type.title(),
+            item_title=item.get("title", item.get("name", "Untitled")),
+            assigned_by=assigned_by_name,
+            due_date=item.get("due_date", item.get("deadline", "Not specified")),
+            portal_url=f"https://wdl-hub.preview.emergentagent.com/{collection}"
+        )
+        
+        email_service.send_email(
+            to_email=user.get("email"),
+            subject=email_content["subject"],
+            body=email_content["html"],
+            html=True
+        )
+        
+        # Log notification
+        await db.notifications.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "type": f"{item_type}_assigned",
+            "title": email_content["subject"],
+            "message": f"You have been assigned to {item_type}: {item.get('title', item.get('name', 'Untitled'))}",
+            "read": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error sending assignment notification: {str(e)}")
+
+# Endpoint to get user notifications
+@api_router.get("/notifications")
+async def get_notifications(current_user: dict = Depends(get_current_user)):
+    """Get user's notifications"""
+    try:
+        notifications = await db.notifications.find(
+            {"user_id": current_user["id"]},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(50).to_list(length=None)
+        return notifications
+    except Exception as e:
+        logger.error(f"Error fetching notifications: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark notification as read"""
+    try:
+        await db.notifications.update_one(
+            {"id": notification_id, "user_id": current_user["id"]},
+            {"$set": {"read": True}}
+        )
+        return {"message": "Notification marked as read"}
+    except Exception as e:
+        logger.error(f"Error marking notification as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
         # Update document status
         await db.vendor_documents.update_one(
             {"id": document_id},
