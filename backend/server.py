@@ -1333,7 +1333,10 @@ async def get_tasks(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/tasks", response_model=Task)
 async def create_task(task_data: TaskCreate, current_user: dict = Depends(get_current_user)):
-    task = Task(**task_data.model_dump(), created_by=current_user['id'])
+    task_dict = task_data.model_dump()
+    task_dict['created_by'] = current_user['id']  # Override with current user
+    task = Task(**task_dict)
+    
     task_dict = task.model_dump()
     task_dict['created_at'] = task_dict['created_at'].isoformat()
     if task_dict.get('due_date'):
