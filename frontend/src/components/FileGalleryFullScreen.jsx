@@ -429,6 +429,60 @@ const FileGalleryFullScreen = ({ isOpen, onClose, record, recordType, files = []
                 </>
               )}
 
+              {recordType === 'timesheet' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Employee Name</p>
+                    <p className="text-white mt-1 text-left">{record.employee_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Date</p>
+                    <p className="text-white mt-1 text-left">{record.date ? new Date(record.date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Hours Worked</p>
+                    <p className="text-white mt-1 text-left">{record.hours_worked ? `${record.hours_worked}h` : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Task Description</p>
+                    <p className="text-white mt-1 text-left">{record.task_description || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Notes</p>
+                    <p className="text-white mt-1 text-left">{record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
+              {recordType === 'inventory' && record && (
+                <>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Item Name</p>
+                    <p className="text-white mt-1 text-left">{record.item_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Category</p>
+                    <p className="text-white mt-1 text-left">{record.category || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Quantity</p>
+                    <p className="text-white mt-1 text-left">{record.quantity} {record.unit || ''}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Location</p>
+                    <p className="text-white mt-1 text-left">{record.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Reorder Level</p>
+                    <p className="text-white mt-1 text-left">{record.reorder_level || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-left" style={{ color: ELEGANT_GOLD }}>Description</p>
+                    <p className="text-white mt-1 text-left">{record.description || record.notes || 'N/A'}</p>
+                  </div>
+                </>
+              )}
+
               {/* Generic details for other record types */}
               {!['project', 'task', 'client'].includes(recordType) && record?.description && (
                 <div>
