@@ -402,6 +402,28 @@ const AdminPanel = () => {
             <DialogTitle style={{ color: ELEGANT_GOLD }}>Edit User</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleUpdateUser} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>First Name</Label>
+                <Input
+                  value={editData.first_name}
+                  onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
+                  placeholder="First name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Last Name</Label>
+                <Input
+                  value={editData.last_name}
+                  onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
+                  className="bg-black border text-white"
+                  style={{ borderColor: ELEGANT_GOLD }}
+                  placeholder="Last name"
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <Label style={{ color: ELEGANT_GOLD }}>Username</Label>
               <Input
