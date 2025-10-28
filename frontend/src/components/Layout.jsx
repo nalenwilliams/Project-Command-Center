@@ -29,6 +29,7 @@ import {
   Banknote,
   Store,
   FolderOpen,
+  Receipt,
 } from 'lucide-react';
 
 const Layout = () => {
