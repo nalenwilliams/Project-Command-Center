@@ -258,7 +258,6 @@ class Task(BaseModel):
             return []
         return []
 
-# Work Order Models  
 class WorkOrderCreate(BaseModel):
     title: str
     description: Optional[str] = None
@@ -267,6 +266,7 @@ class WorkOrderCreate(BaseModel):
     status: str = "todo"  # todo, in_progress, completed
     due_date: Optional[datetime] = None
     priority: str = "medium"  # urgent, high, medium, low
+    address: Optional[str] = None
     files: Optional[List[dict]] = []
     created_by: Optional[str] = None
 
@@ -278,6 +278,7 @@ class WorkOrderUpdate(BaseModel):
     status: Optional[str] = None
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    address: Optional[str] = None
     files: Optional[List[dict]] = None
 
 class WorkOrder(BaseModel):
@@ -290,6 +291,7 @@ class WorkOrder(BaseModel):
     status: str = "todo"
     due_date: Optional[datetime] = None
     priority: str = "medium"
+    address: Optional[str] = None
     files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
