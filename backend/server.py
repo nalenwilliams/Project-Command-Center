@@ -3440,9 +3440,10 @@ async def invite_vendor(
             email_sent = False
         
         return {
-            "message": "Vendor invitation sent successfully",
+            "message": "Vendor invitation created successfully" + (" and email sent" if email_sent else " (email not configured)"),
             "invitation_code": invitation_code,
-            "email": vendor_data.get("email")
+            "email": vendor_data.get("email"),
+            "email_sent": email_sent
         }
     except Exception as e:
         logger.error(f"Error inviting vendor: {str(e)}")
