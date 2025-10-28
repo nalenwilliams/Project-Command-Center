@@ -9,11 +9,13 @@ const AIFloatingChat = ({ currentPage = "Dashboard" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
-    { role: 'assistant', content: 'Hi! I\'m your AI assistant. How can I help you today?' }
+    { role: 'assistant', content: 'Hi! I\'m your Williams Diversified AI assistant powered by Gemini 2.5 Pro. How can I help you today?' }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  
+  // Connect to new AI server on port 3001
+  const aiServerUrl = 'http://localhost:3001';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,21 +34,32 @@ const AIFloatingChat = ({ currentPage = "Dashboard" }) => {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/ai/chat`, {
+      const response = await fetch(`${aiServerUrl}/ai/chat`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: userMessage,
-          conversation_history: chatHistory,
-          current_page: currentPage
+          context: {
+            current_page: currentPage,
+            conversation_history: chatHistory
+          }
         }),
       });
 
       if (!response.ok) throw new Error('Failed to get AI response');
+
+      const data = await response.json();
+      setChatHistory(prev => [...prev, { role: 'assistant', content: data.reply }]);
+    } catch (error) {
+      console.error('AI chat error:', error);
+      toast.error('Failed to get AI response. Please try again.');
+      setChatHistory(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
       const data = await response.json();
       setChatHistory(prev => [...prev, { role: 'assistant', content: data.response }]);
