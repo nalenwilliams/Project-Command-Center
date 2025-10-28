@@ -148,12 +148,16 @@ const VendorOnboardingPage = () => {
       })
       formDataToSend.append('invitation_code', invitationCode)
       
-      await api.post('/vendor/complete-onboarding', formDataToSend, {
+      const response = await api.post('/vendor/complete-onboarding', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       
-      alert('Vendor onboarding completed successfully! Welcome to Williams Diversified LLC Vendor Portal.')
-      navigate('/vendors')
+      const tempPassword = response.data.temp_password
+      
+      alert(`Vendor onboarding completed successfully!\n\nYour Login Credentials:\nEmail: ${formData.email}\nPassword: ${tempPassword}\n\nPlease save these credentials. You will be redirected to the login page.`)
+      
+      // Redirect to login page for vendor to login with new credentials
+      window.location.href = '/auth'
     } catch (error) {
       console.error('Onboarding error:', error)
       const errorMessage = error.response?.data?.detail || error.message
