@@ -280,7 +280,7 @@ const WorkOrdersPage = () => {
                           <SelectValue placeholder="Select project (optional)" />
                         </SelectTrigger>
                         <SelectContent className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
-                          <SelectItem value="">No Project</SelectItem>
+                          <SelectItem value="none">No Project</SelectItem>
                           {projects.map((project) => (
                             <SelectItem key={project.id} value={project.id}>{project.name}</SelectItem>
                           ))}
