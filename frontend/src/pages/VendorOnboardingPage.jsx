@@ -17,6 +17,33 @@ const VendorOnboardingPage = () => {
   const [loading, setLoading] = useState(false)
   const [aiAssisting, setAiAssisting] = useState(false)
   
+  // Check if invitation code is missing
+  if (!invitationCode) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+        <Card className="max-w-md bg-black border-red-500/30">
+          <CardHeader>
+            <CardTitle className="text-white text-center">Missing Invitation Code</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-300">
+              This page requires a valid vendor invitation code.
+            </p>
+            <p className="text-sm text-gray-400">
+              Please contact Williams Diversified LLC administration to receive your invitation code.
+            </p>
+            <Button 
+              onClick={() => navigate('/auth')}
+              className="bg-yellow-600 hover:bg-yellow-700"
+            >
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+  
   // Form data
   const [formData, setFormData] = useState({
     // Company Info
