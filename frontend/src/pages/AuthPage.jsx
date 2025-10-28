@@ -132,7 +132,7 @@ const AuthPage = () => {
           </CardContent>
         </Card>
       ) : (
-        <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
+      <Card className="w-full max-w-md bg-black border-2" style={{ borderColor: '#C9A961' }}>
         <CardHeader className="space-y-3 text-center">
           <img 
             src="/williams-logo.png" 
