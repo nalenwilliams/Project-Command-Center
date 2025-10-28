@@ -316,71 +316,27 @@ const InventoryPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Project Inventory Details Dialog */}
-      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="bg-gray-900 border max-w-4xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
-          <DialogHeader>
-            <DialogTitle style={{ color: ELEGANT_GOLD }}>
-              {selectedProject?.project_name} - Inventory Details
-            </DialogTitle>
-          </DialogHeader>
-          
-          {selectedProject && (
-            <div className="space-y-4">
-              <div className="flex gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4" style={{ color: ELEGANT_GOLD }} />
-                  <span className="text-gray-400">Total Items:</span>
-                  <span className="text-white font-semibold">{selectedProject.total_items}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" style={{ color: ELEGANT_GOLD }} />
-                  <span className="text-gray-400">Total Value:</span>
-                  <span className="text-white font-semibold">${selectedProject.total_value.toFixed(2)}</span>
-                </div>
-              </div>
-
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-b" style={{ borderColor: ELEGANT_GOLD }}>
-                    <TableHead style={{ color: ELEGANT_GOLD }}>Item</TableHead>
-                    <TableHead style={{ color: ELEGANT_GOLD }}>Category</TableHead>
-                    <TableHead style={{ color: ELEGANT_GOLD }}>Quantity</TableHead>
-                    <TableHead style={{ color: ELEGANT_GOLD }}>Location</TableHead>
-                    <TableHead style={{ color: ELEGANT_GOLD }}>Value</TableHead>
-                    <TableHead className="text-right" style={{ color: ELEGANT_GOLD }}>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {selectedProject.items.map((item) => (
-                    <TableRow key={item.id} className="border-b" style={{ borderColor: '#374151' }}>
-                      <TableCell className="font-medium text-white">{item.item_name}</TableCell>
-                      <TableCell className="text-gray-300">{item.category}</TableCell>
-                      <TableCell className="text-gray-300">{item.quantity} {item.unit}</TableCell>
-                      <TableCell className="text-gray-300">{item.location || 'N/A'}</TableCell>
-                      <TableCell className="text-gray-300">
-                        ${((item.unit_cost || 0) * item.quantity).toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex gap-2 justify-end">
-                          <Button size="sm" variant="outline" onClick={() => { setDetailDialogOpen(false); handleEdit(item); }} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          {canDelete && (
-                            <Button size="sm" variant="outline" onClick={() => handleDelete(item.id)} className="border-red-500 text-red-500 hover:bg-red-950">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* FileGalleryFullScreen for viewing project inventory */}
+      <FileGalleryFullScreen
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        record={selectedProject}
+        recordType="inventory-project"
+        files={selectedProject?.files || []}
+        inventoryItems={selectedProject?.items || []}
+        onUpdate={fetchData}
+        onAddItem={() => {
+          setFormData({ ...formData, project_id: selectedProject?.project_id });
+          setGalleryOpen(false);
+          setDialogOpen(true);
+        }}
+        onEditItem={(item) => {
+          setGalleryOpen(false);
+          handleEdit(item);
+        }}
+        onDeleteItem={handleDelete}
+        canDelete={canDelete}
+      />
     </div>
   );
 };
