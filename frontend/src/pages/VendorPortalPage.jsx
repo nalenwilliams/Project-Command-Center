@@ -69,19 +69,27 @@ const VendorPortalPage = () => {
   const handleCreateVendor = async (e) => {
     e.preventDefault()
     try {
-      // API will generate invitation code and send email
-      const response = await api.post('/vendors/invite', vendorForm)
+      // Create vendor directly without invitation code
+      const response = await api.post('/vendors/create-direct', vendorForm)
       setShowVendorDialog(false)
       setVendorForm({
-        name: '',
+        company_name: '',
         email: '',
-        phone: ''
+        phone: '',
+        contact_first_name: '',
+        contact_last_name: '',
+        business_type: 'LLC',
+        address: '',
+        city: '',
+        state: 'OK',
+        zip: ''
       })
-      alert(`Invitation sent successfully to ${vendorForm.email}! Invitation code: ${response.data.invitation_code}`)
+      
+      alert(`Vendor created successfully!\n\nLogin Credentials:\nUsername: ${response.data.username}\nEmail: ${response.data.email}\nTemporary Password: ${response.data.temp_password}\n\nPlease provide these credentials to the vendor.`)
       fetchData()
     } catch (error) {
-      console.error('Error inviting vendor:', error)
-      alert('Error sending vendor invitation. Please try again.')
+      console.error('Error creating vendor:', error)
+      alert('Error creating vendor: ' + (error.response?.data?.detail || error.message))
     }
   }
 
