@@ -196,7 +196,15 @@ const CertificationsPage = () => {
               </TableHeader>
               <TableBody>
                 {certifications.map((cert) => (
-                  <TableRow key={cert.id} className="border-b hover:bg-gray-800" style={{ borderColor: '#374151' }}>
+                  <TableRow 
+                    key={cert.id} 
+                    className="border-b hover:bg-gray-800 cursor-pointer" 
+                    style={{ borderColor: '#374151' }}
+                    onClick={() => {
+                      setSelectedCert(cert);
+                      setGalleryOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium text-white">{cert.name}</TableCell>
                     <TableCell className="text-gray-300">{cert.employee_name || 'N/A'}</TableCell>
                     <TableCell className="text-gray-300">{cert.certification_number || 'N/A'}</TableCell>
@@ -210,9 +218,8 @@ const CertificationsPage = () => {
                         <Badge className="bg-green-600">ACTIVE</Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2 justify-end">
-                        <FileGallery item={cert} itemType="certification" onUpdate={fetchData} canDelete={canDelete} />
                         <Button size="sm" variant="outline" onClick={() => handleEdit(cert)} className="border hover:bg-gray-800" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
