@@ -13,7 +13,7 @@ import sys
 import tempfile
 
 # Get backend URL from frontend .env file
-BACKEND_URL = "https://wdl-hub.preview.emergentagent.com/api"
+BACKEND_URL = "https://crm-command-1.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):

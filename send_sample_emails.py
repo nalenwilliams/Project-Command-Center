@@ -33,7 +33,7 @@ print("\n1. Sending Vendor Invitation sample...")
 email_data = vendor_invitation_email(
     vendor_name="ACME Construction LLC",
     invitation_code="ABC12345",
-    portal_url="https://wdl-hub.preview.emergentagent.com/auth?code=ABC12345&type=vendor"
+    portal_url="https://crm-command-1.preview.emergentagent.com/auth?code=ABC12345&type=vendor"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -44,7 +44,7 @@ email_data = vendor_invoice_submitted_email(
     vendor_name="ACME Construction LLC",
     invoice_number="INV-2025-001",
     amount="15,750.00",
-    portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+    portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -56,7 +56,7 @@ email_data = vendor_invoice_approved_email(
     invoice_number="INV-2025-001",
     amount="15,750.00",
     payment_date="November 15, 2025",
-    portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+    portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -68,7 +68,7 @@ email_data = vendor_invoice_rejected_email(
     invoice_number="INV-2025-002",
     amount="8,500.00",
     reason="Invoice date does not match purchase order. Please verify and resubmit with correct date.",
-    portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+    portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -138,7 +138,7 @@ email_data = employee_paystub_available_email(
     gross_amount="3,200.00",
     net_amount="2,485.50",
     pay_date="November 5, 2025",
-    portal_url="https://wdl-hub.preview.emergentagent.com/my-payroll-documents"
+    portal_url="https://crm-command-1.preview.emergentagent.com/my-payroll-documents"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -162,7 +162,7 @@ email_data = employee_assignment_notification(
     item_title="Install electrical wiring - Building A",
     assigned_by="Nalen Williams",
     due_date="November 20, 2025",
-    portal_url="https://wdl-hub.preview.emergentagent.com/tasks"
+    portal_url="https://crm-command-1.preview.emergentagent.com/tasks"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -175,7 +175,7 @@ email_data = employee_assignment_notification(
     item_title="Downtown Office Renovation - Phase 2",
     assigned_by="Nalen Williams",
     due_date="December 15, 2025",
-    portal_url="https://wdl-hub.preview.emergentagent.com/projects"
+    portal_url="https://crm-command-1.preview.emergentagent.com/projects"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")
@@ -188,7 +188,7 @@ email_data = employee_assignment_notification(
     item_title="Emergency HVAC Repair - Suite 200",
     assigned_by="Nalen Williams",
     due_date="November 10, 2025",
-    portal_url="https://wdl-hub.preview.emergentagent.com/work-orders"
+    portal_url="https://crm-command-1.preview.emergentagent.com/work-orders"
 )
 result = email_service.send_email(admin_email, email_data["subject"], email_data["html"], html=True)
 print(f"   {'✓ Sent' if result else '✗ Failed'}: {email_data['subject']}")

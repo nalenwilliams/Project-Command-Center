@@ -1046,7 +1046,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 @api_router.get("/auth/google/login")
 async def google_login(request: Request):
     """Initiate Google OAuth login"""
-    backend_url = os.environ.get('FRONTEND_URL', 'https://wdl-hub.preview.emergentagent.com')
+    backend_url = os.environ.get('FRONTEND_URL', 'https://crm-command-1.preview.emergentagent.com')
     redirect_uri = f"{backend_url}/api/auth/google/callback"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
@@ -1546,7 +1546,7 @@ async def create_invitation(invitation_data: InvitationCreate, admin_user: dict 
             # Create registration link
             # Frontend is on the same domain as backend (which includes /api)
             # Get backend URL from environment or use default
-            frontend_url = "https://wdl-hub.preview.emergentagent.com"
+            frontend_url = "https://crm-command-1.preview.emergentagent.com"
             
             # Registration link with invitation code as query parameter
             registration_link = f"{frontend_url}/auth?invite={invitation_code}"
@@ -3406,7 +3406,7 @@ async def invite_vendor(
         
         # Send invitation email
         email_service = get_email_service()
-        portal_url = f"{os.environ.get('FRONTEND_URL', 'https://wdl-hub.preview.emergentagent.com')}/auth?code={invitation_code}&type=vendor"
+        portal_url = f"{os.environ.get('FRONTEND_URL', 'https://crm-command-1.preview.emergentagent.com')}/auth?code={invitation_code}&type=vendor"
         email_content = vendor_invitation_email(
             vendor_name=vendor_data.get("name"),
             invitation_code=invitation_code,
@@ -3777,7 +3777,7 @@ async def trigger_invoice_submitted_notification(invoice_id: str):
             vendor_name=vendor.get("name", "Vendor"),
             invoice_number=invoice["invoice_number"],
             amount=str(invoice["amount"]),
-            portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+            portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
         )
         
         email_service.send_email(
@@ -3819,7 +3819,7 @@ async def trigger_invoice_status_change_notification(invoice_id: str, new_status
                 invoice_number=invoice["invoice_number"],
                 amount=str(invoice["amount"]),
                 payment_date=invoice.get("expected_payment_date", "To be determined"),
-                portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+                portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
             )
         elif new_status == "rejected":
             email_content = vendor_invoice_rejected_email(
@@ -3827,7 +3827,7 @@ async def trigger_invoice_status_change_notification(invoice_id: str, new_status
                 invoice_number=invoice["invoice_number"],
                 amount=str(invoice["amount"]),
                 reason=reason or "Please review and resubmit",
-                portal_url="https://wdl-hub.preview.emergentagent.com/vendors"
+                portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
             )
         else:
             return
@@ -3924,7 +3924,7 @@ async def trigger_paystub_notification(paystub_id: str):
             gross_amount=str(paystub["gross_pay"]),
             net_amount=str(paystub["net_pay"]),
             pay_date=paystub["pay_date"],
-            portal_url="https://wdl-hub.preview.emergentagent.com/my-payroll-documents"
+            portal_url="https://crm-command-1.preview.emergentagent.com/my-payroll-documents"
         )
         
         email_service.send_email(
@@ -3982,7 +3982,7 @@ async def trigger_assignment_notification(user_id: str, item_type: str, item_id:
             item_title=item.get("title", item.get("name", "Untitled")),
             assigned_by=assigned_by_name,
             due_date=item.get("due_date", item.get("deadline", "Not specified")),
-            portal_url=f"https://wdl-hub.preview.emergentagent.com/{collection}"
+            portal_url=f"https://crm-command-1.preview.emergentagent.com/{collection}"
         )
         
         email_service.send_email(
@@ -4359,7 +4359,7 @@ Only suggest for fields that are empty or obviously incorrect.
             item_title=item.get("title", item.get("name", "Untitled")),
             assigned_by=assigned_by_name,
             due_date=item.get("due_date", item.get("deadline", "Not specified")),
-            portal_url=f"https://wdl-hub.preview.emergentagent.com/{collection}"
+            portal_url=f"https://crm-command-1.preview.emergentagent.com/{collection}"
         )
         
         email_service.send_email(

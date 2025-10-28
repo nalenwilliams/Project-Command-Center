@@ -9,7 +9,7 @@ COMPANY_INFO = {
     "city_state_zip": "TULSA, OK 74104 USA",
     "phone": "(918)917-3526",
     "email": "accountspayable@williamsdiverse.com",
-    "logo_url": "https://wdl-hub.preview.emergentagent.com/assets/logo_williams_diversified.jpeg"
+    "logo_url": "https://crm-command-1.preview.emergentagent.com/assets/logo_williams_diversified.jpeg"
 }
 
 # Brand colors
@@ -300,7 +300,7 @@ def vendor_document_status_email(vendor_name: str, document_type: str, status: s
     
     {reason_html}
     
-    {get_button_html('Manage Documents', 'https://wdl-hub.preview.emergentagent.com/company-documents')}
+    {get_button_html('Manage Documents', 'https://crm-command-1.preview.emergentagent.com/company-documents')}
     """
     return {
         "subject": f"Document {status.title()}: {document_type}",
@@ -356,7 +356,7 @@ def employee_payment_processed_email(employee_name: str, amount: str, pay_date: 
         View your complete paystub in the employee portal.
     </p>
     
-    {get_button_html('View Paystub', 'https://wdl-hub.preview.emergentagent.com/my-payroll-documents')}
+    {get_button_html('View Paystub', 'https://crm-command-1.preview.emergentagent.com/my-payroll-documents')}
     """
     return {
         "subject": f"Payment Deposited - ${amount}",
@@ -411,7 +411,7 @@ def schedule_change_notification(user_name: str, change_type: str, old_value: st
         <p style="margin: 5px 0; color: {COLORS['text']};"><strong>Changed By:</strong> {changed_by}</p>
     </div>
     
-    {get_button_html('View Schedule', 'https://wdl-hub.preview.emergentagent.com/schedules')}
+    {get_button_html('View Schedule', 'https://crm-command-1.preview.emergentagent.com/schedules')}
     """
     return {
         "subject": f"Schedule Update: {change_type}",
