@@ -788,7 +788,7 @@ class Inventory(BaseModel):
     category: str
     quantity: float
     unit: str
-    project_id: str
+    project_id: Optional[str] = None  # Optional for backward compatibility
     location: Optional[str] = None
     minimum_stock: Optional[float] = None
     supplier: Optional[str] = None
