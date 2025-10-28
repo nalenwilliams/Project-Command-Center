@@ -195,6 +195,18 @@ class Project(BaseModel):
     files: Optional[List[dict]] = []
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+    @field_validator('assigned_to', mode='before')
+    @classmethod
+    def convert_assigned_to_list(cls, v):
+        """Convert single string to list for backward compatibility"""
+        if isinstance(v, str):
+            return [v] if v else []
+        elif isinstance(v, list):
+            return v
+        elif v is None:
+            return []
+        return []
 
 # Task Models
 class TaskCreate(BaseModel):
