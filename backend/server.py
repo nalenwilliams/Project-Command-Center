@@ -1022,7 +1022,8 @@ async def login(credentials: UserLogin):
             "email": user['email'],
             "first_name": user.get('first_name'),
             "last_name": user.get('last_name'),
-            "role": user.get('role', 'employee')
+            "role": user.get('role', 'employee'),
+            "onboarding_completed": user.get('onboarding_completed', False)
         }
     }
 
