@@ -173,6 +173,7 @@ const FileGalleryFullScreen = ({
       case 'compliance': return record.title || record.name || 'Compliance';
       case 'tasks': return record.title || record.name || 'Task';  // Handle 'tasks' vs 'task'
       case 'projects': return record.name || 'Project';  // Handle 'projects' vs 'project'
+      case 'inventory-project': return record.project_name || 'Project Inventory';
       default: return title || 'Files';
     }
   };
