@@ -697,6 +697,38 @@ const ProjectsPage = () => {
         recordType="project"
         files={currentProject?.files || []}
         users={users}
+        inventoryItems={currentProject ? inventory.filter(item => item.project_id === currentProject.id) : []}
+        onAddItem={() => {
+          setInventoryFormData({ ...inventoryFormData, project_id: currentProject?.id });
+          setFilesFullScreenOpen(false);
+          setInventoryDialogOpen(true);
+        }}
+        onEditItem={async (item) => {
+          setInventoryFormData({
+            item_name: item.item_name,
+            category: item.category,
+            quantity: item.quantity,
+            unit: item.unit,
+            location: item.location || '',
+            unit_cost: item.unit_cost || '',
+            supplier: item.supplier || '',
+            notes: item.notes || ''
+          });
+          // Store editing item ID for update
+          setInventoryFormData(prev => ({ ...prev, editing_id: item.id }));
+          setFilesFullScreenOpen(false);
+          setInventoryDialogOpen(true);
+        }}
+        onDeleteItem={async (itemId) => {
+          if (!window.confirm('Delete this inventory item?')) return;
+          try {
+            await api.delete(`/inventory/${itemId}`);
+            toast.success('Item deleted');
+            fetchData();
+          } catch (error) {
+            toast.error('Failed to delete item');
+          }
+        }}
         onDelete={async (fileId) => {
           if (!currentProject) return;
           const updatedFiles = currentProject.files.filter(f => f.id !== fileId);
@@ -707,6 +739,114 @@ const ProjectsPage = () => {
         canDelete={canEdit}
         onUpdate={fetchData}
       />
+
+      {/* Add/Edit Inventory Item Dialog */}
+      <Dialog open={inventoryDialogOpen} onOpenChange={setInventoryDialogOpen}>
+        <DialogContent className="bg-gray-900 border max-w-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: ELEGANT_GOLD }}>
+          <DialogHeader>
+            <DialogTitle style={{ color: ELEGANT_GOLD }}>
+              {inventoryFormData.editing_id ? 'Edit' : 'Add'} Inventory Item
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              const data = {
+                ...inventoryFormData,
+                quantity: parseFloat(inventoryFormData.quantity),
+                unit_cost: inventoryFormData.unit_cost ? parseFloat(inventoryFormData.unit_cost) : 0,
+                project_id: currentProject?.id
+              };
+              delete data.editing_id;
+              
+              if (inventoryFormData.editing_id) {
+                await api.put(`/inventory/${inventoryFormData.editing_id}`, data);
+                toast.success('Item updated');
+              } else {
+                await api.post('/inventory', data);
+                toast.success('Item added');
+              }
+              
+              setInventoryDialogOpen(false);
+              setInventoryFormData({
+                item_name: '',
+                category: 'materials',
+                quantity: '',
+                unit: 'pieces',
+                location: '',
+                unit_cost: '',
+                supplier: '',
+                notes: ''
+              });
+              setFilesFullScreenOpen(true);
+              fetchData();
+            } catch (error) {
+              toast.error('Failed to save item');
+            }
+          }} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Item Name *</Label>
+                <Input value={inventoryFormData.item_name} onChange={(e) => setInventoryFormData({ ...inventoryFormData, item_name: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} required />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Category *</Label>
+                <Select value={inventoryFormData.category} onValueChange={(value) => setInventoryFormData({ ...inventoryFormData, category: value })}>
+                  <SelectTrigger className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border text-white" style={{ borderColor: ELEGANT_GOLD }}>
+                    <SelectItem value="materials">Materials</SelectItem>
+                    <SelectItem value="supplies">Supplies</SelectItem>
+                    <SelectItem value="parts">Parts</SelectItem>
+                    <SelectItem value="tools">Tools</SelectItem>
+                    <SelectItem value="consumables">Consumables</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Quantity *</Label>
+                <Input type="number" step="0.01" value={inventoryFormData.quantity} onChange={(e) => setInventoryFormData({ ...inventoryFormData, quantity: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} required />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Unit *</Label>
+                <Input value={inventoryFormData.unit} onChange={(e) => setInventoryFormData({ ...inventoryFormData, unit: e.target.value })} placeholder="pieces, boxes, etc" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} required />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Unit Cost</Label>
+                <Input type="number" step="0.01" value={inventoryFormData.unit_cost} onChange={(e) => setInventoryFormData({ ...inventoryFormData, unit_cost: e.target.value })} placeholder="0.00" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Location</Label>
+                <Input value={inventoryFormData.location} onChange={(e) => setInventoryFormData({ ...inventoryFormData, location: e.target.value })} placeholder="Warehouse, Site, etc" className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: ELEGANT_GOLD }}>Supplier</Label>
+                <Input value={inventoryFormData.supplier} onChange={(e) => setInventoryFormData({ ...inventoryFormData, supplier: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label style={{ color: ELEGANT_GOLD }}>Notes</Label>
+              <Textarea value={inventoryFormData.notes} onChange={(e) => setInventoryFormData({ ...inventoryFormData, notes: e.target.value })} className="bg-black border text-white" style={{ borderColor: ELEGANT_GOLD }} rows={3} />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button type="button" variant="outline" onClick={() => {
+                setInventoryDialogOpen(false);
+                setFilesFullScreenOpen(true);
+              }} className="border" style={{ borderColor: ELEGANT_GOLD, color: ELEGANT_GOLD }}>
+                Cancel
+              </Button>
+              <Button type="submit" className="text-black" style={{ backgroundColor: ELEGANT_GOLD }}>
+                {inventoryFormData.editing_id ? 'Update' : 'Add'} Item
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
