@@ -70,6 +70,26 @@ function App() {
         <Routes>
           <Route path="/colors" element={<ColorPicker />} />
           <Route path="/auth" element={<AuthPage />} />
+          
+          {/* Onboarding routes - standalone without Layout */}
+          <Route 
+            path="/employee-onboarding" 
+            element={
+              <ProtectedRoute>
+                <EmployeeOnboardingPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/vendor-onboarding" 
+            element={
+              <ProtectedRoute>
+                <VendorOnboardingPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Main app routes with Layout */}
           <Route
             path="/"
             element={
@@ -101,8 +121,6 @@ function App() {
             <Route path="vendors" element={<VendorPortalPage />} />
             <Route path="company-documents" element={<CompanyDocumentsPage />} />
             <Route path="my-payroll-documents" element={<MyPayrollDocumentsPage />} />
-            <Route path="employee-onboarding" element={<EmployeeOnboardingPage />} />
-            <Route path="vendor-onboarding" element={<VendorOnboardingPage />} />
             <Route path="admin" element={<AdminPanel />} />
           </Route>
         </Routes>
