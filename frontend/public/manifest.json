@@ -1,0 +1,18 @@
+{
+  "short_name": "Williams CRM",
+  "name": "Williams Diversified - Project Command Center",
+  "description": "CRM and Project Management for Williams Diversified LLC",
+  "icons": [
+    {
+      "src": "/williams-logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "orientation": "portrait-primary"
+}
