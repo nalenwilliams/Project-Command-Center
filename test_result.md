@@ -287,39 +287,48 @@ backend:
 
   - task: "Work Orders Role-Based Filtering"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Work orders filtering was already implemented in previous iteration (lines 1623-1638). Employees only see work orders assigned to them via assigned_to field."
+        - working: true
+        - agent: "testing"
+        - comment: "Successfully tested work orders filtering. Admin can see all work orders (2 total). Created test work order and verified admin access. Work order filtering implemented correctly at lines 1656-1661 in server.py - employees only see work orders where they are in the assigned_to array, admins and managers see all work orders."
 
   - task: "User Model Enhancement - First/Last Name"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Updated User, UserResponse, UserUpdate, and UserCreate Pydantic models to include optional first_name and last_name fields. Updated register endpoint to accept and store these fields. Updated login and /auth/me endpoints to return first_name and last_name in user response."
+        - working: true
+        - agent: "testing"
+        - comment: "Successfully tested User model enhancements. All endpoints properly handle first_name and last_name fields: 1) POST /auth/login returns first_name and last_name in user object (lines 963-964) 2) GET /auth/me includes first_name and last_name fields (lines 975-976) 3) PUT /admin/users/{user_id} successfully updates and returns first_name and last_name fields. User, UserResponse, UserUpdate, and UserCreate models correctly include optional first_name and last_name fields (lines 105-106, 115-116, 123-124, 92-93)."
 
   - task: "User Registration with Names"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Updated registration endpoint (POST /auth/register) to accept first_name and last_name from UserCreate model and store them in User document."
+        - working: true
+        - agent: "testing"
+        - comment: "Successfully tested user registration with first_name and last_name fields. Created invitation and registered new user 'johndoe' with first_name: 'John' and last_name: 'Doe'. Registration endpoint (POST /auth/register) properly accepts first_name and last_name from UserCreate model (lines 906-907), stores them in User document, and returns them in response (lines 932-933). Registration process working correctly end-to-end."
 
 frontend:
   - task: "File Gallery UX Improvements"
