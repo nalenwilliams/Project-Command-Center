@@ -417,3 +417,61 @@ def schedule_change_notification(user_name: str, change_type: str, old_value: st
         "subject": f"Schedule Update: {change_type}",
         "html": get_base_template(content)
     }
+
+
+def vendor_account_created_email(vendor_name: str, contact_name: str, email: str, temp_password: str, portal_url: str) -> dict:
+    """Email sent to vendor when account is created with login credentials"""
+    content = f"""
+    <h2 style="color: {COLORS['primary']}; margin-top: 0;">Welcome to Williams Diversified LLC Vendor Portal</h2>
+    <p style="font-size: 16px; line-height: 1.6;">Dear {contact_name},</p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        Your vendor account has been created for <strong>{vendor_name}</strong>. 
+        You can now access the Vendor Portal to complete your company profile, upload required documents, 
+        and manage invoices and payments.
+    </p>
+    
+    <div style="background-color: rgba(201, 169, 97, 0.1); border: 2px solid {COLORS['primary']}; border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <p style="margin: 0 0 15px 0; color: {COLORS['primary']}; font-size: 18px; font-weight: bold; text-align: center;">
+            YOUR LOGIN CREDENTIALS
+        </p>
+        <table width="100%" cellpadding="8" cellspacing="0">
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold; width: 40%;">Email/Username:</td>
+                <td style="color: {COLORS['primary']}; font-weight: bold; font-size: 16px;">{email}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Temporary Password:</td>
+                <td style="color: {COLORS['primary']}; font-weight: bold; font-size: 16px; letter-spacing: 1px;">{temp_password}</td>
+            </tr>
+        </table>
+        <p style="margin: 15px 0 0 0; font-size: 13px; color: {COLORS['muted']}; text-align: center;">
+            ⚠️ You will be required to change your password on first login
+        </p>
+    </div>
+    
+    <div style="background-color: rgba(255, 165, 0, 0.1); border-left: 4px solid #FFA500; padding: 15px; margin: 20px 0;">
+        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: {COLORS['text']};">
+            <strong>Important:</strong> After logging in, you will need to complete your vendor profile by providing:
+        </p>
+        <ul style="margin: 10px 0; padding-left: 20px; color: {COLORS['text']};">
+            <li>Company EIN (Tax ID)</li>
+            <li>Insurance Information (Certificate of Insurance)</li>
+            <li>Banking Information for payments</li>
+            <li>Required Documents (W-9, COI, Business License)</li>
+        </ul>
+    </div>
+    
+    {get_button_html('Access Vendor Portal', portal_url)}
+    
+    <p style="font-size: 14px; line-height: 1.6; color: {COLORS['muted']};">
+        If you have any questions or need assistance, please contact us at {COMPANY_INFO['email']} or {COMPANY_INFO['phone']}.
+    </p>
+    
+    <p style="font-size: 13px; line-height: 1.6; color: {COLORS['muted']}; margin-top: 30px;">
+        <em>This is an automated message from {COMPANY_INFO['name']} Project Command Center.</em>
+    </p>
+    """
+    return {
+        "subject": f"Your Vendor Portal Account - {COMPANY_INFO['name']}",
+        "html": get_base_template(content)
+    }
