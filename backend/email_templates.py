@@ -300,7 +300,7 @@ def vendor_document_status_email(vendor_name: str, document_type: str, status: s
     
     {reason_html}
     
-    {get_button_html('Manage Documents', 'https://crm-command-1.preview.emergentagent.com/company-documents')}
+    {get_button_html('Manage Documents', 'https://williams-portal.preview.emergentagent.com/company-documents')}
     """
     return {
         "subject": f"Document {status.title()}: {document_type}",
@@ -356,7 +356,7 @@ def employee_payment_processed_email(employee_name: str, amount: str, pay_date: 
         View your complete paystub in the employee portal.
     </p>
     
-    {get_button_html('View Paystub', 'https://crm-command-1.preview.emergentagent.com/my-payroll-documents')}
+    {get_button_html('View Paystub', 'https://williams-portal.preview.emergentagent.com/my-payroll-documents')}
     """
     return {
         "subject": f"Payment Deposited - ${amount}",
@@ -411,7 +411,7 @@ def schedule_change_notification(user_name: str, change_type: str, old_value: st
         <p style="margin: 5px 0; color: {COLORS['text']};"><strong>Changed By:</strong> {changed_by}</p>
     </div>
     
-    {get_button_html('View Schedule', 'https://crm-command-1.preview.emergentagent.com/schedules')}
+    {get_button_html('View Schedule', 'https://williams-portal.preview.emergentagent.com/schedules')}
     """
     return {
         "subject": f"Schedule Update: {change_type}",

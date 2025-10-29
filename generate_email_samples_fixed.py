@@ -28,7 +28,7 @@ samples = [
             contact_name="John Smith",
             email="john@abcconstruction.com",
             temp_password="TempPass123!",
-            portal_url="https://crm-command-1.preview.emergentagent.com/auth"
+            portal_url="https://williams-portal.preview.emergentagent.com/auth"
         )
     },
     {
@@ -36,7 +36,7 @@ samples = [
         "template": vendor_invitation_email(
             vendor_name="XYZ Contractors",
             invitation_code="ABC12345",
-            portal_url="https://crm-command-1.preview.emergentagent.com/vendor-onboarding?code=ABC12345"
+            portal_url="https://williams-portal.preview.emergentagent.com/vendor-onboarding?code=ABC12345"
         )
     },
     {
@@ -45,7 +45,7 @@ samples = [
             vendor_name="ABC Construction LLC",
             invoice_number="INV-2025-001",
             amount="15,000.00",
-            portal_url="https://crm-command-1.preview.emergentagent.com/vendors"
+            portal_url="https://williams-portal.preview.emergentagent.com/vendors"
         )
     },
     {
@@ -65,7 +65,7 @@ samples = [
             gross_amount="3,200.00",
             net_amount="2,450.00",
             pay_date="01/15/2025",
-            portal_url="https://crm-command-1.preview.emergentagent.com/my-payroll-documents"
+            portal_url="https://williams-portal.preview.emergentagent.com/my-payroll-documents"
         )
     },
     {
@@ -85,7 +85,7 @@ samples = [
             item_title="Downtown Office Renovation",
             assigned_by="Admin User",
             due_date="02/01/2025",
-            portal_url="https://crm-command-1.preview.emergentagent.com/projects"
+            portal_url="https://williams-portal.preview.emergentagent.com/projects"
         )
     }
 ]

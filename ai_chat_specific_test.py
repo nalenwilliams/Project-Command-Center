@@ -10,7 +10,7 @@ import os
 from datetime import datetime, timezone
 
 # Get backend URL from frontend .env file
-BACKEND_URL = "https://crm-command-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://williams-portal.preview.emergentagent.com/api"
 
 class AIChatTester:
     def __init__(self):

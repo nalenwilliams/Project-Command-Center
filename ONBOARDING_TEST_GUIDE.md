@@ -6,20 +6,20 @@
 - **Email**: `john.smith@williamsdiverse.com`
 - **Password**: `Employee123!`
 - **Status**: Needs onboarding
-- **Login URL**: https://crm-command-1.preview.emergentagent.com/auth
+- **Login URL**: https://williams-portal.preview.emergentagent.com/auth
 
 ### 🏢 Test Vendor (ACME Construction LLC)
 - **Company**: ACME Construction LLC
 - **Email**: `contact@acmeconstruction.com`
 - **Invitation Code**: `VENDOR2025`
-- **Direct Onboarding URL**: https://crm-command-1.preview.emergentagent.com/vendor-onboarding?code=VENDOR2025
+- **Direct Onboarding URL**: https://williams-portal.preview.emergentagent.com/vendor-onboarding?code=VENDOR2025
 
 ---
 
 ## 🧪 EMPLOYEE ONBOARDING TEST
 
 ### Step 1: Login as Employee
-1. Go to: https://crm-command-1.preview.emergentagent.com/auth
+1. Go to: https://williams-portal.preview.emergentagent.com/auth
 2. Enter credentials:
    - **Username**: `john.smith@williamsdiverse.com`
    - **Password**: `Employee123!`
@@ -94,7 +94,7 @@ Fill in sample data:
 
 ### Step 1: Access Vendor Onboarding
 **Option A - Direct Link (Recommended):**
-1. Go to: https://crm-command-1.preview.emergentagent.com/vendor-onboarding?code=VENDOR2025
+1. Go to: https://williams-portal.preview.emergentagent.com/vendor-onboarding?code=VENDOR2025
 
 **Option B - Test Invitation Email Flow:**
 1. Login as admin

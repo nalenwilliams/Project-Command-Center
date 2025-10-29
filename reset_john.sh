@@ -42,7 +42,7 @@ async def reset_john():
         
         print("✅ John Smith reset successfully!")
         print("   Login: john.smith / Employee123!")
-        print("   URL: https://crm-command-1.preview.emergentagent.com/auth")
+        print("   URL: https://williams-portal.preview.emergentagent.com/auth")
     else:
         print("❌ John Smith not found")
     

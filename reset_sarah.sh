@@ -42,7 +42,7 @@ async def reset_sarah():
         
         print("✅ Sarah Johnson reset successfully!")
         print("   Login: sarah.johnson / Employee123!")
-        print("   URL: https://crm-command-1.preview.emergentagent.com/auth")
+        print("   URL: https://williams-portal.preview.emergentagent.com/auth")
     else:
         print("❌ Sarah Johnson not found")
     

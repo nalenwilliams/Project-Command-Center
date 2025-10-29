@@ -46,7 +46,7 @@ async def create_test_users():
     print(f"   Email: {employee_email}")
     print(f"   Password: {employee_password}")
     print(f"   Status: Needs Onboarding")
-    print(f"   Login URL: https://crm-command-1.preview.emergentagent.com/auth")
+    print(f"   Login URL: https://williams-portal.preview.emergentagent.com/auth")
     
     # 2. Create VENDOR INVITATION for vendor onboarding
     vendor_email = "contact@acmeconstruction.com"
@@ -77,7 +77,7 @@ async def create_test_users():
     print(f"   Company: ACME Construction LLC")
     print(f"   Email: {vendor_email}")
     print(f"   Invitation Code: {invitation_code}")
-    print(f"   Onboarding URL: https://crm-command-1.preview.emergentagent.com/vendor-onboarding?code={invitation_code}")
+    print(f"   Onboarding URL: https://williams-portal.preview.emergentagent.com/vendor-onboarding?code={invitation_code}")
     
     print("\n" + "=" * 60)
     print("✅ Test users created successfully!")
