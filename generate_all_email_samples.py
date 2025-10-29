@@ -43,6 +43,7 @@ emails.append({
     "filename": "01_vendor_account_created.html",
     "template": vendor_account_created_email(
         vendor_name="ABC Construction Inc",
+        contact_name="Robert Smith",
         email="vendor@abcconstruction.com",
         temp_password="Welcome2024!",
         portal_url=portal_url
