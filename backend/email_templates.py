@@ -469,7 +469,12 @@ def vendor_account_created_email(vendor_name: str, contact_name: str, email: str
     
     <p style="font-size: 13px; line-height: 1.6; color: {COLORS['muted']}; margin-top: 30px;">
         <em>This is an automated message from {COMPANY_INFO['name']} Project Command Center.</em>
-
+    </p>
+    """
+    return {
+        "subject": f"Your Vendor Portal Account - {COMPANY_INFO['name']}",
+        "html": get_base_template(content)
+    }
 
 # ============================================
 # VENDOR ASSIGNMENT NOTIFICATIONS
