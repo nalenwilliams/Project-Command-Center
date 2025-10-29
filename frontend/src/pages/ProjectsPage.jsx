@@ -150,7 +150,17 @@ const ProjectsPage = () => {
       fetchData();
       handleCloseDialog();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Operation failed');
+      const errorDetail = error.response?.data?.detail;
+      let errorMessage = 'Operation failed';
+      
+      if (typeof errorDetail === 'string') {
+        errorMessage = errorDetail;
+      } else if (Array.isArray(errorDetail)) {
+        // Handle validation errors from backend
+        errorMessage = errorDetail.map(err => err.msg || JSON.stringify(err)).join(', ');
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
