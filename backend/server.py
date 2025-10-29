@@ -2126,8 +2126,8 @@ async def update_task(task_id: str, task_data: TaskUpdate, current_user: dict = 
         update_data['due_date'] = update_data['due_date'].isoformat()
     
     # Check for new user assignments
-    old_assigned = set(task.get('assigned_to', []))
-    new_assigned = set(update_data.get('assigned_to', []))
+    old_assigned = set(task.get('assigned_to') or [])
+    new_assigned = set(update_data.get('assigned_to') or [])
     newly_assigned = new_assigned - old_assigned
     
     if update_data:
