@@ -469,6 +469,178 @@ def vendor_account_created_email(vendor_name: str, contact_name: str, email: str
     
     <p style="font-size: 13px; line-height: 1.6; color: {COLORS['muted']}; margin-top: 30px;">
         <em>This is an automated message from {COMPANY_INFO['name']} Project Command Center.</em>
+
+
+# ============================================
+# VENDOR ASSIGNMENT NOTIFICATIONS
+# ============================================
+
+def vendor_work_order_assignment(vendor_name: str, work_order_number: str, work_order_title: str, assigned_by: str, start_date: str, location: str, portal_url: str) -> dict:
+    """Notification when work order is assigned to vendor"""
+    content = f"""
+    <h2 style="color: {COLORS['primary']}; margin-top: 0;">New Work Order Assignment</h2>
+    <p style="font-size: 16px; line-height: 1.6;">Dear {vendor_name},</p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        You have been assigned to a new work order in the Williams Diversified LLC system.
+    </p>
+    
+    <div style="background-color: rgba(201, 169, 97, 0.1); border: 2px solid {COLORS['primary']}; border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <p style="margin: 0 0 15px 0; color: {COLORS['primary']}; font-size: 18px; font-weight: bold;">
+            Work Order Details
+        </p>
+        <table width="100%" cellpadding="8" cellspacing="0">
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold; width: 40%;">Work Order #:</td>
+                <td style="color: {COLORS['primary']}; font-weight: bold; font-size: 16px;">{work_order_number}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Title:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{work_order_title}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Start Date:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{start_date}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Location:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{location}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Assigned By:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{assigned_by}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <p style="font-size: 16px; line-height: 1.6;">
+        Please review the work order details and requirements in the vendor portal.
+    </p>
+    
+    {get_button_html('View Work Order', portal_url)}
+    
+    <p style="font-size: 14px; line-height: 1.6; color: {COLORS['muted']};">
+        If you have any questions about this work order, please contact the project manager or reach out to us at {COMPANY_INFO['email']}.
+    </p>
+    """
+    return {
+        "subject": f"New Work Order Assignment: {work_order_number}",
+        "html": get_base_template(content)
+    }
+
+def vendor_project_assignment(vendor_name: str, project_name: str, project_description: str, assigned_by: str, start_date: str, end_date: str, portal_url: str) -> dict:
+    """Notification when project is assigned to vendor"""
+    content = f"""
+    <h2 style="color: {COLORS['primary']}; margin-top: 0;">New Project Assignment</h2>
+    <p style="font-size: 16px; line-height: 1.6;">Dear {vendor_name},</p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        You have been assigned to a new project. We look forward to working with you on this engagement.
+    </p>
+    
+    <div style="background-color: rgba(201, 169, 97, 0.1); border: 2px solid {COLORS['primary']}; border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <p style="margin: 0 0 15px 0; color: {COLORS['primary']}; font-size: 18px; font-weight: bold;">
+            Project Details
+        </p>
+        <table width="100%" cellpadding="8" cellspacing="0">
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold; width: 40%;">Project Name:</td>
+                <td style="color: {COLORS['primary']}; font-weight: bold; font-size: 16px;">{project_name}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Description:</td>
+                <td style="color: {COLORS['text']}; font-size: 14px;">{project_description}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Start Date:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{start_date}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">End Date:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{end_date}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Assigned By:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{assigned_by}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <p style="font-size: 16px; line-height: 1.6;">
+        Access the vendor portal to view complete project details, deliverables, and timelines.
+    </p>
+    
+    {get_button_html('View Project', portal_url)}
+    
+    <p style="font-size: 14px; line-height: 1.6; color: {COLORS['muted']};">
+        For any project-related questions, please contact us at {COMPANY_INFO['email']} or {COMPANY_INFO['phone']}.
+    </p>
+    """
+    return {
+        "subject": f"New Project Assignment: {project_name}",
+        "html": get_base_template(content)
+    }
+
+def vendor_task_assignment(vendor_name: str, task_title: str, task_description: str, assigned_by: str, due_date: str, priority: str, portal_url: str) -> dict:
+    """Notification when task is assigned to vendor"""
+    
+    priority_colors = {
+        "high": "#ff4444",
+        "medium": "#FFA500",
+        "low": "#4CAF50"
+    }
+    priority_color = priority_colors.get(priority.lower(), "#FFA500")
+    
+    content = f"""
+    <h2 style="color: {COLORS['primary']}; margin-top: 0;">New Task Assignment</h2>
+    <p style="font-size: 16px; line-height: 1.6;">Dear {vendor_name},</p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        A new task has been assigned to you in the Project Command Center.
+    </p>
+    
+    <div style="background-color: rgba(201, 169, 97, 0.1); border: 2px solid {COLORS['primary']}; border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <p style="margin: 0 0 15px 0; color: {COLORS['primary']}; font-size: 18px; font-weight: bold;">
+            Task Details
+        </p>
+        <table width="100%" cellpadding="8" cellspacing="0">
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold; width: 40%;">Task:</td>
+                <td style="color: {COLORS['primary']}; font-weight: bold; font-size: 16px;">{task_title}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Description:</td>
+                <td style="color: {COLORS['text']}; font-size: 14px;">{task_description}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Due Date:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{due_date}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Priority:</td>
+                <td style="color: {priority_color}; font-weight: bold; font-size: 16px; text-transform: uppercase;">{priority}</td>
+            </tr>
+            <tr>
+                <td style="color: {COLORS['muted']}; font-weight: bold;">Assigned By:</td>
+                <td style="color: {COLORS['text']}; font-size: 16px;">{assigned_by}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="background-color: rgba(255, 165, 0, 0.1); border-left: 4px solid {priority_color}; padding: 15px; margin: 20px 0;">
+        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: {COLORS['text']};">
+            <strong>Action Required:</strong> Please review this task and update its status in the vendor portal as you make progress.
+        </p>
+    </div>
+    
+    {get_button_html('View Task', portal_url)}
+    
+    <p style="font-size: 14px; line-height: 1.6; color: {COLORS['muted']};">
+        Questions? Contact us at {COMPANY_INFO['email']} or {COMPANY_INFO['phone']}.
+    </p>
+    """
+    return {
+        "subject": f"New Task Assignment: {task_title}",
+        "html": get_base_template(content)
+    }
+
     </p>
     """
     return {
