@@ -135,6 +135,88 @@ class EmailService:
         </html>
         """
         return self.send_email(user_email, subject, body)
+    
+    async def send_task_assignment_email(self, to_email: str, user_name: str, user_role: str, task_title: str, 
+                                        task_description: str, due_date: str, priority: str, assigned_by: str, 
+                                        portal_url: str):
+        """Send task assignment notification based on user role"""
+        if user_role == 'vendor':
+            email_data = vendor_task_assignment_email(
+                vendor_name=user_name,
+                task_title=task_title,
+                task_description=task_description,
+                due_date=due_date,
+                priority=priority,
+                assigned_by=assigned_by,
+                portal_url=portal_url
+            )
+        else:  # employee, admin, hr, manager
+            email_data = employee_task_assignment(
+                employee_name=user_name,
+                task_title=task_title,
+                task_description=task_description,
+                due_date=due_date,
+                priority=priority,
+                assigned_by=assigned_by,
+                portal_url=portal_url
+            )
+        
+        return self.send_email(to_email, email_data['subject'], email_data['html'])
+    
+    async def send_project_assignment_email(self, to_email: str, user_name: str, user_role: str, project_name: str,
+                                           project_description: str, start_date: str, end_date: str, 
+                                           assigned_by: str, portal_url: str):
+        """Send project assignment notification based on user role"""
+        if user_role == 'vendor':
+            email_data = vendor_project_assignment_email(
+                vendor_name=user_name,
+                project_name=project_name,
+                project_description=project_description,
+                start_date=start_date,
+                end_date=end_date,
+                assigned_by=assigned_by,
+                portal_url=portal_url
+            )
+        else:  # employee, admin, hr, manager
+            email_data = employee_project_assignment(
+                employee_name=user_name,
+                project_name=project_name,
+                project_description=project_description,
+                assigned_by=assigned_by,
+                start_date=start_date,
+                end_date=end_date,
+                portal_url=portal_url
+            )
+        
+        return self.send_email(to_email, email_data['subject'], email_data['html'])
+    
+    async def send_work_order_assignment_email(self, to_email: str, user_name: str, user_role: str, 
+                                               work_order_number: str, work_order_title: str, 
+                                               assigned_by: str, start_date: str, location: str, 
+                                               portal_url: str):
+        """Send work order assignment notification based on user role"""
+        if user_role == 'vendor':
+            email_data = vendor_work_order_assignment_email(
+                vendor_name=user_name,
+                work_order_number=work_order_number,
+                work_order_title=work_order_title,
+                assigned_by=assigned_by,
+                start_date=start_date,
+                location=location,
+                portal_url=portal_url
+            )
+        else:  # employee, admin, hr, manager
+            email_data = employee_work_order_assignment(
+                employee_name=user_name,
+                work_order_number=work_order_number,
+                work_order_title=work_order_title,
+                assigned_by=assigned_by,
+                start_date=start_date,
+                location=location,
+                portal_url=portal_url
+            )
+        
+        return self.send_email(to_email, email_data['subject'], email_data['html'])
 
 
 # Global email service instance
