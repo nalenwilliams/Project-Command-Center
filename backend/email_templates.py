@@ -9,7 +9,7 @@ COMPANY_INFO = {
     "city_state_zip": "TULSA, OK 74104 USA",
     "phone": "(918)917-3526",
     "email": "accountspayable@williamsdiverse.com",
-    "logo_url": "https://crm-command-1.preview.emergentagent.com/assets/logo_williams_diversified.jpeg"
+    "logo_url": "https://crm-command-1.preview.emergentagent.com/williams-logo.png"
 }
 
 # Brand colors
