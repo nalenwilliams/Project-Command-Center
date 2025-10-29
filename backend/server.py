@@ -2265,8 +2265,8 @@ async def update_work_order(work_order_id: str, work_order_data: WorkOrderUpdate
         update_data['due_date'] = update_data['due_date'].isoformat()
     
     # Check for new user assignments
-    old_assigned = set(work_order.get('assigned_to', []))
-    new_assigned = set(update_data.get('assigned_to', []))
+    old_assigned = set(work_order.get('assigned_to') or [])
+    new_assigned = set(update_data.get('assigned_to') or [])
     newly_assigned = new_assigned - old_assigned
     
     if update_data:
