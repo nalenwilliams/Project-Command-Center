@@ -1940,8 +1940,8 @@ async def update_project(project_id: str, project_data: ProjectUpdate, current_u
         update_data['deadline'] = update_data['deadline'].isoformat()
     
     # Check for new user assignments
-    old_assigned = set(project.get('assigned_to', []))
-    new_assigned = set(update_data.get('assigned_to', []))
+    old_assigned = set(project.get('assigned_to') or [])
+    new_assigned = set(update_data.get('assigned_to') or [])
     newly_assigned = new_assigned - old_assigned
     
     if update_data:
