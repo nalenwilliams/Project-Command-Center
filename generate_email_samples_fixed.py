@@ -10,9 +10,9 @@ from email_templates import (
     vendor_invitation_email,
     vendor_invoice_submitted_email,
     vendor_document_status_email,
-    employee_paystub_email,
-    employee_tax_document_email,
-    assignment_notification_email
+    employee_paystub_available_email,
+    employee_payment_processed_email,
+    employee_assignment_notification
 )
 
 # Create output directory
