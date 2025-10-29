@@ -53,6 +53,9 @@ test_email_data = employee_task_assignment(
 
 # Send test email to admin
 try:
+    print(f"   Attempting to send to: admin@williamsdiverse.com")
+    print(f"   Using SMTP: {email_service.smtp_server}:{email_service.smtp_port}")
+    
     result = email_service.send_email(
         to_email="admin@williamsdiverse.com",
         subject=test_email_data['subject'] + " [TEST]",
