@@ -2109,16 +2109,32 @@ async def update_task(task_id: str, task_data: TaskUpdate, current_user: dict = 
     # Send notifications to newly assigned users
     if newly_assigned:
         email_service = get_email_service()
+        portal_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://williams-portal.preview.emergentagent.com')
         for user_id in newly_assigned:
             try:
                 user = await db.users.find_one({"id": user_id}, {"_id": 0})
                 if user and user.get('email'):
-                    await email_service.send_assignment_notification(
+                    user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user['username']
+                    due_date_str = task.get('due_date', 'Not specified')
+                    if isinstance(due_date_str, str) and due_date_str != 'Not specified':
+                        try:
+                            due_date_obj = datetime.fromisoformat(due_date_str)
+                            due_date_str = due_date_obj.strftime('%B %d, %Y')
+                        except:
+                            pass
+                    elif isinstance(due_date_str, datetime):
+                        due_date_str = due_date_str.strftime('%B %d, %Y')
+                    
+                    await email_service.send_task_assignment_email(
                         to_email=user['email'],
-                        user_name=user['username'],
-                        item_type="Task",
-                        item_name=task['title'],
-                        assigned_by=current_user['username']
+                        user_name=user_name,
+                        user_role=user.get('role', 'employee'),
+                        task_title=task['title'],
+                        task_description=task.get('description', 'No description provided'),
+                        due_date=due_date_str,
+                        priority=task.get('priority', 'medium').capitalize(),
+                        assigned_by=f"{current_user.get('first_name', '')} {current_user.get('last_name', '')}".strip() or current_user['username'],
+                        portal_url=f"{portal_url}/tasks"
                     )
             except Exception as e:
                 print(f"Failed to send notification to user {user_id}: {e}")
