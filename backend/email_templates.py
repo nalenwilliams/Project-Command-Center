@@ -21,7 +21,7 @@ COLORS = {
 }
 
 def get_base_template(content: str) -> str:
-    """Base template with Williams Diversified branding"""
+    """Base template with Williams Diversified branding - Mobile optimized"""
     return f"""
     <!DOCTYPE html>
     <html>
@@ -29,35 +29,40 @@ def get_base_template(content: str) -> str:
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{COMPANY_INFO['name']}</title>
+        <style type="text/css">
+            body {{ margin: 0 !important; padding: 0 !important; background-color: #f4f4f4 !important; }}
+            .email-container {{ background-color: #000000 !important; }}
+            .content-area {{ color: #FFFFFF !important; }}
+        </style>
     </head>
-    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px 0;">
+    <body style="margin: 0 !important; padding: 0 !important; font-family: Arial, sans-serif !important; background-color: #f4f4f4 !important;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4 !important; padding: 20px 0;">
             <tr>
                 <td align="center">
-                    <table width="600" cellpadding="0" cellspacing="0" style="background-color: {COLORS['background']}; border: 2px solid {COLORS['primary']}; border-radius: 8px; overflow: hidden;">
+                    <table width="600" cellpadding="0" cellspacing="0" border="0" class="email-container" style="background-color: {COLORS['background']} !important; border: 2px solid {COLORS['primary']}; border-radius: 8px; overflow: hidden; max-width: 600px;">
                         <!-- Header with Logo -->
                         <tr>
-                            <td style="padding: 30px; text-align: center; background-color: {COLORS['background']}; border-bottom: 2px solid {COLORS['primary']};">
-                                <img src="{COMPANY_INFO['logo_url']}" alt="{COMPANY_INFO['name']}" style="max-width: 200px; height: auto;">
-                                <h1 style="color: {COLORS['primary']}; margin: 15px 0 5px 0; font-size: 24px;">{COMPANY_INFO['name']}</h1>
-                                <p style="color: {COLORS['muted']}; margin: 0; font-size: 14px;">Project Command Center</p>
+                            <td style="padding: 30px; text-align: center; background-color: {COLORS['background']} !important; border-bottom: 2px solid {COLORS['primary']};">
+                                <img src="{COMPANY_INFO['logo_url']}" alt="{COMPANY_INFO['name']}" width="200" style="max-width: 200px; height: auto; display: block; margin: 0 auto;">
+                                <h1 style="color: {COLORS['primary']} !important; margin: 15px 0 5px 0; font-size: 24px;">{COMPANY_INFO['name']}</h1>
+                                <p style="color: {COLORS['muted']} !important; margin: 0; font-size: 14px;">Project Command Center</p>
                             </td>
                         </tr>
                         
                         <!-- Content -->
                         <tr>
-                            <td style="padding: 30px; color: {COLORS['text']};">
+                            <td class="content-area" style="padding: 30px; color: {COLORS['text']} !important; background-color: {COLORS['background']} !important;">
                                 {content}
                             </td>
                         </tr>
                         
                         <!-- Footer -->
                         <tr>
-                            <td style="padding: 20px 30px; background-color: {COLORS['background']}; border-top: 2px solid {COLORS['primary']}; text-align: center;">
-                                <p style="color: {COLORS['primary']}; margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">
+                            <td style="padding: 20px 30px; background-color: {COLORS['background']} !important; border-top: 2px solid {COLORS['primary']}; text-align: center;">
+                                <p style="color: {COLORS['primary']} !important; margin: 0 0 10px 0; font-size: 16px; font-weight: bold;">
                                     {COMPANY_INFO['name']}
                                 </p>
-                                <p style="color: {COLORS['muted']}; margin: 0; font-size: 12px; line-height: 1.6;">
+                                <p style="color: {COLORS['muted']} !important; margin: 0; font-size: 12px; line-height: 1.6;">
                                     {COMPANY_INFO['address']}<br>
                                     {COMPANY_INFO['city_state_zip']}<br>
                                     Phone: {COMPANY_INFO['phone']}<br>
