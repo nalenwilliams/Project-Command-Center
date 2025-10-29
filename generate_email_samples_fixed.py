@@ -54,37 +54,38 @@ samples = [
             vendor_name="ABC Construction LLC",
             document_type="Certificate of Insurance",
             status="Approved",
-            notes="All documents verified and approved.",
-            portal_url="https://crm-command-1.preview.emergentagent.com/company-documents"
+            reason="All documents verified and approved."
         )
     },
     {
         "name": "05_employee_paystub",
-        "template": employee_paystub_email(
+        "template": employee_paystub_available_email(
             employee_name="Sarah Johnson",
             pay_period="01/01/2025 - 01/15/2025",
-            net_pay="2,450.00",
+            gross_amount="3,200.00",
+            net_amount="2,450.00",
+            pay_date="01/15/2025",
             portal_url="https://crm-command-1.preview.emergentagent.com/my-payroll-documents"
         )
     },
     {
-        "name": "06_employee_tax_document",
-        "template": employee_tax_document_email(
+        "name": "06_employee_payment",
+        "template": employee_payment_processed_email(
             employee_name="Sarah Johnson",
-            tax_year="2024",
-            document_type="W-2",
-            portal_url="https://crm-command-1.preview.emergentagent.com/my-payroll-documents"
+            amount="2,450.00",
+            pay_date="01/15/2025",
+            account_last4="1234"
         )
     },
     {
         "name": "07_assignment_notification",
-        "template": assignment_notification_email(
-            user_name="John Smith",
-            assignment_type="Project",
-            assignment_name="Downtown Office Renovation",
-            role="Project Manager",
-            start_date="02/01/2025",
-            details_url="https://crm-command-1.preview.emergentagent.com/projects"
+        "template": employee_assignment_notification(
+            employee_name="John Smith",
+            item_type="Project",
+            item_title="Downtown Office Renovation",
+            assigned_by="Admin User",
+            due_date="02/01/2025",
+            portal_url="https://crm-command-1.preview.emergentagent.com/projects"
         )
     }
 ]
