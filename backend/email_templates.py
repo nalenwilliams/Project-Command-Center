@@ -645,10 +645,3 @@ def vendor_task_assignment(vendor_name: str, task_title: str, task_description: 
         "subject": f"New Task Assignment: {task_title}",
         "html": get_base_template(content)
     }
-
-    </p>
-    """
-    return {
-        "subject": f"Your Vendor Portal Account - {COMPANY_INFO['name']}",
-        "html": get_base_template(content)
-    }
