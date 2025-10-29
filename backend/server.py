@@ -2218,16 +2218,24 @@ async def create_work_order(work_order_data: WorkOrderCreate, current_user: dict
     # Send notifications to all assigned users
     if work_order.assigned_to:
         email_service = get_email_service()
+        portal_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://williams-portal.preview.emergentagent.com')
         for user_id in work_order.assigned_to:
             try:
                 user = await db.users.find_one({"id": user_id}, {"_id": 0})
                 if user and user.get('email'):
-                    await email_service.send_assignment_notification(
+                    user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user['username']
+                    start_date_str = datetime.now(timezone.utc).strftime('%B %d, %Y')
+                    
+                    await email_service.send_work_order_assignment_email(
                         to_email=user['email'],
-                        user_name=user['username'],
-                        item_type="Work Order",
-                        item_name=work_order.title,
-                        assigned_by=current_user['username']
+                        user_name=user_name,
+                        user_role=user.get('role', 'employee'),
+                        work_order_number=work_order.id[:8],  # Use first 8 chars of ID as work order number
+                        work_order_title=work_order.title,
+                        assigned_by=f"{current_user.get('first_name', '')} {current_user.get('last_name', '')}".strip() or current_user['username'],
+                        start_date=start_date_str,
+                        location=work_order.address or 'To be determined',
+                        portal_url=f"{portal_url}/work-orders"
                     )
             except Exception as e:
                 print(f"Failed to send notification to user {user_id}: {e}")
