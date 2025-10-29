@@ -95,17 +95,7 @@ const WorkOrdersPage = () => {
       fetchData();
       handleCloseDialog();
     } catch (error) {
-      const errorDetail = error.response?.data?.detail;
-      let errorMessage = 'Operation failed';
-      
-      if (typeof errorDetail === 'string') {
-        errorMessage = errorDetail;
-      } else if (Array.isArray(errorDetail)) {
-        // Handle validation errors from backend
-        errorMessage = errorDetail.map(err => err.msg || JSON.stringify(err)).join(', ');
-      }
-      
-      toast.error(errorMessage);
+      toast.error(formatErrorMessage(error, 'Operation failed'));
     }
   };
 
