@@ -8,9 +8,9 @@ from email_templates import (
     employee_work_order_assignment,
     employee_project_assignment,
     employee_task_assignment,
-    vendor_work_order_assignment_email,
-    vendor_project_assignment_email,
-    vendor_task_assignment_email
+    vendor_work_order_assignment,
+    vendor_project_assignment,
+    vendor_task_assignment
 )
 
 logger = logging.getLogger(__name__)
