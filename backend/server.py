@@ -1892,16 +1892,25 @@ async def create_project(project_data: ProjectCreate, current_user: dict = Depen
     # Send notifications to all assigned users
     if project.assigned_to:
         email_service = get_email_service()
+        portal_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://williams-portal.preview.emergentagent.com')
         for user_id in project.assigned_to:
             try:
                 user = await db.users.find_one({"id": user_id}, {"_id": 0})
                 if user and user.get('email'):
-                    await email_service.send_assignment_notification(
+                    user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user['username']
+                    start_date_str = datetime.now(timezone.utc).strftime('%B %d, %Y')
+                    end_date_str = project.deadline.strftime('%B %d, %Y') if project.deadline else 'To be determined'
+                    
+                    await email_service.send_project_assignment_email(
                         to_email=user['email'],
-                        user_name=user['username'],
-                        item_type="Project",
-                        item_name=project.name,
-                        assigned_by=current_user['username']
+                        user_name=user_name,
+                        user_role=user.get('role', 'employee'),
+                        project_name=project.name,
+                        project_description=project.description or 'No description provided',
+                        start_date=start_date_str,
+                        end_date=end_date_str,
+                        assigned_by=f"{current_user.get('first_name', '')} {current_user.get('last_name', '')}".strip() or current_user['username'],
+                        portal_url=f"{portal_url}/projects"
                     )
             except Exception as e:
                 print(f"Failed to send notification to user {user_id}: {e}")
