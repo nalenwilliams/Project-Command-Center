@@ -17,8 +17,8 @@ from email_templates import (
     vendor_work_order_assignment,
     vendor_project_assignment,
     vendor_task_assignment,
-    employee_paystub_email,
-    employee_payment_email,
+    employee_paystub_available_email,
+    employee_payment_processed_email,
     employee_work_order_assignment,
     employee_project_assignment,
     employee_task_assignment
