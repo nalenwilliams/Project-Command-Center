@@ -141,13 +141,13 @@ class EmailService:
                                         portal_url: str):
         """Send task assignment notification based on user role"""
         if user_role == 'vendor':
-            email_data = vendor_task_assignment_email(
+            email_data = vendor_task_assignment(
                 vendor_name=user_name,
                 task_title=task_title,
                 task_description=task_description,
+                assigned_by=assigned_by,
                 due_date=due_date,
                 priority=priority,
-                assigned_by=assigned_by,
                 portal_url=portal_url
             )
         else:  # employee, admin, hr, manager
@@ -168,13 +168,13 @@ class EmailService:
                                            assigned_by: str, portal_url: str):
         """Send project assignment notification based on user role"""
         if user_role == 'vendor':
-            email_data = vendor_project_assignment_email(
+            email_data = vendor_project_assignment(
                 vendor_name=user_name,
                 project_name=project_name,
                 project_description=project_description,
+                assigned_by=assigned_by,
                 start_date=start_date,
                 end_date=end_date,
-                assigned_by=assigned_by,
                 portal_url=portal_url
             )
         else:  # employee, admin, hr, manager
@@ -196,7 +196,7 @@ class EmailService:
                                                portal_url: str):
         """Send work order assignment notification based on user role"""
         if user_role == 'vendor':
-            email_data = vendor_work_order_assignment_email(
+            email_data = vendor_work_order_assignment(
                 vendor_name=user_name,
                 work_order_number=work_order_number,
                 work_order_title=work_order_title,
