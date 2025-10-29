@@ -3,7 +3,12 @@
 Test SMTP Email Configuration
 """
 import sys
+import os
 sys.path.insert(0, '/app/backend')
+
+# Load .env file manually
+from dotenv import load_dotenv
+load_dotenv('/app/backend/.env')
 
 from email_service import get_email_service
 from email_templates import employee_task_assignment
@@ -12,8 +17,14 @@ print("=" * 70)
 print("Testing SMTP Email Configuration")
 print("=" * 70)
 
-# Initialize email service
-email_service = get_email_service()
+# Initialize email service with explicit values
+email_service = get_email_service(
+    smtp_server=os.getenv('SMTP_SERVER'),
+    smtp_port=int(os.getenv('SMTP_PORT', 587)),
+    username=os.getenv('SMTP_USERNAME'),
+    password=os.getenv('SMTP_PASSWORD'),
+    from_email=os.getenv('SMTP_FROM_EMAIL')
+)
 
 print(f"\n📧 SMTP Configuration:")
 print(f"   Server: {email_service.smtp_server}")
