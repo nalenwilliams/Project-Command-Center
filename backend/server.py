@@ -3286,17 +3286,29 @@ async def process_payroll_payment(
 
 @api_router.get("/vendors")
 async def get_vendors(current_user: dict = Depends(get_current_user)):
-    """Get all vendors (Admin/Manager) or self (Vendor)"""
-    if current_user["role"] == "vendor":
-        # Vendors see only themselves
-        vendor_id = current_user.get("vendor_id")
-        if not vendor_id:
-            raise HTTPException(status_code=404, detail="Vendor profile not found")
-        return await proxy_request("GET", f"/vendors/{vendor_id}", current_user)
-    elif current_user["role"] in ["admin", "manager"]:
-        return await proxy_request("GET", "/vendors", current_user)
-    else:
-        raise HTTPException(status_code=403, detail="Access denied")
+    """Get all registered vendors from users table (Admin/Manager)"""
+    if current_user["role"] not in ["admin", "manager"]:
+        raise HTTPException(status_code=403, detail="Admin/Manager access required")
+    
+    try:
+        # Get all vendor users from database
+        vendor_users = await db.users.find(
+            {"role": "vendor"},
+            {"_id": 0, "password_hash": 0}
+        ).to_list(length=None)
+        
+        # Get vendor profiles if they exist
+        for vendor_user in vendor_users:
+            vendor_id = vendor_user.get("vendor_id")
+            if vendor_id:
+                vendor_profile = await db.vendors.find_one({"id": vendor_id}, {"_id": 0})
+                if vendor_profile:
+                    vendor_user["profile"] = vendor_profile
+        
+        return vendor_users
+    except Exception as e:
+        logger.error(f"Error fetching vendors: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/vendors")
 async def create_vendor(
