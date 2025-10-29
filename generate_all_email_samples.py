@@ -75,8 +75,8 @@ emails.append({
         vendor_name="ABC Construction Inc",
         invoice_number="INV-2025-001",
         amount="15,750.00",
-        approval_date="January 18, 2025",
-        payment_date="January 25, 2025"
+        payment_date="January 25, 2025",
+        portal_url=f"{portal_url}/invoices"
     )
 })
 
