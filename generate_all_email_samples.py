@@ -154,7 +154,7 @@ emails.append({
 # Employee Emails
 emails.append({
     "filename": "11_employee_paystub.html",
-    "template": employee_paystub_email(
+    "template": employee_paystub_available_email(
         employee_name="Sarah Johnson",
         pay_period="January 1, 2025 - January 15, 2025",
         gross_amount="3,200.00",
@@ -166,12 +166,11 @@ emails.append({
 
 emails.append({
     "filename": "12_employee_payment.html",
-    "template": employee_payment_email(
+    "template": employee_payment_processed_email(
         employee_name="Sarah Johnson",
         amount="2,450.00",
         pay_date="January 20, 2025",
-        payment_method="Direct Deposit",
-        bank_account="****5678"
+        account_last4="5678"
     )
 })
 
