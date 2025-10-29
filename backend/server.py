@@ -2052,16 +2052,24 @@ async def create_task(task_data: TaskCreate, current_user: dict = Depends(get_cu
     # Send notifications to all assigned users
     if task.assigned_to:
         email_service = get_email_service()
+        portal_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://williams-portal.preview.emergentagent.com')
         for user_id in task.assigned_to:
             try:
                 user = await db.users.find_one({"id": user_id}, {"_id": 0})
                 if user and user.get('email'):
-                    await email_service.send_assignment_notification(
+                    user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user['username']
+                    due_date_str = task.due_date.strftime('%B %d, %Y') if task.due_date else 'Not specified'
+                    
+                    await email_service.send_task_assignment_email(
                         to_email=user['email'],
-                        user_name=user['username'],
-                        item_type="Task",
-                        item_name=task.title,
-                        assigned_by=current_user['username']
+                        user_name=user_name,
+                        user_role=user.get('role', 'employee'),
+                        task_title=task.title,
+                        task_description=task.description or 'No description provided',
+                        due_date=due_date_str,
+                        priority=task.priority.capitalize(),
+                        assigned_by=f"{current_user.get('first_name', '')} {current_user.get('last_name', '')}".strip() or current_user['username'],
+                        portal_url=f"{portal_url}/tasks"
                     )
             except Exception as e:
                 print(f"Failed to send notification to user {user_id}: {e}")
