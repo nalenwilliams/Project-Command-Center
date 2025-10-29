@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import api from '@/lib/api';
 import MultiSelectUsers from '@/components/MultiSelectUsers';
 import FileGallery from '@/components/FileGallery';
+import { formatErrorMessage } from '@/lib/errorHandler';
 
 const ELEGANT_GOLD = '#C9A961';
 
